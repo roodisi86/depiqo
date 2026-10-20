@@ -19,7 +19,8 @@ from app.security import hash_password
 from app.storage import save_upload
 from app.util import add_months, now_iso, sha256, today, token
 
-PASSWORD = "Depiqo-demo-2026"
+# Staging sets DEMO_PASSWORD (a secret) so the public staging server does not use the password from the README.
+PASSWORD = os.environ.get("DEMO_PASSWORD") or "Depiqo-demo-2026"
 
 
 def pdf_bytes(title, lines):

@@ -1,0 +1,113 @@
+# Deploys the platform to the staging server on Fly.io (sandbox, demo data, never real money).
+# Does nothing until the repository secret FLY_API_TOKEN exists. One-time setup is automatic: app, volume,
+# secrets (SECRET_KEY, BANK_WEBHOOK_SECRET, DEMO_PASSWORD) and the demo seed on a fresh volume.
+# Optional repository variable FLY_APP (default depiqo-staging; must be unique on fly.dev).
+name: Deploy staging
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "platform/**"
+      - ".github/workflows/deploy-staging.yml"
+  workflow_dispatch:
+    inputs:
+      reseed:
+        description: "Wipe staging data and load the demo portfolio again"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-staging
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+    working-directory: platform
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  FLY_APP: ${{ vars.FLY_APP || 'depiqo-staging' }}
+  FLY_REGION: ams
+
+jobs:
+  deploy:
+    name: Deploy to Fly.io (staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Skip when Fly.io is not connected yet
+        id: gate
+        working-directory: .
+        run: |
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::notice::FLY_API_TOKEN is not set: staging deploy skipped. Add it under Settings > Secrets and variables > Actions."
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.go == 'true'
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        if: steps.gate.outputs.go == 'true'
+
+      - name: Create the app if needed
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          if flyctl status --app "$FLY_APP" >/dev/null 2>&1; then
+            echo "App $FLY_APP exists"
+          else
+            flyctl apps create "$FLY_APP"
+          fi
+
+      - name: Create the data volume if needed
+        if: steps.gate.outputs.go == 'true'
+        id: volume
+        run: |
+          if flyctl volumes list --app "$FLY_APP" --json | grep -q '"depiqo_staging_data"'; then
+            echo "fresh=false" >> "$GITHUB_OUTPUT"
+          else
+            flyctl volumes create depiqo_staging_data --size 1 --region "$FLY_REGION" --app "$FLY_APP" --yes
+            echo "fresh=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set secrets once (random values, never printed)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          existing=$(flyctl secrets list --app "$FLY_APP" --json)
+          args=()
+          for name in SECRET_KEY BANK_WEBHOOK_SECRET; do
+            echo "$existing" | grep -q "\"$name\"" || args+=("$name=$(openssl rand -hex 32)")
+          done
+          if ! echo "$existing" | grep -q '"DEMO_PASSWORD"'; then
+            # Readable for testers, not guessable. Read it later with: fly ssh console -C 'printenv DEMO_PASSWORD'
+            args+=("DEMO_PASSWORD=Depiqo-$(openssl rand -hex 4)-$(openssl rand -hex 4)")
+          fi
+          if [ ${#args[@]} -gt 0 ]; then
+            flyctl secrets set --stage --app "$FLY_APP" "${args[@]}" >/dev/null
+            echo "Set ${#args[@]} secret(s)"
+          fi
+
+      - name: Deploy
+        if: steps.gate.outputs.go == 'true'
+        run: flyctl deploy --app "$FLY_APP" --remote-only --env BASE_URL="https://$FLY_APP.fly.dev" --wait-timeout 300
+
+      - name: Load the demo portfolio (fresh volume or on request)
+        if: steps.gate.outputs.go == 'true' && (steps.volume.outputs.fresh == 'true' || inputs.reseed)
+        run: flyctl ssh console --app "$FLY_APP" -C "setpriv --reuid=depiqo --regid=depiqo --init-groups python3 seed.py --reset"
+
+      - name: Check that staging answers as staging, in sandbox
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          for i in 1 2 3 4 5 6; do
+            body=$(curl -fsS "https://$FLY_APP.fly.dev/api/v1/config") && break
+            sleep 10
+          done
+          echo "$body" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('environment'), d.get('banner')); assert d.get('environment')=='staging', d"
+          echo "::notice::Staging is live at https://$FLY_APP.fly.dev"
