@@ -4,13 +4,13 @@ Daemon will be stopped at the end of the build
 > Task :gradle-plugin:shared:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-gradle-plugin:expo-autolinking-plugin-shared:checkKotlinGradlePluginConfigurationErrors
 > Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileKotlin UP-TO-DATE
-> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileJava NO-SOURCE
-> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:processResources NO-SOURCE
-> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:classes UP-TO-DATE
 > Task :gradle-plugin:shared:compileKotlin UP-TO-DATE
 > Task :gradle-plugin:shared:compileJava NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:compileJava NO-SOURCE
 > Task :gradle-plugin:shared:processResources NO-SOURCE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:processResources NO-SOURCE
 > Task :gradle-plugin:shared:classes UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-plugin-shared:classes UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin-shared:jar UP-TO-DATE
 > Task :gradle-plugin:shared:jar UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:checkKotlinGradlePluginConfigurationErrors
@@ -26,18 +26,18 @@ Daemon will be stopped at the end of the build
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:processResources UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:classes UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:jar UP-TO-DATE
-> Task :expo-updates-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-gradle-plugin:expo-autolinking-plugin:checkKotlinGradlePluginConfigurationErrors
+> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-dev-launcher-gradle-plugin:checkKotlinGradlePluginConfigurationErrors
 > Task :expo-module-gradle-plugin:checkKotlinGradlePluginConfigurationErrors
-> Task :expo-gradle-plugin:expo-autolinking-plugin:checkKotlinGradlePluginConfigurationErrors
-> Task :expo-module-gradle-plugin:pluginDescriptors UP-TO-DATE
-> Task :expo-updates-gradle-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-dev-launcher-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :expo-module-gradle-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-module-gradle-plugin:processResources UP-TO-DATE
-> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
-> Task :expo-updates-gradle-plugin:processResources UP-TO-DATE
 > Task :expo-dev-launcher-gradle-plugin:processResources UP-TO-DATE
+> Task :expo-updates-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-updates-gradle-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:compileKotlin UP-TO-DATE
+> Task :expo-updates-gradle-plugin:processResources UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:compileJava NO-SOURCE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:processResources UP-TO-DATE
@@ -49,15 +49,15 @@ Daemon will be stopped at the end of the build
 > Task :gradle-plugin:react-native-gradle-plugin:processResources UP-TO-DATE
 > Task :gradle-plugin:react-native-gradle-plugin:classes UP-TO-DATE
 > Task :gradle-plugin:react-native-gradle-plugin:jar UP-TO-DATE
-> Task :expo-module-gradle-plugin:compileKotlin UP-TO-DATE
-> Task :expo-module-gradle-plugin:compileJava NO-SOURCE
-> Task :expo-module-gradle-plugin:classes UP-TO-DATE
-> Task :expo-module-gradle-plugin:jar UP-TO-DATE
 > Task :expo-dev-launcher-gradle-plugin:compileKotlin UP-TO-DATE
 > Task :expo-dev-launcher-gradle-plugin:compileJava NO-SOURCE
 > Task :expo-dev-launcher-gradle-plugin:classes UP-TO-DATE
 > Task :expo-dev-launcher-gradle-plugin:jar UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-module-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-module-gradle-plugin:classes UP-TO-DATE
 > Task :expo-updates-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-module-gradle-plugin:jar UP-TO-DATE
 > Task :expo-updates-gradle-plugin:compileJava NO-SOURCE
 > Task :expo-updates-gradle-plugin:classes UP-TO-DATE
 > Task :expo-updates-gradle-plugin:jar UP-TO-DATE
@@ -134,19 +134,19 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 > Task :expo-dev-client:preReleaseBuild UP-TO-DATE
 > Task :expo-constants:writeReleaseAarMetadata
 > Task :expo-dev-launcher:preBuild UP-TO-DATE
-> Task :expo-dev-launcher:preReleaseBuild UP-TO-DATE
 > Task :expo-dev-client:writeReleaseAarMetadata
-> Task :expo-dev-launcher:writeReleaseAarMetadata
+> Task :expo-dev-launcher:preReleaseBuild UP-TO-DATE
 > Task :expo-dev-menu:clenupAssets UP-TO-DATE
+> Task :expo-dev-launcher:writeReleaseAarMetadata
 > Task :expo-dev-menu:copyAssets
 > Task :expo-dev-menu:preBuild
 > Task :expo-dev-menu:preReleaseBuild
 > Task :expo-dev-menu-interface:preBuild UP-TO-DATE
-> Task :expo-dev-menu:writeReleaseAarMetadata
 > Task :expo-dev-menu-interface:preReleaseBuild UP-TO-DATE
+> Task :expo-dev-menu:writeReleaseAarMetadata
+> Task :expo-dev-menu-interface:writeReleaseAarMetadata
 > Task :expo-eas-client:preBuild UP-TO-DATE
 > Task :expo-eas-client:preReleaseBuild UP-TO-DATE
-> Task :expo-dev-menu-interface:writeReleaseAarMetadata
 > Task :expo-image-loader:preBuild UP-TO-DATE
 > Task :expo-eas-client:writeReleaseAarMetadata
 > Task :expo-image-loader:preReleaseBuild UP-TO-DATE
@@ -160,10 +160,10 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 > Task :expo-modules-core:preReleaseBuild UP-TO-DATE
 > Task :expo-manifests:writeReleaseAarMetadata
 > Task :expo-structured-headers:preBuild UP-TO-DATE
-> Task :expo-structured-headers:preReleaseBuild UP-TO-DATE
 > Task :expo-modules-core:writeReleaseAarMetadata
-> Task :expo-structured-headers:writeReleaseAarMetadata
+> Task :expo-structured-headers:preReleaseBuild UP-TO-DATE
 > Task :expo-updates:preBuild UP-TO-DATE
+> Task :expo-structured-headers:writeReleaseAarMetadata
 > Task :expo-updates:preReleaseBuild UP-TO-DATE
 > Task :expo-updates-interface:preBuild UP-TO-DATE
 > Task :expo-updates-interface:preReleaseBuild UP-TO-DATE
@@ -187,10 +187,10 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 
 > Task :app:createBundleReleaseJsAndAssets
 Starting Metro Bundler
-Android node_modules/expo-router/entry.js ▓▓▓░░░░░░░░░░░░░ 22.9% (169/381)
-Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 57.4% (667/880)
-Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░ 91.8% (1159/1268)
-Android Bundled 11937ms node_modules/expo-router/entry.js (1446 modules)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓░░░░░░░░░░░ 31.5% (258/475)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 62.3% (768/973)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 97.4% (1365/1383)
+Android Bundled 10725ms node_modules/expo-router/entry.js (1446 modules)
 Writing bundle output to: /home/runner/work/depiqo/depiqo/mobile/android/app/build/generated/assets/createBundleReleaseJsAndAssets/index.android.bundle
 Writing sourcemap output to: /home/runner/work/depiqo/depiqo/mobile/android/app/build/intermediates/sourcemaps/react/release/index.android.bundle.packager.map
 Copying 52 asset files
@@ -261,44 +261,44 @@ Done writing sourcemap output
 > Task :expo-dev-client:extractDeepLinksRelease
 > Task :app:parseReleaseLocalResources
 > Task :expo-dev-launcher:extractDeepLinksRelease
-> Task :expo-constants:processReleaseManifest
-> Task :expo-dev-launcher:processReleaseManifest
-> Task :expo-dev-client:processReleaseManifest
 > Task :expo:processReleaseManifest
+> Task :expo-constants:processReleaseManifest
+> Task :expo-dev-client:processReleaseManifest
 > Task :expo-dev-menu:extractDeepLinksRelease
+> Task :expo-dev-launcher:processReleaseManifest
 > Task :expo-dev-menu-interface:extractDeepLinksRelease
 > Task :expo-dev-menu:processReleaseManifest
 > Task :expo-dev-menu-interface:processReleaseManifest
 > Task :expo-eas-client:extractDeepLinksRelease
 > Task :expo-image-loader:extractDeepLinksRelease
 > Task :expo-eas-client:processReleaseManifest
-> Task :expo-image-loader:processReleaseManifest
 > Task :expo-json-utils:extractDeepLinksRelease
-> Task :expo-manifests:extractDeepLinksRelease
+> Task :expo-image-loader:processReleaseManifest
 > Task :expo-json-utils:processReleaseManifest
+> Task :expo-manifests:extractDeepLinksRelease
 > Task :expo-modules-core:extractDeepLinksRelease
 > Task :expo-manifests:processReleaseManifest
-> Task :expo-structured-headers:extractDeepLinksRelease
 
 > Task :expo-modules-core:processReleaseManifest
 /home/runner/work/depiqo/depiqo/mobile/node_modules/expo-modules-core/android/src/main/AndroidManifest.xml:8:9-11:45 Warning:
 	meta-data#com.facebook.soloader.enabled@android:value was tagged at AndroidManifest.xml:8 to replace other declarations but no other declaration present
 
+> Task :expo-structured-headers:extractDeepLinksRelease
 > Task :expo-updates:extractDeepLinksRelease
 > Task :expo-structured-headers:processReleaseManifest
 > Task :expo-updates-interface:extractDeepLinksRelease
 > Task :expo-updates:processReleaseManifest
-> Task :react-native-safe-area-context:extractDeepLinksRelease
 > Task :expo-updates-interface:processReleaseManifest
+> Task :react-native-safe-area-context:extractDeepLinksRelease
+> Task :react-native-screens:extractDeepLinksRelease
 
 > Task :react-native-safe-area-context:processReleaseManifest
 package="com.th3rdwave.safeareacontext" found in source AndroidManifest.xml: /home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-safe-area-context/android/src/main/AndroidManifest.xml.
 Setting the namespace via the package attribute in the source AndroidManifest.xml is no longer supported, and the value is ignored.
 Recommendation: remove package="com.th3rdwave.safeareacontext" from the source AndroidManifest.xml: /home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-safe-area-context/android/src/main/AndroidManifest.xml.
 
-> Task :react-native-screens:extractDeepLinksRelease
-> Task :react-native-svg:extractDeepLinksRelease
 > Task :react-native-screens:processReleaseManifest
+> Task :react-native-svg:extractDeepLinksRelease
 > Task :react-native-svg:processReleaseManifest
 > Task :expo:compileReleaseLibraryResources
 
@@ -322,60 +322,60 @@ Recommendation: remove package="com.th3rdwave.safeareacontext" from the source A
 > Task :expo:parseReleaseLocalResources
 > Task :expo-constants:compileReleaseLibraryResources
 > Task :app:processReleaseManifestForPackage
-> Task :expo-constants:parseReleaseLocalResources
 > Task :expo-dev-client:compileReleaseLibraryResources
+> Task :expo-constants:parseReleaseLocalResources
 > Task :expo-dev-client:parseReleaseLocalResources
-> Task :expo-constants:generateReleaseRFile
 > Task :expo:generateReleaseRFile
-> Task :expo-dev-launcher:parseReleaseLocalResources
+> Task :expo-constants:generateReleaseRFile
 > Task :expo-dev-client:generateReleaseRFile
-> Task :expo-dev-launcher:generateReleaseRFile
+> Task :expo-dev-launcher:parseReleaseLocalResources
 > Task :expo-dev-launcher:compileReleaseLibraryResources
+> Task :expo-dev-launcher:generateReleaseRFile
 > Task :expo-dev-menu:parseReleaseLocalResources
 > Task :expo-dev-menu-interface:compileReleaseLibraryResources
-> Task :expo-dev-menu-interface:parseReleaseLocalResources
 > Task :expo-dev-menu:generateReleaseRFile
-> Task :expo-dev-menu-interface:generateReleaseRFile
 > Task :expo-eas-client:compileReleaseLibraryResources
+> Task :expo-dev-menu-interface:parseReleaseLocalResources
 > Task :expo-eas-client:parseReleaseLocalResources
+> Task :expo-dev-menu-interface:generateReleaseRFile
+> Task :expo-eas-client:generateReleaseRFile
 > Task :expo-image-loader:compileReleaseLibraryResources
 > Task :expo-image-loader:parseReleaseLocalResources
-> Task :expo-eas-client:generateReleaseRFile
 > Task :expo-json-utils:compileReleaseLibraryResources
-> Task :expo-image-loader:generateReleaseRFile
 > Task :expo-json-utils:parseReleaseLocalResources
 > Task :expo-manifests:compileReleaseLibraryResources
-> Task :expo-manifests:parseReleaseLocalResources
 > Task :expo-dev-menu:compileReleaseLibraryResources
-> Task :expo-modules-core:compileReleaseLibraryResources
-> Task :expo-manifests:generateReleaseRFile
+> Task :expo-image-loader:generateReleaseRFile
+> Task :expo-manifests:parseReleaseLocalResources
 > Task :expo-json-utils:generateReleaseRFile
+> Task :expo-modules-core:compileReleaseLibraryResources
 > Task :expo-structured-headers:compileReleaseLibraryResources
+> Task :expo-manifests:generateReleaseRFile
 > Task :expo-modules-core:parseReleaseLocalResources
 > Task :expo-structured-headers:parseReleaseLocalResources
 > Task :expo-updates:compileReleaseLibraryResources
-> Task :expo-structured-headers:generateReleaseRFile
-> Task :expo-updates-interface:compileReleaseLibraryResources
 > Task :expo-modules-core:generateReleaseRFile
+> Task :expo-structured-headers:generateReleaseRFile
 > Task :expo-updates:parseReleaseLocalResources
-> Task :react-native-safe-area-context:compileReleaseLibraryResources
+> Task :expo-updates-interface:compileReleaseLibraryResources
 > Task :expo-updates:generateReleaseRFile
 > Task :expo-updates-interface:parseReleaseLocalResources
-> Task :react-native-safe-area-context:parseReleaseLocalResources
+> Task :react-native-safe-area-context:compileReleaseLibraryResources
 > Task :expo-updates-interface:generateReleaseRFile
-> Task :react-native-svg:compileReleaseLibraryResources
+> Task :react-native-safe-area-context:parseReleaseLocalResources
 > Task :react-native-screens:parseReleaseLocalResources
+> Task :react-native-svg:compileReleaseLibraryResources
+> Task :react-native-screens:compileReleaseLibraryResources
 > Task :react-native-safe-area-context:generateReleaseRFile
-> Task :react-native-svg:parseReleaseLocalResources
 > Task :expo:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-svg:parseReleaseLocalResources
 > Task :react-native-screens:generateReleaseRFile
-> Task :react-native-svg:generateReleaseRFile
 > Task :expo:generateReleaseBuildConfig
 > Task :expo-constants:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-constants:generateReleaseBuildConfig
 > Task :expo-modules-core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :react-native-svg:generateReleaseRFile
 > Task :expo-modules-core:generateReleaseBuildConfig
-> Task :react-native-screens:compileReleaseLibraryResources
 > Task :expo-modules-core:javaPreCompileRelease
 > Task :expo-dev-client:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-constants:javaPreCompileRelease
@@ -392,14 +392,14 @@ Recommendation: remove package="com.th3rdwave.safeareacontext" from the source A
 > Task :expo-dev-menu-interface:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-dev-menu-interface:generateReleaseBuildConfig
 > Task :expo-json-utils:checkKotlinGradlePluginConfigurationErrors SKIPPED
-> Task :expo-dev-menu-interface:javaPreCompileRelease
 > Task :expo-json-utils:generateReleaseBuildConfig
+> Task :expo-dev-menu-interface:javaPreCompileRelease
 > Task :expo-manifests:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-json-utils:javaPreCompileRelease
 > Task :expo-manifests:generateReleaseBuildConfig
-> Task :expo-dev-menu:javaPreCompileRelease
-> Task :expo-updates-interface:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-manifests:javaPreCompileRelease
+> Task :expo-updates-interface:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-dev-menu:javaPreCompileRelease
 > Task :expo-updates-interface:generateReleaseBuildConfig
 > Task :expo-updates-interface:javaPreCompileRelease
 > Task :expo-eas-client:checkKotlinGradlePluginConfigurationErrors SKIPPED
@@ -407,6 +407,7 @@ Recommendation: remove package="com.th3rdwave.safeareacontext" from the source A
 > Task :expo-eas-client:generateReleaseBuildConfig
 > Task :expo-image-loader:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-eas-client:javaPreCompileRelease
+> Task :app:processReleaseResources
 > Task :expo-image-loader:generateReleaseBuildConfig
 > Task :expo-structured-headers:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-image-loader:javaPreCompileRelease
@@ -414,14 +415,13 @@ Recommendation: remove package="com.th3rdwave.safeareacontext" from the source A
 > Task :expo-updates:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-structured-headers:javaPreCompileRelease
 > Task :expo-updates:generateReleaseBuildConfig
-> Task :expo:javaPreCompileRelease
-> Task :expo-updates:javaPreCompileRelease
 > Task :react-native-safe-area-context:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :react-native-safe-area-context:generateReleaseBuildConfig
-> Task :react-native-safe-area-context:javaPreCompileRelease
+> Task :expo:javaPreCompileRelease
+> Task :expo-updates:javaPreCompileRelease
 > Task :react-native-screens:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :react-native-screens:generateReleaseBuildConfig
-> Task :app:processReleaseResources
+> Task :react-native-safe-area-context:javaPreCompileRelease
 > Task :react-native-screens:javaPreCompileRelease
 > Task :react-native-svg:generateReleaseBuildConfig
 > Task :react-native-svg:javaPreCompileRelease
@@ -516,18 +516,18 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-safe-
 > Task :react-native-screens:mergeReleaseJniLibFolders
 > Task :react-native-screens:extractDeepLinksForAarRelease
 > Task :react-native-screens:mergeReleaseShaders
+> Task :react-native-screens:mergeReleaseNativeLibs
 > Task :react-native-screens:compileReleaseShaders NO-SOURCE
 > Task :react-native-screens:generateReleaseAssets UP-TO-DATE
 > Task :react-native-screens:packageReleaseAssets
-> Task :react-native-screens:mergeReleaseNativeLibs
 > Task :react-native-screens:prepareReleaseArtProfile
 > Task :expo:mergeReleaseJniLibFolders
 > Task :expo:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo:stripReleaseDebugSymbols NO-SOURCE
-> Task :expo:copyReleaseJniLibsProjectAndLocalJars
 > Task :react-native-screens:stripReleaseDebugSymbols
-> Task :expo:extractDeepLinksForAarRelease
+> Task :expo:copyReleaseJniLibsProjectAndLocalJars
 > Task :react-native-screens:copyReleaseJniLibsProjectAndLocalJars
+> Task :expo:extractDeepLinksForAarRelease
 > Task :expo:mergeReleaseShaders
 > Task :expo:compileReleaseShaders NO-SOURCE
 > Task :expo:generateReleaseAssets UP-TO-DATE
@@ -546,11 +546,11 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-safe-
 > Task :react-native-svg:generateReleaseAssets UP-TO-DATE
 > Task :react-native-svg:packageReleaseAssets
 > Task :react-native-svg:prepareReleaseArtProfile
-> Task :react-native-svg:mergeReleaseJavaResource
 > Task :expo-dev-launcher:mergeReleaseJniLibFolders
+> Task :react-native-svg:mergeReleaseJavaResource
+> Task :expo-dev-launcher:mergeReleaseNativeLibs NO-SOURCE
 > Task :react-native-svg:syncReleaseLibJars
 > Task :react-native-svg:bundleReleaseLocalLintAar
-> Task :expo-dev-launcher:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-dev-launcher:stripReleaseDebugSymbols NO-SOURCE
 > Task :expo-dev-launcher:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-dev-launcher:extractDeepLinksForAarRelease
@@ -572,13 +572,14 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-safe-
 > Task :expo-dev-menu-interface:mergeReleaseJniLibFolders
 > Task :expo-dev-menu-interface:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-dev-menu-interface:stripReleaseDebugSymbols NO-SOURCE
-> Task :expo-dev-menu-interface:extractDeepLinksForAarRelease
 > Task :expo-dev-menu-interface:copyReleaseJniLibsProjectAndLocalJars
+> Task :expo-dev-menu-interface:extractDeepLinksForAarRelease
 > Task :expo-dev-menu-interface:mergeReleaseShaders
 > Task :expo-dev-menu-interface:compileReleaseShaders NO-SOURCE
 > Task :expo-dev-menu-interface:generateReleaseAssets UP-TO-DATE
 > Task :expo-dev-menu-interface:packageReleaseAssets
 > Task :expo-dev-menu-interface:prepareReleaseArtProfile
+> Task :expo-modules-core:configureCMakeRelWithDebInfo[arm64-v8a]
 
 > Task :react-native-screens:compileReleaseKotlin
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/RNScreensPackage.kt:66:17 'constructor(name: String, className: String, canOverrideExistingModule: Boolean, needsEagerInit: Boolean, hasConstants: Boolean, isCxxModule: Boolean, isTurboModule: Boolean): ReactModuleInfo' is deprecated. This constructor is deprecated and will be removed in the future. Use ReactModuleInfo(String, String, boolean, boolean, boolean, boolean)].
@@ -643,46 +644,42 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-scree
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:7:8 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-screens/android/src/main/java/com/swmansion/rnscreens/bottomsheet/BottomSheetDialogRootView.kt:25:13 'object ReactFeatureFlags : Any' is deprecated. Use com.facebook.react.internal.featureflags.ReactNativeFeatureFlags instead.
 
-> Task :expo-modules-core:configureCMakeRelWithDebInfo[arm64-v8a]
-> Task :react-native-screens:compileReleaseJavaWithJavac
-> Task :react-native-screens:bundleLibCompileToJarRelease
-> Task :react-native-screens:bundleLibRuntimeToJarRelease
-> Task :react-native-screens:processReleaseJavaRes
-> Task :react-native-screens:createFullJarRelease
-> Task :react-native-screens:generateReleaseLintModel
-> Task :react-native-screens:extractReleaseAnnotations
-> Task :react-native-screens:mergeReleaseGeneratedProguardFiles
-> Task :react-native-screens:mergeReleaseConsumerProguardFiles
-> Task :react-native-screens:mergeReleaseJavaResource
-
 > Task :expo-modules-core:compileReleaseKotlin
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-modules-core/android/src/main/java/expo/modules/apploader/AppLoaderProvider.kt:34:52 Unchecked cast of 'java.lang.Class<*>!' to 'java.lang.Class<out expo.modules.apploader.HeadlessAppLoader>'.
 
 > Task :expo-modules-core:buildCMakeRelWithDebInfo[arm64-v8a]
 > Task :expo-modules-core:compileReleaseJavaWithJavac
-> Task :expo-modules-core:processReleaseJavaRes
-> Task :expo-modules-core:bundleLibRuntimeToJarRelease
 > Task :expo-modules-core:bundleLibCompileToJarRelease
-> Task :expo-modules-core:generateReleaseLintModel
+> Task :react-native-screens:compileReleaseJavaWithJavac
 > Task :expo-dev-client:compileReleaseKotlin NO-SOURCE
 > Task :expo-dev-client:compileReleaseJavaWithJavac
 > Task :expo-dev-client:bundleLibCompileToJarRelease
 > Task :expo-json-utils:compileReleaseKotlin
+> Task :expo-updates-interface:compileReleaseKotlin
 > Task :expo-dev-menu-interface:compileReleaseKotlin
-> Task :expo-json-utils:compileReleaseJavaWithJavac
 > Task :expo-constants:compileReleaseKotlin
-> Task :expo-dev-menu-interface:compileReleaseJavaWithJavac
+> Task :expo-json-utils:compileReleaseJavaWithJavac
 > Task :expo-constants:compileReleaseJavaWithJavac
 > Task :expo-constants:bundleLibCompileToJarRelease
+> Task :expo-dev-menu-interface:compileReleaseJavaWithJavac
 > Task :expo-dev-menu-interface:bundleLibCompileToJarRelease
 > Task :expo-json-utils:bundleLibCompileToJarRelease
-> Task :expo-updates-interface:compileReleaseKotlin
-> Task :expo-eas-client:compileReleaseKotlin
 > Task :expo-updates-interface:compileReleaseJavaWithJavac
 > Task :expo-updates-interface:bundleLibCompileToJarRelease
+> Task :expo-structured-headers:compileReleaseKotlin NO-SOURCE
+> Task :expo-structured-headers:compileReleaseJavaWithJavac
+> Task :expo-structured-headers:bundleLibCompileToJarRelease
+> Task :react-native-screens:bundleLibCompileToJarRelease
+> Task :expo-constants:bundleLibRuntimeToJarRelease
+> Task :expo-constants:processReleaseJavaRes
+> Task :expo-constants:createFullJarRelease
+> Task :expo-eas-client:compileReleaseKotlin
+> Task :expo-modules-core:bundleLibRuntimeToJarRelease
+> Task :expo-image-loader:compileReleaseKotlin
 > Task :expo-eas-client:compileReleaseJavaWithJavac
 > Task :expo-eas-client:bundleLibCompileToJarRelease
-> Task :expo-structured-headers:compileReleaseKotlin NO-SOURCE
+> Task :expo-image-loader:compileReleaseJavaWithJavac
+> Task :expo-image-loader:bundleLibCompileToJarRelease
 
 > Task :expo-manifests:compileReleaseKotlin
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-manifests/android/src/main/java/expo/modules/manifests/core/EmbeddedManifest.kt:19:16 This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
@@ -691,17 +688,11 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-manifests/and
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-manifests/android/src/main/java/expo/modules/manifests/core/Manifest.kt:13:3 Deprecations and opt-ins on a method overridden from 'Any' may not be reported.
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-manifests/android/src/main/java/expo/modules/manifests/core/Manifest.kt:15:12 'fun getRawJson(): JSONObject' is deprecated. Prefer to use specific field getters.
 
-> Task :expo-structured-headers:compileReleaseJavaWithJavac
+> Task :expo-modules-core:processReleaseJavaRes
 > Task :expo-manifests:compileReleaseJavaWithJavac
 > Task :expo-manifests:bundleLibCompileToJarRelease
-> Task :expo-image-loader:compileReleaseKotlin
-> Task :expo-structured-headers:bundleLibCompileToJarRelease
-> Task :expo-image-loader:compileReleaseJavaWithJavac
-> Task :expo-image-loader:bundleLibCompileToJarRelease
-> Task :expo-constants:bundleLibRuntimeToJarRelease
-> Task :expo-constants:processReleaseJavaRes
-> Task :expo-constants:createFullJarRelease
 > Task :expo-modules-core:createFullJarRelease
+> Task :expo-modules-core:generateReleaseLintModel
 > Task :expo-constants:generateReleaseLintModel
 > Task :expo-dev-client:bundleLibRuntimeToJarRelease
 > Task :expo-dev-client:processReleaseJavaRes NO-SOURCE
@@ -735,6 +726,14 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-manifests/and
 > Task :expo-structured-headers:processReleaseJavaRes NO-SOURCE
 > Task :expo-structured-headers:createFullJarRelease
 > Task :expo-structured-headers:generateReleaseLintModel
+> Task :react-native-screens:bundleLibRuntimeToJarRelease
+> Task :react-native-screens:processReleaseJavaRes
+> Task :react-native-screens:createFullJarRelease
+> Task :react-native-screens:generateReleaseLintModel
+> Task :react-native-screens:extractReleaseAnnotations
+> Task :react-native-screens:mergeReleaseGeneratedProguardFiles
+> Task :react-native-screens:mergeReleaseConsumerProguardFiles
+> Task :react-native-screens:mergeReleaseJavaResource
 > Task :react-native-screens:syncReleaseLibJars
 > Task :react-native-screens:bundleReleaseLocalLintAar
 > Task :expo-dev-menu-interface:extractReleaseAnnotations
@@ -770,7 +769,6 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-dev-menu:bundleReleaseLocalLintAar
 > Task :expo-modules-core:mergeReleaseJniLibFolders
 > Task :expo-modules-core:extractDeepLinksForAarRelease
-> Task :expo-modules-core:mergeReleaseNativeLibs
 > Task :expo-modules-core:extractReleaseAnnotations
 > Task :expo-modules-core:mergeReleaseGeneratedProguardFiles
 > Task :expo-modules-core:mergeReleaseConsumerProguardFiles
@@ -778,16 +776,17 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-modules-core:compileReleaseShaders NO-SOURCE
 > Task :expo-modules-core:generateReleaseAssets UP-TO-DATE
 > Task :expo-modules-core:packageReleaseAssets
+> Task :expo-modules-core:mergeReleaseNativeLibs
 > Task :expo-modules-core:prepareReleaseArtProfile
-> Task :expo-modules-core:stripReleaseDebugSymbols
 > Task :expo-modules-core:mergeReleaseJavaResource
-> Task :expo-modules-core:copyReleaseJniLibsProjectAndLocalJars
+> Task :expo-modules-core:stripReleaseDebugSymbols
 > Task :expo-modules-core:syncReleaseLibJars
-> Task :expo-modules-core:bundleReleaseLocalLintAar
 > Task :expo-updates:mergeReleaseJniLibFolders
 > Task :expo-updates:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-updates:stripReleaseDebugSymbols NO-SOURCE
+> Task :expo-modules-core:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-updates:copyReleaseJniLibsProjectAndLocalJars
+> Task :expo-modules-core:bundleReleaseLocalLintAar
 > Task :expo-updates:extractDeepLinksForAarRelease
 > Task :expo-updates:mergeReleaseShaders
 > Task :expo-updates:compileReleaseShaders NO-SOURCE
@@ -797,8 +796,8 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-constants:mergeReleaseJniLibFolders
 > Task :expo-constants:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-constants:stripReleaseDebugSymbols NO-SOURCE
-> Task :expo-constants:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-constants:extractDeepLinksForAarRelease
+> Task :expo-constants:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-constants:extractReleaseAnnotations
 > Task :expo-constants:mergeReleaseGeneratedProguardFiles
 > Task :expo-constants:mergeReleaseConsumerProguardFiles
@@ -808,11 +807,11 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-constants:packageReleaseAssets
 > Task :expo-constants:prepareReleaseArtProfile
 > Task :expo-dev-client:mergeReleaseJniLibFolders
-> Task :expo-constants:mergeReleaseJavaResource
 > Task :expo-dev-client:mergeReleaseNativeLibs NO-SOURCE
+> Task :expo-constants:mergeReleaseJavaResource
+> Task :expo-dev-client:stripReleaseDebugSymbols NO-SOURCE
 > Task :expo-constants:syncReleaseLibJars
 > Task :expo-constants:bundleReleaseLocalLintAar
-> Task :expo-dev-client:stripReleaseDebugSymbols NO-SOURCE
 > Task :expo-dev-client:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-dev-client:extractDeepLinksForAarRelease
 > Task :expo-dev-client:extractReleaseAnnotations
@@ -839,14 +838,14 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-eas-client:generateReleaseAssets UP-TO-DATE
 > Task :expo-eas-client:packageReleaseAssets
 > Task :expo-eas-client:prepareReleaseArtProfile
-> Task :expo-image-loader:mergeReleaseJniLibFolders
 > Task :expo-eas-client:mergeReleaseJavaResource
-> Task :expo-image-loader:mergeReleaseNativeLibs NO-SOURCE
+> Task :expo-image-loader:mergeReleaseJniLibFolders
 > Task :expo-eas-client:syncReleaseLibJars
 > Task :expo-eas-client:bundleReleaseLocalLintAar
+> Task :expo-image-loader:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-image-loader:stripReleaseDebugSymbols NO-SOURCE
-> Task :expo-image-loader:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-image-loader:extractDeepLinksForAarRelease
+> Task :expo-image-loader:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-image-loader:extractReleaseAnnotations
 > Task :expo-image-loader:mergeReleaseGeneratedProguardFiles
 > Task :expo-image-loader:mergeReleaseConsumerProguardFiles
@@ -855,12 +854,12 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-image-loader:generateReleaseAssets UP-TO-DATE
 > Task :expo-image-loader:packageReleaseAssets
 > Task :expo-image-loader:prepareReleaseArtProfile
-> Task :expo-manifests:mergeReleaseJniLibFolders
-> Task :expo-manifests:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-image-loader:mergeReleaseJavaResource
-> Task :expo-manifests:stripReleaseDebugSymbols NO-SOURCE
+> Task :expo-manifests:mergeReleaseJniLibFolders
 > Task :expo-image-loader:syncReleaseLibJars
 > Task :expo-image-loader:bundleReleaseLocalLintAar
+> Task :expo-manifests:mergeReleaseNativeLibs NO-SOURCE
+> Task :expo-manifests:stripReleaseDebugSymbols NO-SOURCE
 > Task :expo-manifests:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-manifests:extractDeepLinksForAarRelease
 > Task :expo-manifests:extractReleaseAnnotations
@@ -909,8 +908,8 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-structured-headers:bundleReleaseLocalLintAar
 > Task :expo-updates-interface:mergeReleaseNativeLibs NO-SOURCE
 > Task :expo-updates-interface:stripReleaseDebugSymbols NO-SOURCE
-> Task :expo-updates-interface:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-updates-interface:extractDeepLinksForAarRelease
+> Task :expo-updates-interface:copyReleaseJniLibsProjectAndLocalJars
 > Task :expo-updates-interface:extractReleaseAnnotations
 > Task :expo-updates-interface:mergeReleaseGeneratedProguardFiles
 > Task :expo-updates-interface:mergeReleaseConsumerProguardFiles
@@ -919,11 +918,11 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo-dev-menu/andr
 > Task :expo-updates-interface:generateReleaseAssets UP-TO-DATE
 > Task :expo-updates-interface:packageReleaseAssets
 > Task :expo-updates-interface:prepareReleaseArtProfile
-> Task :expo-updates-interface:mergeReleaseJavaResource
 > Task :expo-constants:writeReleaseLintModelMetadata
+> Task :expo-updates-interface:mergeReleaseJavaResource
+> Task :expo-dev-client:writeReleaseLintModelMetadata
 > Task :expo-updates-interface:syncReleaseLibJars
 > Task :expo-updates-interface:bundleReleaseLocalLintAar
-> Task :expo-dev-client:writeReleaseLintModelMetadata
 > Task :expo-dev-launcher:writeReleaseLintModelMetadata
 > Task :expo-dev-menu:writeReleaseLintModelMetadata
 > Task :expo-dev-menu-interface:writeReleaseLintModelMetadata
@@ -1017,10 +1016,9 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo/android/src/m
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo/android/src/main/java/expo/modules/fetch/NativeResponse.kt:41:16 This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the '@Deprecated' annotation or suppress the diagnostic.
 w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo/android/src/main/java/expo/modules/fetch/NativeResponse.kt:43:11 'fun deallocate(): Unit' is deprecated. Use sharedObjectDidRelease() instead.
 
+> Task :expo-dev-menu-interface:lintVitalAnalyzeRelease
 > Task :expo:compileReleaseJavaWithJavac
 > Task :expo:bundleLibCompileToJarRelease
-> Task :app:compileReleaseKotlin
-> Task :app:compileReleaseJavaWithJavac
 > Task :expo:bundleLibRuntimeToJarRelease
 > Task :expo:processReleaseJavaRes
 > Task :expo:createFullJarRelease
@@ -1028,7 +1026,9 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo/android/src/m
 > Task :expo-updates:processReleaseJavaRes
 > Task :expo-updates:createFullJarRelease
 > Task :expo-updates:generateReleaseLintModel
+> Task :app:compileReleaseKotlin
 > Task :expo:generateReleaseLintModel
+> Task :app:compileReleaseJavaWithJavac
 > Task :app:generateReleaseLintVitalReportModel
 > Task :expo:extractReleaseAnnotations
 > Task :expo:mergeReleaseGeneratedProguardFiles
@@ -1063,9 +1063,9 @@ w: file:///home/runner/work/depiqo/depiqo/mobile/node_modules/expo/android/src/m
 > Task :react-native-screens:generateReleaseLintVitalModel
 > Task :react-native-svg:generateReleaseLintVitalModel
 > Task :app:configureCMakeRelWithDebInfo[arm64-v8a]
-> Task :expo-dev-menu-interface:lintVitalAnalyzeRelease
-> Task :expo-dev-menu:lintVitalAnalyzeRelease
 > Task :expo-dev-launcher:lintVitalAnalyzeRelease
+> Task :expo-dev-menu:lintVitalAnalyzeRelease
+> Task :expo:lintVitalAnalyzeRelease
 > Task :app:buildCMakeRelWithDebInfo[arm64-v8a]
 C/C++: ninja: Entering directory `/home/runner/work/depiqo/depiqo/mobile/android/app/.cxx/RelWithDebInfo/444d3z37/arm64-v8a'
 C/C++: /home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/EventEmitters.cpp:31:44: warning: '$' in identifier [-Wdollar-in-identifier-extension]
@@ -1098,9 +1098,10 @@ C/C++:       |            ^
 C/C++: 9 warnings generated.
 
 > Task :app:configureCMakeRelWithDebInfo[x86_64]
+> Task :expo-json-utils:lintVitalAnalyzeRelease
 > Task :expo-eas-client:lintVitalAnalyzeRelease
 > Task :expo-image-loader:lintVitalAnalyzeRelease
-> Task :expo:lintVitalAnalyzeRelease
+
 > Task :app:buildCMakeRelWithDebInfo[x86_64]
 C/C++: ninja: Entering directory `/home/runner/work/depiqo/depiqo/mobile/android/app/.cxx/RelWithDebInfo/444d3z37/x86_64'
 C/C++: /home/runner/work/depiqo/depiqo/mobile/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/EventEmitters.cpp:31:44: warning: '$' in identifier [-Wdollar-in-identifier-extension]
@@ -1150,13 +1151,12 @@ C/C++: 9 warnings generated.
 > Task :react-native-safe-area-context:copyReleaseJniLibsProjectOnly
 > Task :react-native-screens:copyReleaseJniLibsProjectOnly
 > Task :react-native-svg:copyReleaseJniLibsProjectOnly
+> Task :expo-structured-headers:lintVitalAnalyzeRelease
 > Task :app:mergeReleaseNativeLibs
-> Task :expo-json-utils:lintVitalAnalyzeRelease
 > Task :expo-manifests:lintVitalAnalyzeRelease
 > Task :app:stripReleaseDebugSymbols
-> Task :app:extractReleaseNativeSymbolTables
-> Task :expo-structured-headers:lintVitalAnalyzeRelease
 > Task :expo-updates-interface:lintVitalAnalyzeRelease
+> Task :app:extractReleaseNativeSymbolTables
 > Task :app:mergeReleaseNativeDebugMetadata
 > Task :react-native-safe-area-context:bundleLibRuntimeToDirRelease
 > Task :react-native-screens:bundleLibRuntimeToDirRelease
@@ -1167,6 +1167,7 @@ C/C++: 9 warnings generated.
 > Task :expo-dev-menu:bundleLibRuntimeToDirRelease
 > Task :expo-dev-menu-interface:bundleLibRuntimeToDirRelease
 > Task :expo-modules-core:bundleLibRuntimeToDirRelease
+> Task :react-native-screens:lintVitalAnalyzeRelease
 > Task :expo-updates:bundleLibRuntimeToDirRelease
 > Task :expo-updates:lintVitalAnalyzeRelease
 > Task :expo-constants:bundleLibRuntimeToDirRelease
@@ -1174,10 +1175,9 @@ C/C++: 9 warnings generated.
 > Task :expo-eas-client:bundleLibRuntimeToDirRelease
 > Task :expo-image-loader:bundleLibRuntimeToDirRelease
 > Task :expo-manifests:bundleLibRuntimeToDirRelease
-> Task :react-native-screens:lintVitalAnalyzeRelease
 > Task :expo-json-utils:bundleLibRuntimeToDirRelease
-> Task :expo-updates-interface:bundleLibRuntimeToDirRelease
 > Task :expo-structured-headers:bundleLibRuntimeToDirRelease
+> Task :expo-updates-interface:bundleLibRuntimeToDirRelease
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:dexBuilderRelease
 > Task :app:desugarReleaseFileDependencies
@@ -1196,21 +1196,21 @@ C/C++: 9 warnings generated.
 > Task :app:extractReleaseVersionControlInfo
 > Task :app:processReleaseJavaRes
 > Task :app:lintVitalAnalyzeRelease
+> Task :app:optimizeReleaseResources
 > Task :app:lintVitalReportRelease
-> Task :app:lintVitalRelease
 > Task :app:mergeReleaseJavaResource
 > Task :app:collectReleaseDependencies
+> Task :app:lintVitalRelease
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:optimizeReleaseResources
 > Task :app:mergeDexRelease
 > Task :app:compileReleaseArtProfile
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1792535988291.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1792539684497.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/depiqo/depiqo/mobile/android/build/reports/problems/problems-report.html
 
@@ -1220,5 +1220,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 5m 23s
+BUILD SUCCESSFUL in 4m 43s
 746 actionable tasks: 713 executed, 33 up-to-date
