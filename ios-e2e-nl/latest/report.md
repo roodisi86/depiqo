@@ -1,25 +1,25 @@
 ## iOS e2e (nl)
 
-**1 van 10 flows geslaagd.**
+**3 van 10 flows geslaagd.**
 ### maestro-nl
 
 | Flow | Resultaat | Tijd (s) | Melding |
 |---|---|---|---|
-| a. Login (mila), borgen, vier bedragen, — bij onbekend | FAILED | 129.0 | Assertion is false: id: tab-profile is visible |
-| b. Login met 2FA (lars) | FAILED | 113.0 | Assertion is false: id: tab-profile is visible |
-| reset-app | ok | 25.0 |  |
-| c. Uitnodiging via deep link: verhuurder, adres, bedrag | FAILED | 52.0 | Assertion is false: id: invite-screen is visible |
-| d. Eindafrekening bekijken (sanne), niet reageren | FAILED | 110.0 | Assertion is false: id: tab-profile is visible |
-| e. Meldingen, profiel, taal fr en en | FAILED | 104.0 | Assertion is false: id: tab-profile is visible |
-| f. Uitloggen, beschermde schermen niet bereikbaar | FAILED | 106.0 | Assertion is false: id: tab-profile is visible |
-| g. Sessie blijft na herstart | FAILED | 111.0 | Assertion is false: id: tab-profile is visible |
-| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | FAILED | 111.0 | Assertion is false: id: tab-profile is visible |
-| Fout wachtwoord geeft vertaalde foutmelding | FAILED | 112.0 | Assertion is false: id: tab-profile is visible |
+| a. Login (mila), borgen, vier bedragen, — bij onbekend | FAILED | 86.0 | Element not found: Id matching regex: tab-profile |
+| b. Login met 2FA (lars) | ok | 59.0 |  |
+| reset-app | ok | 19.0 |  |
+| c. Uitnodiging via deep link: verhuurder, adres, bedrag | ok | 40.0 |  |
+| d. Eindafrekening bekijken (sanne), niet reageren | FAILED | 92.0 | Assertion is false: id: tab-profile is visible |
+| e. Meldingen, profiel, taal fr en en | FAILED | 85.0 | Assertion is false: id: tab-profile is visible |
+| f. Uitloggen, beschermde schermen niet bereikbaar | FAILED | 85.0 | Assertion is false: id: tab-profile is visible |
+| g. Sessie blijft na herstart | FAILED | 88.0 | Assertion is false: id: tab-profile is visible |
+| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | FAILED | 84.0 | Assertion is false: id: tab-profile is visible |
+| Fout wachtwoord geeft vertaalde foutmelding | FAILED | 83.0 | Assertion is false: id: tab-profile is visible |
 
 ```
 01-login-deposits-amounts FAILED
-02-login-2fa FAILED
-03-invite-deeplink FAILED
+02-login-2fa ok
+03-invite-deeplink ok
 04-settlement-view FAILED
 05-notifications-profile-language FAILED
 06-logout-protected FAILED
