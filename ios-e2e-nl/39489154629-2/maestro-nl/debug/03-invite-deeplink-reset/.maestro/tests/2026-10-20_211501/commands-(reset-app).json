@@ -1,0 +1,180 @@
+[ {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943851,
+    "duration" : 1,
+    "sequenceNumber" : 3
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.getdepiqo.app.dev"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "clearKeychainCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      }, {
+        "launchAppCommand" : {
+          "appId" : "com.getdepiqo.app.dev",
+          "clearState" : true,
+          "stopApp" : true,
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "launch-clean.yaml",
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943849,
+    "duration" : 27306,
+    "sequenceNumber" : 2
+  }
+}, {
+  "command" : {
+    "defineVariablesCommand" : {
+      "env" : {
+        "PASSWORD" : "Depiqo-demo-2026",
+        "PLATFORM" : "ios",
+        "LANG_CODE" : "nl",
+        "T_ERR_INVALID_CREDENTIALS" : "Dat e-mailadres en wachtwoord passen niet bij elkaar\\.",
+        "T_AMOUNT_OBLIGATION" : "Vereiste borg",
+        "T_AMOUNT_RECEIVED" : "Ontvangen",
+        "T_AMOUNT_LOCKED" : "Bevestigd geblokkeerd",
+        "T_AMOUNT_INTEREST" : "Rente",
+        "T_AMOUNT_UNKNOWN" : "nog niet bekend",
+        "T_PROFILE_LOGOUT" : "Uitloggen",
+        "T_PROFILE_LANGUAGE" : "Taal",
+        "T_SETTLEMENT_LINES" : "Inhoudingen",
+        "T_SETTLEMENT_AGREE" : "Akkoord gaan",
+        "T_SETTLEMENT_DISPUTE" : "Bezwaar maken",
+        "T_MFA_TITLE" : "Twee-stapsverificatie",
+        "T_ENV_SANDBOX" : "SANDBOX · testomgeving, geen echt geld",
+        "T_DEPOSITS_INTRO" : "Hier zie je je borg en wat er nog moet gebeuren\\.",
+        "T_TAB_DEPOSITS" : "Mijn borg",
+        "L_NL_PROFILE_LANGUAGE" : "Taal",
+        "L_NL_TAB_DEPOSITS" : "Mijn borg",
+        "L_NL_AMOUNT_RECEIVED" : "Ontvangen",
+        "L_FR_PROFILE_LANGUAGE" : "Langue",
+        "L_FR_TAB_DEPOSITS" : "Ma garantie",
+        "L_FR_AMOUNT_RECEIVED" : "Reçu",
+        "L_EN_PROFILE_LANGUAGE" : "Language",
+        "L_EN_TAB_DEPOSITS" : "My deposit",
+        "L_EN_AMOUNT_RECEIVED" : "Received",
+        "MAESTRO_VERSION" : "2.6.0",
+        "MAESTRO_FILENAME" : "reset-app",
+        "MAESTRO_DEVICE_UDID" : "291E4B86-C951-41A7-8327-84BF0304D0A9",
+        "MAESTRO_SHARD_ID" : "1",
+        "MAESTRO_SHARD_INDEX" : "0"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943836,
+    "duration" : 12,
+    "sequenceNumber" : 0
+  }
+}, {
+  "command" : {
+    "clearKeychainCommand" : {
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943854,
+    "duration" : 2949,
+    "sequenceNumber" : 5
+  }
+}, {
+  "command" : {
+    "stopAppCommand" : {
+      "appId" : "com.getdepiqo.app.dev",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530971196,
+    "duration" : 1325,
+    "sequenceNumber" : 7
+  }
+}, {
+  "command" : {
+    "launchAppCommand" : {
+      "appId" : "com.getdepiqo.app.dev",
+      "clearState" : true,
+      "stopApp" : true,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530946808,
+    "duration" : 24345,
+    "sequenceNumber" : 6
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943848,
+    "duration" : 1,
+    "sequenceNumber" : 1
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "clearKeychainCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792530943853,
+    "duration" : 2952,
+    "sequenceNumber" : 4
+  }
+} ]

@@ -1,0 +1,162 @@
+21:15:01.995 [ INFO] maestro.cli.report.TestDebugReporter.logSystemInfo: Debug output path: /Users/runner/work/depiqo/depiqo/ci-out/ios-e2e/nl/maestro-nl/debug/03-invite-deeplink-reset/.maestro/tests/2026-10-20_211501
+21:15:01.997 [ INFO] MAESTRO.logSystemInfo: ---- System Info ----
+21:15:01.998 [ INFO] MAESTRO.logSystemInfo: Maestro Version: 2.6.0
+21:15:02.016 [ INFO] MAESTRO.logSystemInfo: CI: github
+21:15:02.016 [ INFO] MAESTRO.logSystemInfo: OS Name: Mac OS X
+21:15:02.016 [ INFO] MAESTRO.logSystemInfo: OS Version: 15.7.9
+21:15:02.016 [ INFO] MAESTRO.logSystemInfo: Architecture: aarch64
+21:15:02.017 [ INFO] MAESTRO.logSystemInfo: Java Version: 17
+21:15:02.203 [ INFO] MAESTRO.logSystemInfo: Xcode Version: 16.4
+21:15:02.261 [ INFO] MAESTRO.logSystemInfo: Flutter Version: Undefined
+21:15:02.317 [ INFO] MAESTRO.logSystemInfo: Flutter Channel: Undefined
+21:15:02.318 [ INFO] MAESTRO.logSystemInfo: ---------------------
+21:15:03.467 [DEBUG] io.micrometer.common.util.internal.logging.InternalLoggerFactory.newDefaultFactory: Using SLF4J as the default logging framework
+21:15:11.243 [ INFO] maestro.cli.command.TestCommand.runShardSuite: [shard 1] Selected device 291E4B86-C951-41A7-8327-84BF0304D0A9 using port 54289 with execution plan ExecutionPlan(flowsToRun=[/Users/runner/work/depiqo/depiqo/mobile/.maestro/subflows/reset-app.yaml], sequence=FlowSequence(flows=[], continueOnFailure=true), workspaceConfig=WorkspaceConfig(flows=null, includeTags=null, excludeTags=null, executionOrder=null, baselineBranch=null, notifications=null, disableRetries=false, platform=PlatformConfiguration(android=AndroidConfiguration(disableAnimations=false), ios=IOSConfiguration(disableAnimations=false, snapshotKeyHonorModalViews=null)), testOutputDir=null))
+21:15:14.733 [TRACE] ios.xctest.XCTestIOSDevice.open: Opening a connection
+21:15:14.735 [TRACE] xcuitest.XCTestDriverClient.restartXCTestRunner: Restarting XCTest Runner (uninstalling, installing and starting)
+21:15:14.735 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:14.738 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:14.738 [TRACE] xcuitest.XCTestDriverClient.restartXCTestRunner: XCTest Runner uninstalled, will install and start it
+21:15:14.738 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: start()
+21:15:14.739 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: [Start] Install XCUITest runner on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:14.739 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:14.743 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:14.743 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing build products
+21:15:14.869 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing build products
+21:15:14.869 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing maestro-driver-iosUITests-Runner app
+21:15:15.596 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing maestro-driver-iosUITests-Runner app
+21:15:15.596 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing maestro-driver-ios app
+21:15:15.626 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing maestro-driver-ios app
+21:15:15.627 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: Installing driver with xcodebuild
+21:15:15.629 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: [Start] Running XcUITest with `xcodebuild test-without-building` with 54289 and config: IOSDriverConfig(prebuiltRunner=false, sourceDirectory=driver-iPhoneSimulator, context=CLI, snapshotKeyHonorModalViews=null)
+21:15:15.630 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcodebuild, test-without-building, -xctestrun, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/291E4B86-C951-41A7-8327-84BF0304D0A911166326761653093300/maestro-driver-ios-config.xctestrun, -destination, id=291E4B86-C951-41A7-8327-84BF0304D0A9, -derivedDataPath, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/maestro_xctestrunner_xcodebuild_output1863348713767417762] with {TEST_RUNNER_PORT=54289}
+21:15:15.792 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: [Done] Running XcUITest with `xcodebuild test-without-building`
+21:15:15.792 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: [Done] Install XCUITest runner on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:15.792 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:15.793 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:16.334 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:16.351 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:16.990 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:16.991 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:17.542 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:17.543 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:18.135 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:18.136 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:18.719 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:18.722 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:19.368 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:19.370 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:20.016 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:20.022 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:20.569 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:20.570 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:21.116 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:21.118 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:21.769 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:21.783 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:22.428 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:22.430 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:23.075 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:23.076 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:23.721 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:23.732 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:24.309 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:24.310 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:24.938 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:24.940 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:25.593 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:25.595 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:26.248 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:26.251 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:26.778 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:26.791 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:27.448 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:27.454 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:28.035 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:28.039 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:28.592 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:28.593 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:29.134 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:29.142 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:29.794 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:29.820 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:30.461 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:30.462 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:31.090 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:31.098 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:31.975 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:32.625 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:34.166 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:34.186 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:34.798 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:34.800 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:35.392 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:35.394 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:36.042 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:36.046 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:36.655 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:36.657 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:37.316 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:37.324 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:37.887 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:37.888 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:38.531 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:38.532 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:39.180 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:39.181 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:39.715 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:39.717 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:40.364 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:40.367 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:40.994 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:40.996 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:41.503 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:41.509 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:42.220 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:42.221 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:54289
+21:15:42.757 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:42.873 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Done] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+21:15:43.297 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow:  Running flow reset-app
+21:15:43.385 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Getting device info
+21:15:43.648 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Got device info: DeviceInfo(platform=IOS, widthPixels=1206, heightPixels=2622, widthGrid=402, heightGrid=874)
+21:15:43.836 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Define variables RUNNING
+21:15:43.847 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Define variables COMPLETED
+21:15:43.848 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+21:15:43.849 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+21:15:43.849 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run launch-clean.yaml RUNNING
+21:15:43.851 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+21:15:43.851 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+21:15:43.853 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS RUNNING
+21:15:43.854 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Clear keychain RUNNING
+21:15:43.856 [ INFO] maestro.Maestro.clearKeychain$lambda$7: Clearing keychain
+21:15:43.859 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, keychain, 291E4B86-C951-41A7-8327-84BF0304D0A9, reset] with {}
+21:15:46.801 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Clear keychain COMPLETED
+21:15:46.805 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run flow when Platform is IOS COMPLETED
+21:15:46.807 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Launch app "com.getdepiqo.app.dev" with clear state RUNNING
+21:15:46.812 [ INFO] maestro.Maestro.clearAppState$lambda$5: Clearing app state com.getdepiqo.app.dev
+21:15:46.814 [ INFO] util.LocalSimulatorUtils.clearAppState: Clearing app com.getdepiqo.app.dev state
+21:15:46.814 [ INFO] util.LocalSimulatorUtils.terminate: [Start] Terminating app com.getdepiqo.app.dev
+21:15:46.814 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, terminate, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+21:15:48.244 [ INFO] util.LocalSimulatorUtils.terminate: [Done] Terminating app com.getdepiqo.app.dev
+21:15:50.300 [ INFO] util.LocalSimulatorUtils.reinstallApp: Copying app binary from /Users/runner/Library/Developer/CoreSimulator/Devices/291E4B86-C951-41A7-8327-84BF0304D0A9/data/Containers/Bundle/Application/14AB78A9-89D2-4285-865E-EF182E73935B/com.getdepiqo.app.dev-1792530818817.app to /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/2607560885661594498/com.getdepiqo.app.dev-1792530950283.app
+21:15:50.604 [ INFO] util.LocalSimulatorUtils.reinstallApp: Reinstalling and launching com.getdepiqo.app.dev
+21:15:50.606 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, uninstall, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+21:15:52.724 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, install, 291E4B86-C951-41A7-8327-84BF0304D0A9, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/2607560885661594498/com.getdepiqo.app.dev-1792530950283.app] with {}
+21:16:04.013 [ INFO] util.LocalSimulatorUtils.reinstallApp: App com.getdepiqo.app.dev reinstalled and launched
+21:16:04.078 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting permissions all=allow through applesimutils
+21:16:04.080 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Start] Setting permissions via pinned applesimutils
+21:16:04.081 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [/Users/runner/.maestro/deps/applesimutils, --byId, 291E4B86-C951-41A7-8327-84BF0304D0A9, --bundle, com.getdepiqo.app.dev, --setPermissions, calendar=YES,camera=YES,contacts=YES,faceid=YES,homekit=YES,medialibrary=YES,microphone=YES,motion=YES,photos=YES,reminders=YES,siri=YES,speech=YES,userTracking=YES] with {}
+21:16:07.130 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Done] Setting permissions pinned applesimutils
+21:16:07.130 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting permissions through applesimutils
+21:16:07.130 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting Permissions all=allow through simctl
+21:16:07.131 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, privacy, 291E4B86-C951-41A7-8327-84BF0304D0A9, grant, location-always, com.getdepiqo.app.dev] with {}
+21:16:08.236 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting Permissions all=allow through simctl
+21:16:08.418 [ INFO] maestro.Maestro.launchApp$lambda$2: Launching app com.getdepiqo.app.dev
+21:16:08.418 [ INFO] maestro.Maestro.launchApp$lambda$2: Stopping com.getdepiqo.app.dev app during launch
+21:16:08.498 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, launch, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+21:16:11.026 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Launch app "com.getdepiqo.app.dev" with clear state COMPLETED
+21:16:11.155 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run launch-clean.yaml COMPLETED
+21:16:11.195 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Stop com.getdepiqo.app.dev RUNNING
+21:16:11.425 [ INFO] maestro.Maestro.stopApp$lambda$3: Stopping app com.getdepiqo.app.dev
+21:16:12.518 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Stop com.getdepiqo.app.dev COMPLETED
+21:16:14.372 [ INFO] maestro.cli.report.TestDebugReporter.deleteOldFiles: Performing purge of logs older than 14 days from /Users/runner/work/depiqo/depiqo/ci-out/ios-e2e/nl/maestro-nl/debug/03-invite-deeplink-reset/.maestro/tests
