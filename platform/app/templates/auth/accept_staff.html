@@ -1,0 +1,19 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf, mark, status, holding, steps, deadline_box, flashes %}
+{% block title %}Uitnodiging{% endblock %}
+{% block content %}
+<h1>Welkom bij {{ org.name }}.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <p>Je bent uitgenodigd als <b>{{ ROLE_LABELS[inv.role]|lower }}</b> voor {{ inv.email }}.</p>
+  {% if existing %}
+    <p class="muted">Je hebt al een Depiqo-account. {% if not g.user %}Log eerst in; daarna voeg je deze organisatie toe.{% endif %}</p>
+    <button class="btn btn-primary" type="submit">{{ 'Organisatie toevoegen' if g.user else 'Inloggen en toevoegen' }}</button>
+  {% else %}
+    <div class="field"><label for="name">Je naam</label><input id="name" name="name" autocomplete="name" required></div>
+    <div class="field"><label for="password">Kies een wachtwoord</label><input id="password" name="password" type="password" autocomplete="new-password" required><span class="hint">Minstens 12 tekens.</span></div>
+    <button class="btn btn-primary" type="submit">Account aanmaken</button>
+  {% endif %}
+</form>
+{% endblock %}

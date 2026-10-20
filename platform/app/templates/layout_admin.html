@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% from "macros.html" import mark, flashes, csrf, twofa_banner %}
+{% block body %}
+<div class="shell">
+  <aside class="side" aria-label="Navigatie">
+    <a class="brand" href="{{ url_for('admin.home') }}">{{ mark() }}depiqo</a>
+    <div class="org-name">Depiqo-beheer</div>
+    {% set ep = request.endpoint %}
+    <nav class="nav">
+      <a href="{{ url_for('admin.home') }}" class="{{ 'on' if ep == 'admin.home' }}">Overzicht</a>
+      <a href="{{ url_for('admin.reconciliation') }}" class="{{ 'on' if ep in ('admin.reconciliation', 'admin.deposit') }}">Afstemming</a>
+      <a href="{{ url_for('invest_admin.home') }}" class="{{ 'on' if ep and ep.startswith('invest_admin.') }}">Beleggen</a>
+      <a href="{{ url_for('admin.unit_economics') }}" class="{{ 'on' if ep == 'admin.unit_economics' }}">Unit economics</a>
+      <a href="{{ url_for('admin.invoices') }}" class="{{ 'on' if ep == 'admin.invoices' }}">Facturen</a>
+      <a href="{{ url_for('support_admin.index') }}" class="{{ 'on' if ep and ep.startswith('support_admin.') }}">Support</a>
+      <a href="{{ url_for('admin.outbox') }}" class="{{ 'on' if ep == 'admin.outbox' }}">Uitgaande mail</a>
+      <a href="{{ url_for('admin.audit_log') }}" class="{{ 'on' if ep == 'admin.audit_log' }}">Auditlog</a>
+      <a href="{{ url_for('auth.security') }}" class="{{ 'on' if ep == 'auth.security' }}">Beveiliging</a>
+      {% if g.membership %}<a href="{{ url_for('business.dashboard') }}">Naar Business</a>{% endif %}
+    </nav>
+    <div class="foot">
+      {% if sandbox() %}<span class="sandbox-pill">SANDBOX · GEEN ECHT GELD</span>{% endif %}
+      <span><b>{{ g.user.name }}</b><br>Depiqo-medewerker</span>
+      <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form>
+    </div>
+  </aside>
+  <main class="main" id="inhoud">
+    {{ twofa_banner() }}
+    {{ flashes() }}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

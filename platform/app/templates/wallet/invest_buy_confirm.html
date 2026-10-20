@@ -1,0 +1,24 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Kooporder controleren{% endblock %}
+{% block hero %}<div class="w-amount"><small>Kooporder · {{ PORTFOLIOS[acct.portfolio].label }}</small><h1 class="w-title">{{ amount|eur }} kopen</h1></div>{% endblock %}
+{% block content %}
+<form class="w-card stack" method="post" action="{{ url_for('invest.action', action='kopen') }}">{{ csrf() }}
+  <input type="hidden" name="amount" value="{{ '%.2f'|format(amount / 100)|replace('.', ',') }}">
+  <p class="note warn"><b>Je kunt geld verliezen.</b> {{ INVEST_RISK }}</p>
+  <h2>Kosten op {{ amount|eur }}</h2>
+  <table class="t mini"><thead><tr><th>Kosten</th><th class="num">1 jaar</th><th class="num">3 jaar</th></tr></thead><tbody>
+    <tr><td>Servicekosten Depiqo ({{ costs.fee_bps|bps }} per jaar)</td><td class="num">{{ costs.service_1y|eur }}</td><td class="num">{{ costs.service_3y|eur }}</td></tr>
+    <tr><td>Lopende kosten fondsen ({{ costs.ocf_bps|bps }} per jaar)</td><td class="num">{{ costs.fund_1y|eur }}</td><td class="num">{{ costs.fund_3y|eur }}</td></tr>
+    <tr><td>Transactiekosten</td><td class="num">{{ costs.tx|eur }}</td><td class="num">{{ costs.tx|eur }}</td></tr>
+    <tr class="total"><td>Totaal</td><td class="num">{{ costs.total_1y|eur }}</td><td class="num">{{ costs.total_3y|eur }}</td></tr>
+  </tbody></table>
+  <h3 class="h3">Scenario's, geen voorspelling</h3>
+  <table class="t mini"><thead><tr><th>Scenario</th><th class="num">Na 1 jaar</th><th class="num">Na 3 jaar</th></tr></thead><tbody>
+    {% for sc in scenarios %}<tr class="sc-{{ sc.key }}"><td>{{ sc.label }}</td><td class="num">{{ sc.y1|eur }}</td><td class="num">{{ sc.y3|eur }}</td></tr>{% endfor %}
+  </tbody></table>
+  <p class="small muted">De partner voert je order uit tegen de volgende koers. Vrij geld na de order: {{ (s.available - amount)|eur if s.available >= amount else '—' }}.</p>
+  <label class="check"><input type="checkbox" name="confirm" value="1" required>Ik heb de kosten en het risico gelezen en wil deze kooporder plaatsen.</label>
+  <div class="row"><button class="btn btn-primary">Kooporder plaatsen</button><a class="btn btn-line" href="{{ url_for('invest.index') }}">Terug</a></div>
+</form>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf, mark, status_d, evidence_tag, sandbox_tag, holding, provider_tag, steps, deadline_box %}
+{% block title %}Borgen{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div><p class="crumb">{{ g.org.name }}</p><h1>Borgen</h1></div>
+  <div class="row">
+    {% if can('export') %}<a class="btn btn-line" href="{{ url_for('business.export') }}">Exporteer alles (CSV)</a>{% endif %}
+    {% if can('deposit.import') %}<a class="btn btn-line" href="{{ url_for('business.import_upload') }}">Importeren</a>{% endif %}
+    {% if can('deposit.edit') %}<a class="btn btn-primary" href="{{ url_for('business.new_deposit') }}">Nieuwe borg</a>{% endif %}
+  </div>
+</div>
+<form class="panel panel-b row" method="get" role="search">
+  <div class="row" role="group" aria-label="Filter">
+    {% for key, (label, _) in FILTERS.items() %}
+      <a class="btn btn-sm {{ 'btn-dark' if f == key else 'btn-line' }}" href="{{ url_for('business.deposits', filter=key, q=q, regio=region, waar=waar, bewijs=evidence, aanbieder=place) }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <input type="hidden" name="filter" value="{{ f }}">
+  <label class="sr" for="regio">Regio</label>
+  <select id="regio" name="regio" class="auto-submit"><option value="">Alle regio's</option>{% for code, r in REGIONS.items() %}<option value="{{ code }}" {{ 'selected' if region == code }}>{{ r.name }}</option>{% endfor %}</select>
+  <label class="sr" for="waar">Waar staat de borg</label>
+  <select id="waar" name="waar" class="auto-submit"><option value="">Overal</option><option value="depiqo" {{ 'selected' if waar == 'depiqo' }}>Depiqo-borgrekening</option><option value="external" {{ 'selected' if waar == 'external' }}>Elders</option></select>
+  <label class="sr" for="aanbieder">Aanbieder</label>
+  <select id="aanbieder" name="aanbieder" class="auto-submit"><option value="">Elke aanbieder</option><option value="depiqo" {{ 'selected' if place == 'depiqo' }}>Depiqo-borgrekening</option>{% for code, p in PROVIDER_KINDS.items() %}<option value="{{ code }}" {{ 'selected' if place == code }}>{{ p.label }}</option>{% endfor %}<option value="onbekend" {{ 'selected' if place == 'onbekend' }}>Elders, aanbieder onbekend</option></select>
+  <label class="sr" for="bewijs">Bewijsniveau</label>
+  <select id="bewijs" name="bewijs" class="auto-submit"><option value="">Elk bewijsniveau</option>{% for code, e in EVIDENCE.items() %}<option value="{{ code }}" {{ 'selected' if evidence == code }}>{{ e.label }}</option>{% endfor %}</select>
+  <label class="sr" for="q">Zoeken</label>
+  <input id="q" type="search" name="q" value="{{ q }}" placeholder="Zoek op adres, huurder of kenmerk">
+  <button class="btn btn-line" type="submit">Zoeken</button>
+</form>
+
+<form class="panel mt" method="post" action="{{ url_for('business.bulk') }}" id="bulk-form">{{ csrf() }}
+  <input type="hidden" name="filter" value="{{ f }}">
+  <div class="bulkbar" data-bulkbar>
+    <span class="small"><b data-selected-count>0</b> geselecteerd</span>
+    {% if can('deposit.edit') %}<button class="btn btn-sm btn-line" name="action" value="uitnodigen" data-needs-selection>(Opnieuw) uitnodigen</button>{% endif %}
+    {% if can('deposit.remind') %}<button class="btn btn-sm btn-line" name="action" value="herinneren" data-needs-selection>Betaalherinnering sturen</button>{% endif %}
+    {% if can('export') %}<button class="btn btn-sm btn-line" name="action" value="export" data-needs-selection>Selectie exporteren</button>{% endif %}
+    <span class="small muted">Alleen dossiers in een passende status worden verwerkt; de rest wordt overgeslagen.</span>
+  </div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th class="pick"><label class="sr" for="pick-all">Alles selecteren</label><input type="checkbox" id="pick-all" data-pick-all></th><th>Kenmerk</th><th>Adres</th><th>Huurder</th><th class="num">Vereiste borg</th><th>Waar</th><th>Status en bewijs</th><th>Termijn</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr class="click">
+        <td class="pick"><label class="sr" for="pick-{{ r.pid }}">Selecteer {{ r.reference }}</label><input type="checkbox" id="pick-{{ r.pid }}" name="pids" value="{{ r.pid }}" data-pick></td>
+        <td class="mono">{{ r.reference }}</td>
+        <td><a class="rowlink" href="{{ url_for('business.deposit', pid=r.pid) }}">{{ r.address }}</a><div class="small muted">{{ r.city }} · {{ REGIONS[r.region].name }}</div></td>
+        <td>{{ r.tenant_name }}</td>
+        <td class="num">{{ r.amount_cents|eur }}</td>
+        <td><div class="row tight">{{ holding(r.holding) }}{{ provider_tag(r) }}{{ sandbox_tag(r.bank_provider) }}</div></td>
+        <td><div class="row tight">{{ status_d(r) }}{{ evidence_tag(r) }}</div></td>
+        <td class="tabnum">{% set dl = deadlines[r.id] %}{% if dl %}{{ dl.date|date_nl }}{% else %}<span class="muted">—</span>{% endif %}</td>
+      </tr>
+    {% else %}
+      <tr><td colspan="8" class="empty">Geen dossiers gevonden.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+</form>
+{% endblock %}

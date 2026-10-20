@@ -1,0 +1,416 @@
+{
+  "advice_note": "Depiqo geeft geen advies. Je kiest zelf.",
+  "amount": {
+    "cents": 100000,
+    "currency": "EUR"
+  },
+  "current": "neutraal",
+  "fee_rate_bps": 25,
+  "items": [
+    {
+      "code": "defensief",
+      "costs": {
+        "amount": {
+          "cents": 100000,
+          "currency": "EUR"
+        },
+        "fund_1y": {
+          "cents": 144,
+          "currency": "EUR"
+        },
+        "fund_3y": {
+          "cents": 432,
+          "currency": "EUR"
+        },
+        "note": "Kosten in euro voor dit bedrag, als de waarde gelijk blijft. De lopende kosten zitten in de koers van de fondsen.",
+        "ongoing_charges_bps": 14.4,
+        "percent_per_year": 0.394,
+        "service_1y": {
+          "cents": 250,
+          "currency": "EUR"
+        },
+        "service_3y": {
+          "cents": 750,
+          "currency": "EUR"
+        },
+        "service_fee_bps": 25,
+        "total_1y": {
+          "cents": 394,
+          "currency": "EUR"
+        },
+        "total_3y": {
+          "cents": 1182,
+          "currency": "EUR"
+        },
+        "transaction_cost_bps": 0,
+        "transactions": {
+          "cents": 0,
+          "currency": "EUR"
+        }
+      },
+      "funds": [
+        {
+          "asset": "Geldmarkt",
+          "fund": "geldmarkt",
+          "name": "Geldmarktfonds euro",
+          "ongoing_charges_bps": 10,
+          "weight_bps": 4000
+        },
+        {
+          "asset": "Obligaties",
+          "fund": "obligaties_kort",
+          "name": "Kortlopende obligaties euro",
+          "ongoing_charges_bps": 15,
+          "weight_bps": 4000
+        },
+        {
+          "asset": "Aandelen",
+          "fund": "aandelen_wereld",
+          "name": "Wereldwijde aandelen",
+          "ongoing_charges_bps": 22,
+          "weight_bps": 2000
+        }
+      ],
+      "label": "Defensief",
+      "risk": 2,
+      "risk_scale": 7,
+      "scenarios": {
+        "items": [
+          {
+            "key": "gunstig",
+            "label": "Gunstig",
+            "result_1y": {
+              "cents": 4606,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 14581,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 104606,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 114581,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.05
+          },
+          {
+            "key": "neutraal",
+            "label": "Neutraal",
+            "result_1y": {
+              "cents": 1606,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 4939,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 101606,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 104939,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.02
+          },
+          {
+            "key": "ongunstig",
+            "label": "Ongunstig",
+            "result_1y": {
+              "cents": -6394,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": -18124,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 93606,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 81876,
+              "currency": "EUR"
+            },
+            "yearly_return": -0.06
+          }
+        ],
+        "note": "Dit zijn voorbeelden, geen voorspelling. Na kosten."
+      },
+      "summary": "80% geldmarkt en kortlopende obligaties, 20% wereldwijde aandelen."
+    },
+    {
+      "code": "neutraal",
+      "costs": {
+        "amount": {
+          "cents": 100000,
+          "currency": "EUR"
+        },
+        "fund_1y": {
+          "cents": 193,
+          "currency": "EUR"
+        },
+        "fund_3y": {
+          "cents": 579,
+          "currency": "EUR"
+        },
+        "note": "Kosten in euro voor dit bedrag, als de waarde gelijk blijft. De lopende kosten zitten in de koers van de fondsen.",
+        "ongoing_charges_bps": 19.25,
+        "percent_per_year": 0.4425,
+        "service_1y": {
+          "cents": 250,
+          "currency": "EUR"
+        },
+        "service_3y": {
+          "cents": 750,
+          "currency": "EUR"
+        },
+        "service_fee_bps": 25,
+        "total_1y": {
+          "cents": 443,
+          "currency": "EUR"
+        },
+        "total_3y": {
+          "cents": 1329,
+          "currency": "EUR"
+        },
+        "transaction_cost_bps": 0,
+        "transactions": {
+          "cents": 0,
+          "currency": "EUR"
+        }
+      },
+      "funds": [
+        {
+          "asset": "Obligaties",
+          "fund": "obligaties_kort",
+          "name": "Kortlopende obligaties euro",
+          "ongoing_charges_bps": 15,
+          "weight_bps": 2500
+        },
+        {
+          "asset": "Obligaties",
+          "fund": "obligaties_wereld",
+          "name": "Wereldwijde obligaties (euro-afgedekt)",
+          "ongoing_charges_bps": 18,
+          "weight_bps": 2500
+        },
+        {
+          "asset": "Aandelen",
+          "fund": "aandelen_wereld",
+          "name": "Wereldwijde aandelen",
+          "ongoing_charges_bps": 22,
+          "weight_bps": 5000
+        }
+      ],
+      "label": "Neutraal",
+      "risk": 4,
+      "risk_scale": 7,
+      "scenarios": {
+        "items": [
+          {
+            "key": "gunstig",
+            "label": "Gunstig",
+            "result_1y": {
+              "cents": 11557,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 39164,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 111557,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 139164,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.12
+          },
+          {
+            "key": "neutraal",
+            "label": "Neutraal",
+            "result_1y": {
+              "cents": 3557,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 11157,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 103557,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 111157,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.04
+          },
+          {
+            "key": "ongunstig",
+            "label": "Ongunstig",
+            "result_1y": {
+              "cents": -15443,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": -39917,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 84557,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 60083,
+              "currency": "EUR"
+            },
+            "yearly_return": -0.15
+          }
+        ],
+        "note": "Dit zijn voorbeelden, geen voorspelling. Na kosten."
+      },
+      "summary": "50% obligaties, 50% wereldwijde aandelen."
+    },
+    {
+      "code": "offensief",
+      "costs": {
+        "amount": {
+          "cents": 100000,
+          "currency": "EUR"
+        },
+        "fund_1y": {
+          "cents": 216,
+          "currency": "EUR"
+        },
+        "fund_3y": {
+          "cents": 648,
+          "currency": "EUR"
+        },
+        "note": "Kosten in euro voor dit bedrag, als de waarde gelijk blijft. De lopende kosten zitten in de koers van de fondsen.",
+        "ongoing_charges_bps": 21.6,
+        "percent_per_year": 0.466,
+        "service_1y": {
+          "cents": 250,
+          "currency": "EUR"
+        },
+        "service_3y": {
+          "cents": 750,
+          "currency": "EUR"
+        },
+        "service_fee_bps": 25,
+        "total_1y": {
+          "cents": 466,
+          "currency": "EUR"
+        },
+        "total_3y": {
+          "cents": 1398,
+          "currency": "EUR"
+        },
+        "transaction_cost_bps": 0,
+        "transactions": {
+          "cents": 0,
+          "currency": "EUR"
+        }
+      },
+      "funds": [
+        {
+          "asset": "Obligaties",
+          "fund": "obligaties_wereld",
+          "name": "Wereldwijde obligaties (euro-afgedekt)",
+          "ongoing_charges_bps": 18,
+          "weight_bps": 1000
+        },
+        {
+          "asset": "Aandelen",
+          "fund": "aandelen_wereld",
+          "name": "Wereldwijde aandelen",
+          "ongoing_charges_bps": 22,
+          "weight_bps": 9000
+        }
+      ],
+      "label": "Offensief",
+      "risk": 6,
+      "risk_scale": 7,
+      "scenarios": {
+        "items": [
+          {
+            "key": "gunstig",
+            "label": "Gunstig",
+            "result_1y": {
+              "cents": 19534,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 71402,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 119534,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 171402,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.2
+          },
+          {
+            "key": "neutraal",
+            "label": "Neutraal",
+            "result_1y": {
+              "cents": 5534,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": 17704,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 105534,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 117704,
+              "currency": "EUR"
+            },
+            "yearly_return": 0.06
+          },
+          {
+            "key": "ongunstig",
+            "label": "Ongunstig",
+            "result_1y": {
+              "cents": -25466,
+              "currency": "EUR"
+            },
+            "result_3y": {
+              "cents": -59210,
+              "currency": "EUR"
+            },
+            "value_after_1y": {
+              "cents": 74534,
+              "currency": "EUR"
+            },
+            "value_after_3y": {
+              "cents": 40790,
+              "currency": "EUR"
+            },
+            "yearly_return": -0.25
+          }
+        ],
+        "note": "Dit zijn voorbeelden, geen voorspelling. Na kosten."
+      },
+      "summary": "90% wereldwijde aandelen, 10% obligaties."
+    }
+  ],
+  "risk_text": "Beleggen brengt risico met zich mee. De waarde van je belegging kan dalen en je kunt geld verliezen, ook je inleg. Het depositogarantiestelsel geldt niet voor beleggingen."
+}

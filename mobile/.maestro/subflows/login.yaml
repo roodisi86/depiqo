@@ -1,0 +1,22 @@
+# Log in on the login screen. Language independent: only testIDs (login-email, login-password, login-submit).
+# env: EMAIL, PASSWORD (PASSWORD comes from the runner; a flow may override it for the negative test).
+appId: com.getdepiqo.app.dev
+---
+- extendedWaitUntil:
+    visible:
+      id: "login-email"
+    timeout: 45000
+- tapOn:
+    id: "login-email"
+- inputText: ${EMAIL}
+- tapOn:
+    id: "login-password"
+- inputText: ${PASSWORD}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "login-submit"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    id: "login-submit"

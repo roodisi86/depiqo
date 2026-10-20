@@ -1,0 +1,305 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf, status_d, evidence_tag, sandbox_tag, holding, provider_tag, steps, deadline_box, figures %}
+{% block title %}{{ prop.address }}{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <p class="crumb"><a href="{{ url_for('business.deposits') }}">Borgen</a> / <span class="mono">{{ d.reference }}</span></p>
+    <h1>{{ prop.address }}, {{ prop.city }}</h1>
+  </div>
+  <div class="row">{{ holding(d.holding) }}{{ provider_tag(d) }}{{ sandbox_tag(acct.provider if acct else None) }} {{ status_d(d) }} {{ evidence_tag(d) }}</div>
+</div>
+{% for w in provider_warnings %}<div class="banner warn" role="status">{{ w }}</div>{% endfor %}
+{% if expiry and expiry[0] <= 60 %}<div class="banner {{ 'alert' if expiry[0] < 0 else 'warn' }}" role="status"><b>{{ 'De garantie is verlopen' if expiry[0] < 0 else 'De garantie verloopt binnenkort' }}:</b> {{ expiry[1]|date_nl }}. Vraag de huurder om een verlenging of een andere zekerheid.</div>{% endif %}
+{% if d.holding == 'depiqo' and not partner.available and d.status not in (S.CLOSED, S.CANCELLED) %}<div class="banner alert" role="status"><b>Er is geen financiële partner gekoppeld.</b> Er gaat geen opdracht naar een bank voor dit dossier tot er een partner is.</div>{% endif %}
+<section class="panel" aria-labelledby="fig-h">
+  <div class="panel-h"><h2 id="fig-h">Bedragen</h2><span class="small muted">Vier aparte bedragen. Een streepje betekent: niet bevestigd.</span></div>
+  <div class="panel-b">{{ figures(balances) }}</div>
+  <div class="panel-b steps-wrap">{{ steps(d.status) }}<div class="spread small muted"><span>Concept</span><span>Zekerheid</span><span>Uitbetaald</span></div></div>
+</section>
+
+<div class="grid g-main mt">
+<div class="stack">
+
+  {# ---------------- next step ---------------- #}
+  <section class="panel" id="volgende-stap" aria-labelledby="next-h">
+    <div class="panel-h"><h2 id="next-h">Volgende stap</h2></div>
+    <div class="panel-b stack">
+    {% if d.status == S.CONCEPT %}
+      <p>Het dossier is nog niet naar de huurder gestuurd.</p>
+      {% if can('deposit.edit') %}<div class="row">
+        <form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='uitnodigen') }}">{{ csrf() }}<button class="btn btn-primary">Huurder uitnodigen</button></form>
+        <form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='annuleren') }}" data-confirm="Dossier annuleren?">{{ csrf() }}<button class="btn btn-danger">Annuleren</button></form>
+      </div>{% endif %}
+    {% elif d.status == S.INVITED %}
+      <p>{{ tenant.name }} heeft een uitnodiging gekregen op {{ tenant.email }}. De link is geldig tot {{ d.invite_expires_at|date_nl }}.</p>
+      {% if can('deposit.edit') %}<div class="row">
+        <form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='uitnodigen') }}">{{ csrf() }}<button class="btn btn-line">Opnieuw versturen</button></form>
+        <form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='annuleren') }}" data-confirm="Dossier annuleren?">{{ csrf() }}<button class="btn btn-danger">Annuleren</button></form>
+      </div>{% endif %}
+    {% elif d.status in (S.ID_PENDING, S.ID_FAILED) %}
+      {% set open_instr = bank_instructions|selectattr('kind', 'equalto', 'open')|list %}
+      {% if d.status == S.ID_PENDING and open_instr %}
+        <p>De identiteit van de huurder is bevestigd. De opdracht om de borgrekening te openen staat bij de bank: <b>{{ INSTRUCTION_STATUSES[open_instr[-1].status]|lower }}</b>.</p>
+      {% else %}
+        <p>{{ 'De huurder bevestigt zijn identiteit.' if d.status == S.ID_PENDING else 'De identificatie van de huurder is niet gelukt. De huurder kan het opnieuw proberen in de app.' }}</p>
+      {% endif %}
+    {% elif d.status == S.AWAITING_PAYMENT %}
+      {% if d.holding == 'depiqo' %}
+        <p>De borgrekening is geopend. Zodra de bank de storting meldt, gaat het dossier vanzelf verder. Een betaalbewijs van de huurder is niet genoeg.</p>
+        {% if instructions %}<dl class="facts"><dt>Rekening</dt><dd class="mono">{{ instructions.iban|iban }}</dd><dt>Ten name van</dt><dd>{{ instructions.beneficiary }}</dd><dt>Kenmerk</dt><dd class="mono">{{ instructions.reference }}</dd><dt>Bedrag</dt><dd>{{ instructions.amount_cents|eur }}</dd></dl>
+        {% elif pay_problem %}<p class="note warn">{{ pay_problem }}</p>{% endif %}
+        {% if can('deposit.remind') %}<form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='herinneren') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Betaalherinnering sturen</button></form>{% endif %}
+      {% else %}
+        {% if d.provider_kind in NO_TENANT_PAYMENT %}
+        <p>De huurder stort niets. {{ 'Een derde staat garant' if d.provider_kind == 'borggarantie' else 'Het OCMW of het lokaal bestuur regelt de waarborg' }}{% if d.provider_name %} ({{ d.provider_name }}){% endif %}. Verklaar de ontvangst pas als je het certificaat of attest hebt.</p>
+        {% elif d.provider_kind and d.provider_kind != 'verhuurder_rekening' %}
+        <p>De borg komt bij de aanbieder: <b>{{ PROVIDER_KINDS[d.provider_kind].label }}</b>{% if d.provider_name %}, {{ d.provider_name }}{% endif %}. Verklaar de ontvangst pas als de aanbieder bevestigt dat de borg er staat.</p>
+        {% else %}
+        <p>De huurder stort op {{ d.external_iban|iban if d.external_iban else 'je eigen rekening' }}. Verklaar de ontvangst pas als het geld echt op de rekening staat.</p>
+        {% endif %}
+        {% if can('deposit.confirm_receipt') %}
+        <form class="stack" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='ontvangst') }}" data-confirm="Staat de borg van {{ d.amount_cents|eur }} echt bij de aanbieder?">{{ csrf() }}
+          <div class="field"><label for="receipt_doc">Bankbewijs (aanbevolen)</label><select id="receipt_doc" name="document_id"><option value="">Nog geen bankbewijs: alleen verklaren</option>{% for doc in docs if doc.kind == 'bankbewijs' %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select>
+            <span class="hint">Upload eerst een afschrift of betaalbewijs bij Documenten als "Bankbewijs van ontvangst". Zonder bewijs staat de borg als "verklaard door beheerder".</span></div>
+          <div class="row"><button class="btn btn-primary">Ontvangst verklaren</button></div>
+        </form>
+        {% else %}<p class="small muted">Een financieel medewerker of beheerder verklaart de ontvangst.</p>{% endif %}
+        {% if can('deposit.remind') and d.provider_kind not in NO_TENANT_PAYMENT %}<form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='herinneren') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Betaalherinnering sturen</button></form>{% endif %}
+      {% endif %}
+    {% elif d.status == S.PAYMENT_RECEIVED %}
+      <p>De storting is binnen. De bank zet de blokkering ten gunste van de verhuurder. Pas daarna staat de zekerheid als bevestigd.</p>
+    {% elif d.status == S.SECURED %}
+      {% if d.holding == 'depiqo' %}<p>De bank heeft de borg geblokkeerd ten gunste van de verhuurder. Start het vertrek zodra de huurder heeft opgezegd.</p>
+      {% elif d.evidence_level == 'legal' %}<p>Juridische zekerheid is aangetoond. Start het vertrek zodra de huurder heeft opgezegd.</p>
+      {% else %}<p>De zekerheid is geregistreerd met bewijsniveau <b>{{ EVIDENCE[d.evidence_level].label|lower }}</b>. Dat is geen bevestigde zekerheid. Zie <a href="#bewijs">Bewijs</a>.</p>{% endif %}
+      {% if can_invite and can('deposit.edit') %}<form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='uitnodigen') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Huurder uitnodigen voor Depiqo Wallet</button></form>{% endif %}
+      {% if can('deposit.edit') %}<form class="row" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='vertrek') }}">{{ csrf() }}
+        <div class="field"><label for="move_out_date">Vertrekdatum</label><input id="move_out_date" type="date" name="move_out_date" value="{{ d.lease_end or '' }}"></div>
+        <button class="btn btn-primary">Vertrek starten</button></form>{% endif %}
+    {% elif d.status in (S.MOVE_OUT, S.DISPUTED) %}
+      {% if d.status == S.DISPUTED and dispute %}
+        <div class="note warn"><b>De huurder betwist de afrekening.</b> “{{ dispute.reason }}”</div>
+        <p class="small muted">Depiqo beslist niet in een geschil. Maak een nieuwe afrekening, of leg de uitkomst vast van een akkoord tussen huurder en verhuurder of een vonnis.</p>
+      {% else %}
+        <p>Stel de eindafrekening op. Zet elke inhouding apart, met bewijs. Laat de regels leeg als je niets inhoudt.</p>
+      {% endif %}
+      {% if can('settlement.edit') %}
+      <form class="stack lines-form" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='afrekening-opslaan') }}">{{ csrf() }}
+        {% for i in range(10) %}{% set l = lines[i] if lines|length > i and settlement and settlement.status == 'draft' else None %}
+        <div class="line" {{ 'hidden' if i > 2 and not l }} data-line>
+          <label class="sr" for="cat_{{ i }}">Soort</label><select id="cat_{{ i }}" name="cat_{{ i }}">{% for k, v in CATEGORIES.items() %}<option value="{{ k }}" {{ 'selected' if l and l.category == k }}>{{ v }}</option>{% endfor %}</select>
+          <label class="sr" for="desc_{{ i }}">Omschrijving</label><input id="desc_{{ i }}" name="desc_{{ i }}" placeholder="Omschrijving" value="{{ l.description if l else '' }}">
+          <label class="sr" for="amount_{{ i }}">Bedrag</label><input id="amount_{{ i }}" name="amount_{{ i }}" inputmode="decimal" placeholder="€" value="{{ '%.2f'|format(l.amount_cents / 100) if l else '' }}">
+          <label class="sr" for="doc_{{ i }}">Bewijs</label><select id="doc_{{ i }}" name="doc_{{ i }}"><option value="">Geen bewijs</option>{% for doc in docs %}<option value="{{ doc.id }}" {{ 'selected' if l and l.document_id == doc.id }}>{{ doc.filename[:28] }}</option>{% endfor %}</select>
+        </div>{% endfor %}
+        <div class="row"><button class="btn btn-line btn-sm" type="button" data-add-line>Regel toevoegen</button><button class="btn btn-dark">Concept opslaan</button></div>
+      </form>
+      {% if settlement and settlement.status == 'draft' %}
+      <div class="spread"><span>Concept: <b>{{ total|eur }}</b> inhoudingen, <b>{{ (d.amount_cents - total)|eur }}</b> terug naar de huurder</span>
+        <form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='afrekening-voorstellen') }}" data-confirm="Afrekening naar de huurder sturen?">{{ csrf() }}<button class="btn btn-primary">Voorstellen aan huurder</button></form></div>
+      {% endif %}
+      {% endif %}
+      {% if d.status == S.DISPUTED and can('dispute.resolve') %}
+      <details class="panel panel-b"><summary><b>Uitkomst vastleggen (akkoord of vonnis)</b></summary>
+        <form class="stack" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='geschil-afsluiten') }}">{{ csrf() }}
+          <div class="choice"><label><input type="radio" name="kind" value="agreement" checked><span><b>Akkoord</b>Huurder en verhuurder zijn het eens geworden.</span></label><label><input type="radio" name="kind" value="court_decision"><span><b>Vonnis</b>De rechter heeft beslist.</span></label></div>
+          <div class="form-grid"><div class="field"><label for="landlord_amount">Bedrag voor de verhuurder (€)</label><input id="landlord_amount" name="landlord_amount" inputmode="decimal" placeholder="0,00"></div>
+          <div class="field"><label for="document_id">Getekend akkoord of vonnis</label><select id="document_id" name="document_id"><option value="">Kies een document</option>{% for doc in docs if doc.kind in ('agreement', 'court') %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select><span class="hint">Upload het eerst bij Documenten als “Getekend akkoord” of “Vonnis”.</span></div>
+          <div class="field full"><label for="note">Toelichting</label><textarea id="note" name="note"></textarea></div></div>
+          <button class="btn btn-primary">Uitkomst vastleggen</button></form></details>
+      {% endif %}
+    {% elif d.status == S.SETTLEMENT_PROPOSED %}
+      <p>De afrekening ligt bij de huurder: {{ total|eur }} inhoudingen. De huurder gaat akkoord of betwist in de app.</p>
+    {% elif d.status == S.AGREED and d.holding == 'external' %}
+      {% set tenant_cents, landlord_cents = split %}
+      <p>Akkoord bereikt. Verdeling: <b>{{ tenant_cents|eur }}</b> aan de huurder{% if landlord_cents %}, <b>{{ landlord_cents|eur }}</b> aan de verhuurder{% endif %}.{% if release_basis %} <span class="muted">{{ release_basis[0] }}.</span>{% endif %}</p>
+      <ol class="release-steps">
+        <li><b>Download het vrijgaveformulier</b><span class="small muted">Met partijen, adres, kenmerken, aanbieder en de afgesproken verdeling.</span>
+          {% if release_form %}<a class="btn btn-line btn-sm" href="{{ url_for('business.release_form_pdf', pid=d.pid) }}">Vrijgaveformulier (PDF)</a>{% endif %}</li>
+        <li><b>Laat huurder en verhuurder tekenen</b><span class="small muted">De huurder kan het formulier ook downloaden in Depiqo Wallet.</span></li>
+        <li><b>Vraag de vrijgave aan bij de aanbieder{% if d.provider_name %} ({{ d.provider_name }}){% endif %}</b><span class="small muted">e-DEPO, de bank en de verzekeraar hebben elk een eigen procedure en formulier. Het vrijgaveformulier ondersteunt die aanvraag, maar vervangt ze niet.</span></li>
+        <li><b>Bevestig de vrijgave hier</b><span class="small muted">Met het bewijs van de aanbieder of van de terugbetaling. Daarna sluit het dossier.</span></li>
+      </ol>
+      {% if can('deposit.payout') %}
+      <form class="row align-end" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='vrijgave') }}" data-confirm="Heeft de aanbieder de borg vrijgegeven zoals afgesproken?">{{ csrf() }}
+        <div class="field grow"><label for="release_doc">Bewijs van vrijgave</label><select id="release_doc" name="document_id"><option value="">Kies een geüpload document</option>{% for doc in docs if doc.kind == 'vrijgave' %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select>
+          <span class="hint">Upload het eerst bij Documenten als "Bewijs van vrijgave of terugbetaling".</span></div>
+        <button class="btn btn-primary">Vrijgave bij aanbieder bevestigd</button></form>
+      {% else %}<p class="small muted">Een financieel medewerker of beheerder bevestigt de vrijgave.</p>{% endif %}
+    {% elif d.status == S.AGREED %}
+      {% set tenant_cents, landlord_cents = split %}
+      <p>Akkoord bereikt. Uitbetaling: <b>{{ tenant_cents|eur }}</b> aan de huurder{% if landlord_cents %}, <b>{{ landlord_cents|eur }}</b> aan de verhuurder{% endif %}.</p>
+      <p class="small muted">Het deel van de huurder gaat naar de rekening van de huurder.</p>
+      {% if can('deposit.payout') %}<form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='uitbetalen') }}" data-confirm="Uitbetaling starten?">{{ csrf() }}<button class="btn btn-primary">Vrijgave-opdracht naar de bank</button></form>
+      {% else %}<p class="small muted">Een financieel medewerker of beheerder start de uitbetaling.</p>{% endif %}
+    {% elif d.status == S.PAYOUT_PENDING %}
+      {% set rel = bank_instructions|selectattr('kind', 'equalto', 'release')|list %}
+      <p>De vrijgave-opdracht is {{ INSTRUCTION_STATUSES[rel[-1].status]|lower if rel else 'klaargezet' }}. Het dossier sluit pas als de bank meldt dat precies de opgedragen bedragen zijn uitbetaald.</p>
+      {% if rel and rel[-1].last_error %}<p class="note warn">{{ rel[-1].last_error }}</p>{% endif %}
+    {% elif d.status == S.CLOSED and d.release_document_id %}
+      <p>Vrijgegeven bij de aanbieder en gesloten op {{ d.closed_at|date_nl }}.</p>
+      <div class="row">{% if release_form %}<a class="btn btn-line btn-sm" href="{{ url_for('business.release_form_pdf', pid=d.pid) }}">Vrijgaveformulier (PDF)</a>{% endif %}
+        <a class="btn btn-line btn-sm" href="{{ url_for('business.download', doc_id=d.release_document_id) }}">Bewijs van vrijgave</a></div>
+    {% elif d.status == S.CLOSED %}
+      <p>Uitbetaald en gesloten op {{ d.closed_at|date_nl }}.</p>
+      {% if release_form %}<a class="btn btn-line btn-sm" href="{{ url_for('business.release_form_pdf', pid=d.pid) }}">Vrijgaveformulier (PDF)</a>{% endif %}
+    {% elif d.status == S.CANCELLED %}
+      <p>Geannuleerd op {{ d.closed_at|date_nl }}.</p>
+    {% elif d.status == S.LEGAL_HOLD %}
+      <div class="note warn">Juridische blokkade. Er gebeurt niets met deze borg tot de blokkade is opgeheven.</div>
+      {% if can('deposit.legal_hold') %}<form method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='blokkade-opheffen') }}">{{ csrf() }}<button class="btn btn-line">Blokkade opheffen</button></form>{% endif %}
+    {% endif %}
+    </div>
+  </section>
+
+  {% if settlement and settlement.status != 'draft' %}
+  <section class="panel" aria-labelledby="set-h">
+    <div class="panel-h"><h2 id="set-h">Eindafrekening</h2><span class="badge t-{{ {'proposed': 'wait', 'agreed': 'ok', 'disputed': 'alert'}.get(settlement.status, 'neutral') }}">{{ {'proposed': 'Voorgesteld', 'agreed': 'Akkoord', 'disputed': 'Betwist'}.get(settlement.status, settlement.status) }}</span></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th>Soort</th><th>Omschrijving</th><th>Bewijs</th><th class="num">Bedrag</th></tr></thead><tbody>
+      <tr><td colspan="3">Borg</td><td class="num">{{ d.amount_cents|eur }}</td></tr>
+      {% for l in lines %}<tr><td>{{ CATEGORIES[l.category] }}</td><td>{{ l.description }}</td><td>{% if l.document_id %}<a href="{{ url_for('business.download', doc_id=l.document_id) }}">bekijken</a>{% else %}<span class="muted">—</span>{% endif %}</td><td class="num">− {{ l.amount_cents|eur }}</td></tr>{% endfor %}
+      <tr><td colspan="3"><b>Terug naar huurder</b></td><td class="num"><b>{{ (d.amount_cents - total)|eur }}</b></td></tr>
+    </tbody></table></div>
+  </section>
+  {% endif %}
+
+  <section class="panel" id="documenten" aria-labelledby="doc-h">
+    <div class="panel-h"><h2 id="doc-h">Documenten</h2></div>
+    <div class="table-wrap"><table class="t"><tbody>
+      {% for doc in docs %}<tr><td><a href="{{ url_for('business.download', doc_id=doc.id) }}">{{ doc.filename }}</a></td><td>{{ KINDS[doc.kind] }}</td><td class="small muted">{{ 'Huurder' if doc.uploaded_by_kind == 'tenant' else 'Beheerder' }} · {{ doc.created_at|datetime_nl }}</td></tr>
+      {% else %}<tr><td class="empty">Nog geen documenten. Voeg het huurcontract en de plaatsbeschrijving toe.</td></tr>{% endfor %}
+    </tbody></table></div>
+    {% if can('document.upload') and d.status not in (S.CLOSED, S.CANCELLED) %}
+    <form class="panel-b row" method="post" enctype="multipart/form-data" action="{{ url_for('business.upload', pid=d.pid) }}">{{ csrf() }}
+      <label class="sr" for="kind">Soort</label><select id="kind" name="kind">{% for k, v in KINDS.items() %}<option value="{{ k }}">{{ v }}</option>{% endfor %}</select>
+      <label class="sr" for="file">Bestand</label><input id="file" type="file" name="file" accept="application/pdf,image/jpeg,image/png">
+      <button class="btn btn-line">Uploaden</button><span class="small muted">PDF, JPG of PNG, maximaal 10 MB.</span>
+    </form>{% endif %}
+  </section>
+
+  {% if d.holding == 'external' %}
+  <section class="panel" id="bewijs" aria-labelledby="ev-h">
+    <div class="panel-h"><h2 id="ev-h">Bewijs van de zekerheid</h2>{{ evidence_tag(d) }}</div>
+    <div class="panel-b stack">
+      <ol class="ladder" aria-label="Bewijsniveaus">
+        {% for code in ('declared', 'document', 'verified', 'legal') %}{% set e = EVIDENCE[code] %}
+        {% set reached = d.evidence_level and loop.index0 <= ('declared', 'document', 'verified', 'legal').index(d.evidence_level) %}
+        {% set hint = evidence_hint(d.provider_kind, code) %}
+        <li class="{{ 'reached' if reached }} {{ 'current' if d.evidence_level == code }}"><b>{{ e.label }}</b><span class="small muted">{% if hint %}{{ hint }}.{% else %}{{ {'declared': 'Je verklaart dat het geld binnen is.', 'document': 'Je voegt een bankafschrift of betaalbewijs toe.', 'verified': 'Depiqo controleert de ontvangst extern.', 'legal': 'Blokkeringsattest of e-DEPO: juridisch zeker.'}[code] }}{% endif %}</span></li>
+        {% endfor %}
+      </ol>
+      <p class="small muted">Alleen "extern geverifieerd" en "juridische zekerheid" tellen mee als dekking. Alleen juridische zekerheid geldt als bevestigde zekerheid.</p>
+      {% if d.evidence_level == 'declared' and can('deposit.confirm_receipt') and d.status not in (S.CLOSED, S.CANCELLED) %}
+      <form class="row align-end" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='bewijs') }}">{{ csrf() }}
+        <div class="field grow"><label for="ev_doc">Bankbewijs</label><select id="ev_doc" name="document_id"><option value="">Kies een geüpload bankbewijs</option>{% for doc in docs if doc.kind == 'bankbewijs' %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select></div>
+        <button class="btn btn-line">Bankbewijs vastleggen</button></form>
+      {% endif %}
+      {% if evidence_history %}
+      <ul class="timeline">{% for e in evidence_history %}<li><span class="dot {{ 'staff' if e.set_by_staff else 'user' }}"></span><div>{{ EVIDENCE[e.level].label }}{% if e.filename %} · {{ e.filename }}{% endif %}{% if e.note %} · {{ e.note }}{% endif %}<div class="meta">{{ e.at|datetime_nl }} · {{ 'Depiqo' if e.set_by_staff else (e.user_name or 'Beheerder') }}</div></div></li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if bank_instructions %}
+  <section class="panel" aria-labelledby="bi-h">
+    <div class="panel-h"><h2 id="bi-h">Opdrachten aan de bank</h2><span class="small muted">Verstuurd met een vaste sleutel: nooit dubbel</span></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th>Opdracht</th><th>Status</th><th class="num">Pogingen</th><th>Aangemaakt</th><th>Melding</th></tr></thead><tbody>
+      {% for i in bank_instructions %}<tr><td>{{ INSTRUCTION_KINDS[i.kind] }}</td><td><span class="badge t-{{ {'pending': 'wait', 'sent': 'wait', 'acknowledged': 'info', 'failed': 'alert', 'confirmed': 'ok'}[i.status] }}">{{ INSTRUCTION_STATUSES[i.status] }}</span></td><td class="num">{{ i.attempts }}</td><td class="small">{{ i.created_at|datetime_nl }}</td><td class="small">{{ i.last_error or '' }}</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+  {% endif %}
+
+  <section class="panel" id="communicatie" aria-labelledby="mail-h">
+    <div class="panel-h"><h2 id="mail-h">Communicatie</h2><span class="small muted">Mails over dit dossier</span></div>
+    <div class="table-wrap"><table class="t"><thead><tr><th>Onderwerp</th><th>Aan</th><th>Tijd</th><th>Status</th></tr></thead><tbody>
+      {% for m in mails %}<tr><td>{{ m.subject }}</td><td class="small">{{ m.to_email }}</td><td class="small">{{ m.created_at|datetime_nl }}</td>
+        <td>{% if m.error %}<span class="badge t-alert" title="{{ m.error }}">Mislukt</span>{% elif m.sent_at %}<span class="badge t-ok">Verzonden</span>{% else %}<span class="badge t-neutral" title="Geen mailserver ingesteld: alleen in de uitgaande mail">In outbox</span>{% endif %}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">Nog geen mails over dit dossier.</td></tr>{% endfor %}
+    </tbody></table></div>
+  </section>
+
+  <section class="panel" aria-labelledby="tl-h">
+    <div class="panel-h"><h2 id="tl-h">Audittrail</h2><span class="small muted">Wie deed wat, wanneer</span></div>
+    <ul class="timeline panel-b">
+      {% for e in events %}<li><span class="dot {{ e.actor_kind }}"></span><div>{{ e.message }}<div class="meta">{{ e.at|datetime_nl }} · {{ {'bank': 'Bank', 'tenant': 'Huurder', 'system': 'Systeem', 'staff': 'Depiqo'}.get(e.actor_kind, e.user_name or 'Gebruiker') }}{% if e.to_status %} · {{ LABELS.get(e.to_status, e.to_status) }}{% endif %}</div></div></li>{% endfor %}
+    </ul>
+  </section>
+</div>
+
+<aside class="stack">
+  {% if deadline %}<section class="panel panel-b stack"><span class="label">Terugbetaling</span>{{ deadline_box(deadline) }}</section>{% endif %}
+  <section class="panel" aria-labelledby="fact-h">
+    <div class="panel-h"><h2 id="fact-h">Gegevens</h2></div>
+    <dl class="facts panel-b">
+      <dt>Huurder</dt><dd>{{ tenant.name }}<br><span class="small muted">{{ tenant.email }}</span></dd>
+      <dt>Regio</dt><dd>{{ rules.name }}</dd>
+      <dt>Huur</dt><dd class="tabnum">{{ d.rent_cents|eur }}</dd>
+      <dt>Borg</dt><dd class="tabnum">{{ d.amount_cents|eur }}<br><span class="small muted">max. {{ max_amount[0]|eur }} ({{ max_amount[1] }} mnd)</span></dd>
+      <dt>Huurcontract</dt><dd>{{ d.lease_start|date_nl }}{% if d.lease_end %} tot {{ d.lease_end|date_nl }}{% endif %}</dd>
+      {% if d.move_out_date %}<dt>Vertrek</dt><dd>{{ d.move_out_date|date_nl }}</dd>{% endif %}
+      <dt>Regels</dt><dd class="small">versie {{ d.rule_version }}<br><span class="muted">blijft gelden voor dit dossier</span></dd>
+    </dl>
+  </section>
+  {% if d.holding == 'external' %}
+  <section class="panel" id="aanbieder" aria-labelledby="prov-h">
+    <div class="panel-h"><h2 id="prov-h">Waar staat de borg</h2>{% if can('deposit.edit') and d.status not in (S.CLOSED, S.CANCELLED) %}<a class="btn btn-line btn-sm" href="{{ url_for('business.edit_provider', pid=d.pid) }}">Wijzigen</a>{% endif %}</div>
+    <dl class="facts panel-b">
+      <dt>Soort</dt><dd>{% if d.provider_kind %}{{ PROVIDER_KINDS[d.provider_kind].label }}{% else %}<span class="late">Nog niet vastgelegd</span>{% endif %}</dd>
+      <dt>Aanbieder</dt><dd>{{ d.provider_name or '—' }}</dd>
+      <dt>{{ PROVIDER_KINDS[d.provider_kind].reference_label if d.provider_kind else 'Referentie' }}</dt><dd class="mono wrap">{{ d.provider_reference or '—' }}</dd>
+      {% if d.external_iban %}<dt>IBAN</dt><dd class="mono">{{ d.external_iban|iban }}</dd>{% endif %}
+      {% if d.guarantee_expires_on %}<dt>Garantie tot</dt><dd class="{{ 'late' if expiry and expiry[0] <= 60 }}">{{ d.guarantee_expires_on|date_nl }}</dd>{% endif %}
+    </dl>
+  </section>
+  {% endif %}
+  <section class="panel" aria-labelledby="sec-h">
+    <div class="panel-h"><h2 id="sec-h">Zekerheid</h2>{% if d.legal_lock_status == 'active' %}<span class="badge t-ok">Geblokkeerd</span>{% elif d.legal_lock_status == 'requested' %}<span class="badge t-wait">Blokkering aangevraagd</span>{% endif %}</div>
+    <dl class="facts panel-b">
+      <dt>Type</dt><dd>{{ SECURITY_TYPES[d.security_type] }}{% if d.holding == 'external' and d.provider_kind %}<br><span class="small muted">{{ PROVIDER_KINDS[d.provider_kind].label }}</span>{% endif %}</dd>
+      <dt>Bewaarder</dt><dd>{{ d.custodian or ('Aanbieder, naam niet ingevuld' if d.provider_kind and d.provider_kind != 'verhuurder_rekening' else ('Verhuurder of beheerder' if d.security_type == 'external_account' else 'Nog niet bekend')) }}</dd>
+      <dt>Begunstigde</dt><dd>{{ d.beneficiary or g.org.name }}</dd>
+      <dt>Juridische blokkering</dt><dd>{{ 'Niet van toepassing' if d.security_type == 'external_account' and d.legal_lock_status == 'none' else LOCK_STATUSES[d.legal_lock_status] }}</dd>
+      <dt>Dekking</dt><dd class="tabnum">{% if d.legal_lock_status == 'released' or d.status in (S.CLOSED, S.CANCELLED) %}<span class="muted">Zekerheid vrijgegeven</span>{% elif coverage is none and d.evidence_level in ('declared', 'document') %}<span class="muted">Telt niet mee: niet geverifieerd</span>{% elif coverage is none %}<span class="muted">Nog geen zekerheid</span>{% else %}{{ coverage|pct }}<br><span class="small muted">{{ d.eligible_value_cents|eur }} van {{ d.amount_cents|eur }}</span>{% endif %}</dd>
+    </dl>
+  </section>
+  {% if acct %}
+  <section class="panel" aria-labelledby="bank-h">
+    <div class="panel-h"><h2 id="bank-h">Borgrekening</h2>{{ sandbox_tag(acct.provider) }}</div>
+    <dl class="facts panel-b">
+      <dt>IBAN</dt><dd class="mono">{{ acct.iban|iban }}</dd>
+      <dt>Op naam van</dt><dd>{{ acct.holder_name }}</dd>
+      <dt>Status bank</dt><dd>{{ {'open': 'Open', 'blocked': 'Geblokkeerd', 'release_requested': 'Vrijgave aangevraagd', 'closed': 'Gesloten'}[acct.status] }}</dd>
+      <dt>Saldo volgens bank</dt><dd class="tabnum">{{ acct.ledger_balance_cents|eur }}</dd>
+      <dt>Rente voor huurder</dt><dd class="tabnum">{{ acct.ledger_interest_cents|eur }} <span class="small muted">({{ '%.2f'|format(acct.interest_rate_bps / 100)|replace('.', ',') }}%)</span></dd>
+    </dl>
+  </section>
+  {% if sandbox() and acct.provider == 'sandbox' and can('deposit.confirm_receipt') %}
+  <section class="note sandbox stack" aria-label="Sandbox-bank">
+    <b>Sandbox-bank</b><span class="small">Simuleer wat de partnerbank meldt. In productie komen deze berichten van de bank zelf.</span>
+    <div class="row">
+      {% set opts = [] %}
+      {% if d.status == S.AWAITING_PAYMENT %}{% set _ = opts.append(('storting', 'Huurder stort ' ~ (d.amount_cents|eur))) %}{% endif %}
+      {% if d.status == S.PAYMENT_RECEIVED %}{% set _ = opts.append(('blokkering', 'Bank bevestigt blokkering')) %}{% endif %}
+      {% if acct.status in ('open', 'blocked') and acct.ledger_balance_cents > 0 %}{% set _ = opts.append(('rente', 'Rente bijschrijven (1 maand)')) %}{% endif %}
+      {% set rel_i = bank_instructions|selectattr('kind', 'equalto', 'release')|list %}{% if d.status == S.PAYOUT_PENDING and acct.status == 'release_requested' and rel_i and rel_i[-1].status in ('sent', 'acknowledged') %}{% set _ = opts.append(('uitbetaling', 'Bank voert uitbetaling uit')) %}{% endif %}
+      {% for ev, label in opts %}<form method="post" action="{{ url_for('business.sandbox', pid=d.pid, event=ev) }}">{{ csrf() }}<button class="btn btn-line btn-sm">{{ label }}</button></form>{% else %}<span class="small">Geen bankbericht verwacht in deze stap.</span>{% endfor %}
+    </div>
+  </section>
+  {% endif %}
+  {% endif %}
+  <section class="panel panel-b stack small">
+    <span class="label">Regels {{ rules.name }}</span>
+    <p>{{ rules.release_note }}</p>
+    <p class="muted">Rente: {{ rules.interest_owner }}. Gecontroleerd op {{ rules.checked_on|date_nl }}. Geen juridisch advies.</p>
+  </section>
+  {% if can('deposit.legal_hold') and d.status in S.HOLDABLE %}
+  <details class="panel panel-b"><summary class="small"><b>Juridische blokkade instellen</b></summary>
+    <form class="stack" method="post" action="{{ url_for('business.deposit_action', pid=d.pid, action='blokkade') }}">{{ csrf() }}
+      <div class="field"><label for="reason">Reden</label><input id="reason" name="reason" placeholder="Bijvoorbeeld: beslag, procedure, overlijden"></div>
+      <button class="btn btn-danger btn-sm">Blokkade instellen</button></form></details>
+  {% endif %}
+</aside>
+</div>
+{% endblock %}

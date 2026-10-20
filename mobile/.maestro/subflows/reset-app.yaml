@@ -1,0 +1,5 @@
+# Used by the runner before the deep-link flow: a clean app that is not running, so the link starts it cold.
+appId: com.getdepiqo.app.dev
+---
+- runFlow: launch-clean.yaml
+- stopApp

@@ -1,0 +1,13 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Nieuw wachtwoord{% endblock %}
+{% block content %}
+<h1>Kies een nieuw wachtwoord.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <p class="small muted">Voor {{ email }}. Je wordt op alle andere apparaten uitgelogd.</p>
+  <div class="field"><label for="password">Nieuw wachtwoord</label><input id="password" name="password" type="password" autocomplete="new-password" required><span class="hint">Minstens 12 tekens.</span></div>
+  <button class="btn btn-primary" type="submit">Opslaan en inloggen</button>
+</form>
+{% endblock %}

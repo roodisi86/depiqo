@@ -1,0 +1,2217 @@
+openapi: 3.1.0
+info:
+  title: Depiqo tenant app API
+  version: 0.6.1
+  summary: JSON API for the Depiqo app for tenants (Depiqo Wallet and Depiqo Invest).
+  description: |
+    Tenants only. Business users and Depiqo staff use the web app and are refused here (403).
+
+    Conventions:
+    - Bearer tokens only (`Authorization: Bearer <access_token>`). Cookies are never read. A mutating request
+      that carries the web session cookie `dpq_session` but no bearer token is refused with `cookie_auth_not_allowed`.
+    - Every error has the shape `{"error": {"code", "message", "fields", "detail?"}}`. `code` is stable; `message`
+      follows `Accept-Language` (nl, fr, en; default nl, else the user's stored language). In fr and en the specific
+      Dutch text, when it says more, is in `detail`.
+    - Labels in responses are Dutch and always sit next to a stable key (`status` + `status_label`, `key`, `kind`...).
+    - Money is `{"cents": integer, "currency": "EUR"}`. Dates are `YYYY-MM-DD`, timestamps ISO 8601 with offset.
+    - Lists that can grow use `limit` (1 to 100, default 20) and an opaque `cursor`; the response has `next_cursor`. A cursor that was not issued by the server gets 400 invalid_cursor.
+    - `Idempotency-Key` (8 to 100 characters) is honoured on every mutating money endpoint and required where noted.
+      The first successful response is stored for 24 hours and returned again (header `Idempotent-Replayed: true`).
+      For multipart uploads the form fields and the SHA-256 of each file count, not the raw body.
+    - `X-App-Platform` and `X-App-Version` may be sent on every request; an app below the minimum gets 426.
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Development
+  - url: https://app.getdepiqo.com/api/v1
+    description: Production
+security:
+  - bearerAuth: []
+tags:
+  - name: Config
+  - name: Auth
+  - name: Invites
+  - name: Me
+  - name: Notifications
+  - name: Deposits
+  - name: Invest
+  - name: Support
+
+paths:
+  /config:
+    get:
+      tags: [Config]
+      operationId: getConfig
+      summary: Public app configuration
+      security: []
+      responses:
+        "200":
+          description: Configuration
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Config'}
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      operationId: login
+      summary: Log in with email and password
+      description: Same rate limits as the web login (5 failures per email or 30 per IP in 15 minutes). With 2FA on, returns an mfa_token instead of tokens.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, device]
+              properties:
+                email: {type: string, format: email}
+                password: {type: string}
+                device: {$ref: '#/components/schemas/DeviceInput'}
+      responses:
+        "200":
+          description: Tokens, or a second step is needed
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Session'
+                  - $ref: '#/components/schemas/MfaChallenge'
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+        "415": {$ref: '#/components/responses/UnsupportedMediaType'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "426": {$ref: '#/components/responses/UpgradeRequired'}
+        "429": {$ref: '#/components/responses/TooManyRequests'}
+
+  /auth/mfa:
+    post:
+      tags: [Auth]
+      operationId: loginSecondStep
+      summary: Second step with a TOTP code or a recovery code
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mfa_token, code]
+              properties:
+                mfa_token: {type: string}
+                code: {type: string, description: "Six digits from the authenticator app, or a recovery code"}
+      responses:
+        "200":
+          description: Tokens
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Session'
+                  - type: object
+                    properties:
+                      second_factor: {type: string, enum: [totp, recovery]}
+                      recovery_codes_left: {type: integer}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+        "429": {$ref: '#/components/responses/TooManyRequests'}
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      operationId: refreshTokens
+      summary: Exchange a refresh token for a new pair (rotation)
+      description: A refresh token works once. Presenting a used one revokes the whole device session (refresh_token_reused). Send one refresh at a time.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refresh_token]
+              properties:
+                refresh_token: {type: string}
+      responses:
+        "200":
+          description: New tokens
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/TokenPair'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "426": {$ref: '#/components/responses/UpgradeRequired'}
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      operationId: logout
+      summary: End this device session
+      responses:
+        "204": {description: Logged out}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+
+  /auth/devices:
+    get:
+      tags: [Auth]
+      operationId: listDevices
+      summary: Active device sessions (also shown on the web page Beveiliging)
+      responses:
+        "200":
+          description: Devices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Device'}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+
+  /auth/devices/{device_id}:
+    delete:
+      tags: [Auth]
+      operationId: revokeDevice
+      summary: Sign a device out
+      parameters:
+        - name: device_id
+          in: path
+          required: true
+          schema: {type: integer}
+      responses:
+        "204": {description: Revoked}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /invites/{token}:
+    get:
+      tags: [Invites]
+      operationId: getInvite
+      summary: Anti-phishing check of an invitation
+      description: Shows landlord, address, amount and reference so the tenant can compare them with the lease before going on.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/InviteToken'
+      responses:
+        "200":
+          description: The invitation
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Invite'}
+        "410": {$ref: '#/components/responses/Gone'}
+
+  /invites/{token}/accept:
+    post:
+      tags: [Invites]
+      operationId: acceptInvite
+      summary: Accept an invitation
+      description: |
+        New account: send password, confirm_details=true and device; returns tokens (201).
+        Existing tenant account: send the bearer token of that account and confirm_details=true (200).
+        Existing account that is not a tenant yet: 409 use_web with the web link in fields.url.
+      security:
+        - {}
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/InviteToken'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm_details]
+              properties:
+                confirm_details: {type: boolean, const: true}
+                password: {type: string, minLength: 12}
+                device: {$ref: '#/components/schemas/DeviceInput'}
+      responses:
+        "200":
+          description: Linked to the existing account
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deposit_pid: {type: string}
+                  status: {type: string}
+        "201":
+          description: Account created and logged in
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Session'
+                  - type: object
+                    properties:
+                      deposit_pid: {type: string}
+                      status: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "410": {$ref: '#/components/responses/Gone'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /devices/push-token:
+    post:
+      tags: [Notifications]
+      operationId: registerPushToken
+      summary: Register the Expo push token of this device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, platform]
+              properties:
+                token: {type: string, pattern: '^(ExponentPushToken|ExpoPushToken)\[[A-Za-z0-9_\-]{10,200}\]$'}
+                platform: {type: string, enum: [ios, android]}
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: {type: integer}
+                  active: {type: boolean}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /me:
+    get:
+      tags: [Me]
+      operationId: getMe
+      summary: The tenant's own account
+      responses:
+        "200":
+          description: Account
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Me'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+    patch:
+      tags: [Me]
+      operationId: updateMe
+      summary: Change name, language or notification preferences
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                name: {type: string, maxLength: 120}
+                language: {type: string, enum: [nl, fr, en]}
+                notification_preferences: {$ref: '#/components/schemas/NotificationPreferences'}
+      responses:
+        "200":
+          description: Updated account
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Me'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /me/export:
+    post:
+      tags: [Me]
+      operationId: exportMyData
+      summary: Download all own data as one JSON file
+      responses:
+        "200":
+          description: JSON file (Content-Disposition attachment)
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DataExport'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+
+  /me/delete-request:
+    get:
+      tags: [Me]
+      operationId: previewDeletion
+      summary: What deleting the account means, and whether it is possible now
+      responses:
+        "200":
+          description: Explanation
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DeletionInfo'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+    post:
+      tags: [Me]
+      operationId: deleteAccount
+      summary: Delete (anonymise) the account
+      description: Refused (409 deletion_blocked) while a deposit is open or the investment account has money or running orders.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [password, confirm]
+              properties:
+                password: {type: string}
+                confirm: {type: boolean, const: true}
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  deleted: {type: boolean}
+                  deleted_now: {type: array, items: {type: string}}
+                  kept_by_law: {type: array, items: {type: string}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "429": {$ref: '#/components/responses/TooManyRequests'}
+
+  /notifications:
+    get:
+      tags: [Notifications]
+      operationId: listNotifications
+      summary: Notifications, newest first
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/AcceptLanguage'
+      responses:
+        "200":
+          description: A page of notifications
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/Notification'}}
+                      unread_count: {type: integer}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+
+  /notifications/{notification_id}/read:
+    post:
+      tags: [Notifications]
+      operationId: markNotificationRead
+      summary: Mark a notification as read
+      parameters:
+        - name: notification_id
+          in: path
+          required: true
+          schema: {type: integer}
+      responses:
+        "200":
+          description: The notification
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Notification'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /activity:
+    get:
+      tags: [Me]
+      operationId: listActivity
+      summary: Combined history of deposit events and invest transactions
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of activity
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/ActivityItem'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+
+  /support:
+    get:
+      tags: [Support]
+      operationId: listSupportTickets
+      summary: Own support questions with their status
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of tickets
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/SupportTicket'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+    post:
+      tags: [Support]
+      operationId: createSupportTicket
+      summary: Ask Depiqo support a question
+      description: At most 3 questions per 10 minutes and 10 per day. Never shown to the landlord.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category, message]
+              properties:
+                category: {type: string, enum: [deposit, invest, account, app, other]}
+                subject: {type: string, maxLength: 120}
+                message: {type: string, minLength: 10, maxLength: 4000}
+                deposit_pid: {type: string}
+      responses:
+        "201":
+          description: Ticket created
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/SupportTicket'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "429": {$ref: '#/components/responses/TooManyRequests'}
+
+  /deposits:
+    get:
+      tags: [Deposits]
+      operationId: listDeposits
+      summary: The tenant's deposits
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of deposits
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/DepositSummary'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "403": {$ref: '#/components/responses/Forbidden'}
+
+  /deposits/{pid}:
+    get:
+      tags: [Deposits]
+      operationId: getDeposit
+      summary: One deposit with amounts, progress, location, deadline, next action, payment details and recent events
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+      responses:
+        "200":
+          description: The deposit
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/DepositDetail'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /deposits/{pid}/events:
+    get:
+      tags: [Deposits]
+      operationId: listDepositEvents
+      summary: Tenant-visible events of a deposit
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of events
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/DepositEvent'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /deposits/{pid}/identity:
+    post:
+      tags: [Deposits]
+      operationId: verifyIdentity
+      summary: Identity check for a Depiqo deposit account (sandbox KYC)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, birth_date]
+              properties:
+                full_name: {type: string}
+                birth_date: {type: string, format: date}
+      responses:
+        "200":
+          description: Result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result: {type: string, enum: [account_open, opening, bank_unavailable, failed]}
+                  message: {type: string}
+                  deposit: {$ref: '#/components/schemas/DepositDetail'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /deposits/{pid}/documents:
+    get:
+      tags: [Deposits]
+      operationId: listDocuments
+      summary: Documents of a deposit
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+      responses:
+        "200":
+          description: Documents and upload rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items: {type: array, items: {$ref: '#/components/schemas/Document'}}
+                  upload_kinds:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        kind: {type: string, enum: [photo, inspection, other]}
+                        label: {type: string}
+                  upload_allowed: {type: boolean}
+                  max_bytes: {type: integer}
+                  accepted_types: {type: array, items: {type: string}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+    post:
+      tags: [Deposits]
+      operationId: uploadDocument
+      summary: Add a document (PDF, JPEG or PNG, max 10 MB; a camera photo is a JPEG)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [kind, file]
+              properties:
+                kind: {type: string, enum: [photo, inspection, other]}
+                file: {type: string, format: binary}
+      responses:
+        "201":
+          description: Stored
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Document'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "413": {$ref: '#/components/responses/TooLarge'}
+        "415": {$ref: '#/components/responses/UnsupportedMediaType'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /deposits/{pid}/documents/{doc_id}:
+    get:
+      tags: [Deposits]
+      operationId: downloadDocument
+      summary: Download a document (streamed, with the bearer token)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - name: doc_id
+          in: path
+          required: true
+          schema: {type: integer}
+      responses:
+        "200":
+          description: The file
+          content:
+            application/pdf: {schema: {type: string, format: binary}}
+            image/jpeg: {schema: {type: string, format: binary}}
+            image/png: {schema: {type: string, format: binary}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /deposits/{pid}/settlement:
+    get:
+      tags: [Deposits]
+      operationId: getSettlement
+      summary: The final settlement (null until the landlord proposes one)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+      responses:
+        "200":
+          description: Settlement
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  settlement:
+                    oneOf:
+                      - $ref: '#/components/schemas/Settlement'
+                      - type: 'null'
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /deposits/{pid}/settlement/agree:
+    post:
+      tags: [Deposits]
+      operationId: agreeSettlement
+      summary: Agree with the proposed settlement
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm]
+              properties:
+                confirm: {type: boolean, const: true}
+      responses:
+        "200": {$ref: '#/components/responses/SettlementResult'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /deposits/{pid}/settlement/dispute:
+    post:
+      tags: [Deposits]
+      operationId: disputeSettlement
+      summary: Dispute the proposed settlement (reason of at least 10 characters)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason: {type: string, minLength: 10, maxLength: 2000}
+      responses:
+        "200": {$ref: '#/components/responses/SettlementResult'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /deposits/{pid}/release-form:
+    get:
+      tags: [Deposits]
+      operationId: downloadReleaseForm
+      summary: Release form (PDF) for a deposit held elsewhere, after agreement
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+      responses:
+        "200":
+          description: PDF
+          content:
+            application/pdf: {schema: {type: string, format: binary}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+
+  /deposits/{pid}/payout-choice:
+    get:
+      tags: [Deposits]
+      operationId: getPayoutChoice
+      summary: Doorbeleggen options (where the tenant's share goes)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+      responses:
+        "200":
+          description: Options
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PayoutChoice'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Deposits]
+      operationId: choosePayoutToInvest
+      summary: Choose the investment account for the tenant's share (until the payout starts)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm]
+              properties:
+                confirm: {type: boolean, const: true}
+      responses:
+        "200":
+          description: Choice stored
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PayoutChoice'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    delete:
+      tags: [Deposits]
+      operationId: cancelPayoutToInvest
+      summary: Back to the own account (until the payout starts)
+      parameters:
+        - $ref: '#/components/parameters/Pid'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        "200":
+          description: Choice cancelled
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PayoutChoice'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest:
+    get:
+      tags: [Invest]
+      operationId: getInvestOverview
+      summary: Invest overview or onboarding state
+      description: 404 invest_not_offered when the landlord does not offer Invest and there is no account; 503 partner_unavailable without a partner.
+      responses:
+        "200":
+          description: Overview
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/InvestOverview'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/portfolios:
+    get:
+      tags: [Invest]
+      operationId: listPortfolios
+      summary: Model portfolios with costs in euro and scenarios for an amount
+      parameters:
+        - name: amount_cents
+          in: query
+          schema: {type: integer, minimum: 2500, maximum: 10000000, default: 100000}
+      responses:
+        "200":
+          description: Portfolios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount: {$ref: '#/components/schemas/Money'}
+                  fee_rate_bps: {type: integer}
+                  current: {type: [string, 'null']}
+                  risk_text: {type: string}
+                  advice_note: {type: string}
+                  items:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Portfolio'
+                        - type: object
+                          properties:
+                            costs: {$ref: '#/components/schemas/Costs'}
+                            scenarios: {$ref: '#/components/schemas/Scenarios'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/appropriateness:
+    get:
+      tags: [Invest]
+      operationId: getAppropriatenessQuestions
+      summary: The knowledge and experience questions and the latest result
+      responses:
+        "200":
+          description: Questions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version: {type: string}
+                  can_answer: {type: boolean}
+                  latest:
+                    oneOf:
+                      - $ref: '#/components/schemas/Appropriateness'
+                      - type: 'null'
+                  questions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key: {type: string}
+                        text: {type: string}
+                        options:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              value: {type: string}
+                              label: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Invest]
+      operationId: answerAppropriateness
+      summary: Submit answers; the result says whether an extra confirmation is required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: object
+                  additionalProperties: {type: string}
+      responses:
+        "201":
+          description: Result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Appropriateness'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/appropriateness/confirm:
+    post:
+      tags: [Invest]
+      operationId: confirmAppropriatenessWarning
+      summary: Confirm the warning after a 'niet passend' result
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [confirm]
+              properties:
+                confirm: {type: boolean, const: true}
+      responses:
+        "200":
+          description: Updated result
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Appropriateness'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/terms:
+    get:
+      tags: [Invest]
+      operationId: getInvestTerms
+      summary: The versioned terms of the partner and of Depiqo Invest
+      responses:
+        "200":
+          description: Terms
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Terms'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Invest]
+      operationId: acceptInvestTerms
+      summary: Accept both terms (versions must match the current ones)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [partner_version, depiqo_version, accept_partner, accept_depiqo]
+              properties:
+                partner_version: {type: string}
+                depiqo_version: {type: string}
+                accept_partner: {type: boolean, const: true}
+                accept_depiqo: {type: boolean, const: true}
+      responses:
+        "200":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accepted: {type: boolean}
+                  partner_version: {type: string}
+                  depiqo_version: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/account:
+    post:
+      tags: [Invest]
+      operationId: openInvestAccount
+      summary: Open the investment account with a portfolio
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [portfolio]
+              properties:
+                portfolio: {type: string, enum: [defensief, neutraal, offensief]}
+      responses:
+        "201":
+          description: Opening
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account: {$ref: '#/components/schemas/InvestAccount'}
+                  message: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/deposit-instructions:
+    get:
+      tags: [Invest]
+      operationId: getInvestDepositInstructions
+      summary: Where the tenant transfers money to invest
+      responses:
+        "200":
+          description: Instructions
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  iban: {type: string}
+                  beneficiary: {type: string}
+                  reference: {type: string}
+                  sandbox: {type: boolean}
+                  note: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/sandbox/deposit:
+    post:
+      tags: [Invest]
+      operationId: simulateInvestDeposit
+      summary: Sandbox only - simulate an incoming transfer
+      description: Exists only while the sandbox is on (never in production); otherwise 404, before login and before any other check.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_cents]
+              properties:
+                amount_cents: {type: integer, minimum: 1, maximum: 10000000}
+      responses:
+        "201":
+          description: Processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result: {type: string}
+                  summary: {$ref: '#/components/schemas/InvestSummary'}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+
+  /invest/orders/quote:
+    post:
+      tags: [Invest]
+      operationId: quoteOrder
+      summary: Costs, scenarios and risk before an order (valid 10 minutes)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [side]
+              properties:
+                side: {type: string, enum: [buy, sell, switch]}
+                amount_cents: {type: integer, minimum: 2500, description: Buy or sell amount}
+                sell_all: {type: boolean}
+                portfolio: {type: string, enum: [defensief, neutraal, offensief], description: Target portfolio for a switch}
+      responses:
+        "201":
+          description: Quote
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Quote'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/orders:
+    get:
+      tags: [Invest]
+      operationId: listOrders
+      summary: Orders, newest first
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of orders
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/Order'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Invest]
+      operationId: placeOrder
+      summary: Place the order of a quote; requires risk_acknowledged=true and an Idempotency-Key
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quote_id, risk_acknowledged]
+              properties:
+                quote_id: {type: string}
+                risk_acknowledged: {type: boolean, const: true}
+      responses:
+        "201":
+          description: Order placed (executed later at the next price)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  order:
+                    oneOf:
+                      - $ref: '#/components/schemas/Order'
+                      - type: 'null'
+                  message: {type: string}
+                  account: {$ref: '#/components/schemas/InvestAccount'}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/iban:
+    post:
+      tags: [Invest]
+      operationId: registerWithdrawalIban
+      summary: Register the own account for withdrawals (fresh 2FA code makes it usable at once, else after 7 days)
+      description: With 2FA on, only a six-digit TOTP code is accepted (never a recovery code). Wrong codes share the counters of the second login step; after 5 in 15 minutes the answer is 429 too_many_attempts.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [iban]
+              properties:
+                iban: {type: string}
+                code: {type: string, description: TOTP code when two-factor authentication is on}
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account: {$ref: '#/components/schemas/InvestAccount'}
+                  usable_from: {type: string, format: date-time}
+                  usable_now: {type: boolean}
+                  cooling_off_days: {type: integer}
+                  message: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "429": {$ref: '#/components/responses/TooManyRequests'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/withdrawals:
+    get:
+      tags: [Invest]
+      operationId: listWithdrawals
+      summary: Withdrawals, newest first
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of withdrawals
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/Withdrawal'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Invest]
+      operationId: withdraw
+      summary: Withdraw free money to the registered own account
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKeyRequired'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_cents]
+              properties:
+                amount_cents: {type: integer, minimum: 1}
+      responses:
+        "201":
+          description: Withdrawal placed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  withdrawal: {$ref: '#/components/schemas/Withdrawal'}
+                  message: {type: string}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/transactions:
+    get:
+      tags: [Invest]
+      operationId: listInvestTransactions
+      summary: Cash movements on the investment account, newest first
+      parameters:
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Cursor'
+      responses:
+        "200":
+          description: A page of transactions
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Page'
+                  - type: object
+                    properties:
+                      items: {type: array, items: {$ref: '#/components/schemas/InvestTransaction'}}
+        "400": {$ref: '#/components/responses/BadRequest'}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/statements:
+    get:
+      tags: [Invest]
+      operationId: listStatements
+      summary: Monthly statements
+      responses:
+        "200":
+          description: Statements
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        period: {type: string, pattern: '^\d{4}-\d{2}$'}
+                        label: {type: string}
+                        download_path: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/statements/{period}:
+    get:
+      tags: [Invest]
+      operationId: downloadStatement
+      summary: Monthly statement as PDF
+      parameters:
+        - name: period
+          in: path
+          required: true
+          schema: {type: string, pattern: '^\d{4}-\d{2}$'}
+      responses:
+        "200":
+          description: PDF
+          content:
+            application/pdf: {schema: {type: string, format: binary}}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+  /invest/fee-change:
+    get:
+      tags: [Invest]
+      operationId: getFeeChange
+      summary: A proposed new service fee, if any
+      responses:
+        "200":
+          description: Current and proposed fee
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_bps: {type: [integer, 'null']}
+                  pending_bps: {type: [integer, 'null']}
+                  proposed_at: {type: [string, 'null'], format: date-time}
+                  accept_text: {type: [string, 'null']}
+                  note: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+    post:
+      tags: [Invest]
+      operationId: acceptFeeChange
+      summary: Accept the proposed service fee (applies from today)
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [accept]
+              properties:
+                accept: {type: boolean, const: true}
+      responses:
+        "200":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account: {$ref: '#/components/schemas/InvestAccount'}
+                  message: {type: string}
+        "401": {$ref: '#/components/responses/Unauthorized'}
+        "404": {$ref: '#/components/responses/NotFound'}
+        "409": {$ref: '#/components/responses/Conflict'}
+        "422": {$ref: '#/components/responses/ValidationFailed'}
+        "503": {$ref: '#/components/responses/PartnerUnavailable'}
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque access token (15 minutes), stored hashed on the server.
+
+  parameters:
+    Pid:
+      name: pid
+      in: path
+      required: true
+      description: Public id of the deposit. Another tenant's pid answers 404.
+      schema: {type: string}
+    InviteToken:
+      name: token
+      in: path
+      required: true
+      description: The token from the invitation link /t/<token>
+      schema: {type: string}
+    Limit:
+      name: limit
+      in: query
+      schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+    Cursor:
+      name: cursor
+      in: query
+      description: The next_cursor of the previous page
+      schema: {type: string}
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      schema: {type: string, example: 'fr-BE,fr;q=0.9'}
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      schema: {type: string, pattern: '^[A-Za-z0-9_\-:.]{8,100}$'}
+    IdempotencyKeyRequired:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema: {type: string, pattern: '^[A-Za-z0-9_\-:.]{8,100}$'}
+
+  responses:
+    BadRequest:
+      description: 'Bad request: invalid_json, invalid_cursor, invalid_limit, idempotency_key_required, invalid_idempotency_key'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Unauthorized:
+      description: 'Not logged in: token_missing, token_invalid, token_expired (refresh), device_revoked, refresh_token_reused, invalid_credentials, invalid_code, mfa_token_invalid'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Forbidden:
+      description: 'Not for this user: staff_not_allowed, not_a_tenant, cookie_auth_not_allowed, invite_for_other_account'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    NotFound:
+      description: 'not_found (also for another tenant''s data), invest_not_offered, quote_not_found, not_available'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Conflict:
+      description: 'The rules do not allow this now: invest_rejected, account_not_active, account_exists, terms_outdated, terms_not_accepted, quote_used, quote_expired, settlement_not_open, payout_choice_closed, identity_not_possible, deposit_closed, deletion_blocked, login_required, use_web, invite_not_accepted, idempotency_in_progress, invest_not_offered, push_token_in_use'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    Gone:
+      description: invite_expired
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    TooLarge:
+      description: file_too_large (request above 12 MB)
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    UnsupportedMediaType:
+      description: unsupported_media_type
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    ValidationFailed:
+      description: 'validation_failed (fields per input), unknown_field, weak_password, invalid_password, reason_required, upload_rejected, amount_below_minimum, idempotency_key_reused, <field>_required (confirm_required, confirm_details_required, risk_acknowledged_required, accept_required, accept_partner_required, accept_depiqo_required)'
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    UpgradeRequired:
+      description: app_update_required (fields.minimum_version)
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    TooManyRequests:
+      description: too_many_attempts, support_rate_limited (with Retry-After)
+      headers:
+        Retry-After: {schema: {type: integer}}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    PartnerUnavailable:
+      description: partner_unavailable - no financial or investment partner (always in production without a real partner). Nothing moved.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+    SettlementResult:
+      description: Settlement and deposit after the answer
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message: {type: string}
+              settlement: {$ref: '#/components/schemas/Settlement'}
+              deposit: {$ref: '#/components/schemas/DepositDetail'}
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message, fields]
+          properties:
+            code: {type: string, description: Stable snake_case code}
+            message: {type: string, description: "In the language of Accept-Language (nl, fr, en)"}
+            fields:
+              type: object
+              additionalProperties: true
+              description: Per input field a message; for some codes extra data (minimum_version, url)
+            detail: {type: string, description: The specific Dutch text when message is a translation}
+
+    Money:
+      type: object
+      required: [cents, currency]
+      properties:
+        cents: {type: integer}
+        currency: {type: string, const: EUR}
+
+    NullableMoney:
+      oneOf:
+        - $ref: '#/components/schemas/Money'
+        - type: 'null'
+
+    Page:
+      type: object
+      required: [items, next_cursor]
+      properties:
+        items: {type: array}
+        next_cursor: {type: [string, 'null']}
+
+    Config:
+      type: object
+      properties:
+        api_version: {type: string}
+        environment: {type: string, enum: [development, staging, production]}
+        banner: {type: [string, 'null'], enum: [STAGING, SANDBOX, null]}
+        languages: {type: array, items: {type: string}}
+        default_language: {type: string}
+        minimum_app_version:
+          type: object
+          properties:
+            ios: {type: string}
+            android: {type: string}
+        features: {type: object, additionalProperties: true}
+        support_email: {type: string}
+        links:
+          type: object
+          properties:
+            privacy: {type: string}
+            terms: {type: string}
+            password_reset: {type: string, description: Password reset stays on the web}
+            security: {type: string}
+            web: {type: string}
+        sandbox: {type: boolean}
+
+    DeviceInput:
+      type: object
+      required: [name, platform, app_version]
+      properties:
+        name: {type: string, maxLength: 80}
+        platform: {type: string, enum: [ios, android]}
+        app_version: {type: string, pattern: '^\d{1,3}(\.\d{1,3}){0,2}$'}
+
+    TokenPair:
+      type: object
+      properties:
+        access_token: {type: string}
+        access_expires_at: {type: string, format: date-time}
+        refresh_token: {type: string}
+        refresh_expires_at: {type: string, format: date-time}
+        token_type: {type: string, const: Bearer}
+        expires_in: {type: integer, description: Seconds (900)}
+        device_id: {type: integer}
+
+    Session:
+      allOf:
+        - $ref: '#/components/schemas/TokenPair'
+        - type: object
+          properties:
+            mfa_required: {type: boolean, const: false}
+            user:
+              type: object
+              properties:
+                id: {type: integer}
+                name: {type: string}
+                email: {type: string}
+
+    MfaChallenge:
+      type: object
+      properties:
+        mfa_required: {type: boolean, const: true}
+        mfa_token: {type: string}
+        mfa_expires_at: {type: string, format: date-time}
+        message: {type: string}
+
+    Device:
+      type: object
+      properties:
+        id: {type: integer}
+        name: {type: string}
+        platform: {type: string, enum: [ios, android]}
+        app_version: {type: string}
+        created_at: {type: string, format: date-time}
+        last_seen_at: {type: string, format: date-time}
+        second_factor: {type: boolean}
+        current: {type: boolean}
+
+    Invite:
+      type: object
+      properties:
+        landlord: {type: object, properties: {name: {type: string}}}
+        address: {$ref: '#/components/schemas/Address'}
+        amount: {$ref: '#/components/schemas/Money'}
+        reference: {type: string}
+        region: {type: string, enum: [NL, VL, BRU]}
+        term: {type: string}
+        holding: {type: string, enum: [depiqo, external]}
+        tenant: {type: object, properties: {name: {type: string}, email: {type: string}}}
+        existing_account: {type: boolean}
+        expires_at: {type: string, format: date-time}
+        check: {type: string}
+
+    Address:
+      type: object
+      properties:
+        street: {type: string}
+        postcode: {type: string}
+        city: {type: string}
+
+    NotificationPreferences:
+      type: object
+      properties:
+        push:
+          type: object
+          additionalProperties: false
+          properties:
+            deposit: {type: boolean}
+            invest: {type: boolean}
+            security: {type: boolean}
+            support: {type: boolean}
+
+    Me:
+      type: object
+      properties:
+        id: {type: integer}
+        name: {type: string}
+        email: {type: string}
+        two_factor_enabled: {type: boolean}
+        recovery_codes_left: {type: [integer, 'null']}
+        created_at: {type: string, format: date-time}
+        language: {type: string, enum: [nl, fr, en]}
+        deposit_count: {type: integer}
+        notification_preferences: {$ref: '#/components/schemas/NotificationPreferences'}
+        invest:
+          type: object
+          properties:
+            visibility: {type: string, enum: [hidden, unavailable, available]}
+            eligible: {type: boolean}
+            offered_by_landlord: {type: boolean}
+            account_status: {type: [string, 'null'], enum: [draft, pending, active, closed, null]}
+
+    DataExport:
+      type: object
+      properties:
+        format: {type: string}
+        exported_at: {type: string, format: date-time}
+        user: {type: object}
+        deposits: {type: array, items: {type: object}}
+        invest: {type: [object, 'null']}
+        notifications: {type: array, items: {type: object}}
+        support: {type: array, items: {type: object}}
+        devices: {type: array, items: {type: object}}
+        audit_log: {type: array, items: {type: object}}
+
+    DeletionInfo:
+      type: object
+      properties:
+        possible: {type: boolean}
+        blockers:
+          type: array
+          items:
+            type: object
+            properties:
+              code: {type: string, enum: [open_deposit, invest_pending, invest_balance]}
+              message: {type: string}
+              next_step: {type: string}
+              deposit_pid: {type: string}
+        deleted_now: {type: array, items: {type: string}}
+        kept_by_law: {type: array, items: {type: string}}
+        how: {type: string}
+
+    Notification:
+      type: object
+      properties:
+        id: {type: integer}
+        type:
+          type: string
+          enum: [invite, payment_received, deposit_secured, settlement_proposed, dispute_resolved, payout_completed, release_confirmed,
+                 invest_order_executed, invest_order_failed, invest_withdrawal_completed, invest_withdrawal_failed, invest_fee_change,
+                 new_device_login, support_reply]
+        category: {type: string, enum: [deposit, invest, security, support]}
+        title: {type: string}
+        body: {type: string}
+        params: {type: object, additionalProperties: true}
+        language: {type: string}
+        link_path: {type: [string, 'null'], description: 'Deep link path, e.g. /app-link/borg/<pid>'}
+        created_at: {type: string, format: date-time}
+        read_at: {type: [string, 'null'], format: date-time}
+
+    ActivityItem:
+      type: object
+      properties:
+        type: {type: string, enum: [deposit_event, invest_transaction]}
+        id: {type: integer}
+        at: {type: string, format: date-time}
+        key: {type: string}
+        params: {type: object, additionalProperties: true}
+        message: {type: string}
+        event_type: {type: string}
+        deposit_pid: {type: string}
+        deposit_reference: {type: string}
+        kind: {type: string}
+        amount: {$ref: '#/components/schemas/Money'}
+        day: {type: string, format: date}
+
+    SupportTicket:
+      type: object
+      properties:
+        id: {type: integer}
+        category: {type: string, enum: [deposit, invest, account, app, other]}
+        category_label: {type: string}
+        subject: {type: string}
+        deposit_pid: {type: [string, 'null']}
+        status: {type: string, enum: [open, answered, closed]}
+        status_label: {type: string}
+        created_at: {type: string, format: date-time}
+        updated_at: {type: string, format: date-time}
+        messages:
+          type: array
+          items:
+            type: object
+            properties:
+              author: {type: string, enum: [tenant, staff]}
+              body: {type: string}
+              created_at: {type: string, format: date-time}
+
+    Amount:
+      type: object
+      properties:
+        key: {type: string, enum: [obligation, received, locked, interest]}
+        label: {type: string}
+        value: {$ref: '#/components/schemas/NullableMoney'}
+        known: {type: boolean, description: "false means unknown, never the obligation amount"}
+        explanation: {type: string}
+        explanation_key: {type: string}
+
+    DepositSummary:
+      type: object
+      properties:
+        pid: {type: string}
+        reference: {type: string}
+        region: {type: string, enum: [NL, VL, BRU]}
+        term: {type: string}
+        holding: {type: string, enum: [depiqo, external]}
+        provider_kind: {type: [string, 'null']}
+        evidence_level: {type: [string, 'null'], enum: [declared, document, verified, legal, null]}
+        address: {$ref: '#/components/schemas/Address'}
+        landlord: {type: object, properties: {name: {type: string}}}
+        status: {type: string, description: Stable status key}
+        status_label: {type: string}
+        display_key: {type: string, description: 'Status refined for display, e.g. secured_bank_confirmed, awaiting_guarantee, released'}
+        display_label: {type: string}
+        tone: {type: string}
+        amounts: {type: array, items: {$ref: '#/components/schemas/Amount'}}
+        updated_at: {type: string, format: date-time}
+
+    DepositDetail:
+      allOf:
+        - $ref: '#/components/schemas/DepositSummary'
+        - type: object
+          properties:
+            rent: {$ref: '#/components/schemas/Money'}
+            lease_start: {type: string, format: date}
+            lease_end: {type: [string, 'null'], format: date}
+            move_out_date: {type: [string, 'null'], format: date}
+            progress:
+              type: object
+              properties:
+                current: {type: [string, 'null']}
+                on_hold: {type: boolean}
+                steps:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      code: {type: string}
+                      label: {type: string}
+                      state: {type: string, enum: [done, current, upcoming, cancelled]}
+            location: {$ref: '#/components/schemas/Location'}
+            deadline:
+              oneOf:
+                - type: 'null'
+                - type: object
+                  properties:
+                    date: {type: string, format: date}
+                    statutory: {type: boolean}
+                    why: {type: string}
+                    days_left: {type: integer}
+            release_rule: {type: string}
+            next_action:
+              oneOf:
+                - type: 'null'
+                - type: object
+                  properties:
+                    code: {type: string, enum: [verify_identity, pay, wait, respond_settlement, choose_payout_destination, release_form]}
+                    label: {type: string}
+                    description: {type: string}
+            payment_instructions:
+              oneOf:
+                - type: 'null'
+                - type: object
+                  properties:
+                    iban: {type: string}
+                    beneficiary: {type: string}
+                    amount: {$ref: '#/components/schemas/Money'}
+                    reference: {type: string}
+                    warning: {type: string}
+            payment_problem: {type: [string, 'null']}
+            payout:
+              oneOf:
+                - type: 'null'
+                - type: object
+                  properties:
+                    to_tenant: {$ref: '#/components/schemas/Money'}
+                    to_landlord: {$ref: '#/components/schemas/Money'}
+            release_form_available: {type: boolean}
+            interest_note: {type: [string, 'null']}
+            events: {type: array, items: {$ref: '#/components/schemas/DepositEvent'}}
+            events_path: {type: string}
+
+    Location:
+      type: object
+      properties:
+        kind: {type: string, description: 'depiqo_account or a provider kind (verhuurder_rekening, bank_geblokkeerd, e_depo, verzekering_tak26, borggarantie, ocmw, anders, unknown)'}
+        label: {type: string}
+        account_open: {type: [boolean, 'null']}
+        sandbox: {type: boolean}
+        interest_rate_bps: {type: [integer, 'null']}
+        provider_name: {type: [string, 'null']}
+        reference_label: {type: [string, 'null']}
+        reference: {type: [string, 'null']}
+        assurance: {type: [object, 'null']}
+        evidence:
+          oneOf:
+            - type: 'null'
+            - type: object
+              properties:
+                level: {type: string}
+                label: {type: string}
+                tenant: {type: string}
+        guarantee:
+          oneOf:
+            - type: 'null'
+            - type: object
+              properties:
+                kind: {type: string}
+                text: {type: string}
+                expires_on: {type: [string, 'null'], format: date}
+                days_left: {type: [integer, 'null']}
+                warning: {type: [string, 'null']}
+                warning_key: {type: [string, 'null'], enum: [expired, expiring, null]}
+
+    DepositEvent:
+      type: object
+      properties:
+        id: {type: integer}
+        at: {type: string, format: date-time}
+        type: {type: string, enum: [status, payment, interest]}
+        key: {type: string, enum: [status_changed, payment_received, interest_credited]}
+        params: {type: object, additionalProperties: true, description: 'from_status, to_status, amount_cents, total_cents...'}
+        message: {type: string}
+        actor: {type: string}
+
+    Document:
+      type: object
+      properties:
+        id: {type: integer}
+        kind: {type: string}
+        kind_label: {type: string}
+        filename: {type: string}
+        mime: {type: string, enum: [application/pdf, image/jpeg, image/png]}
+        size_bytes: {type: integer}
+        created_at: {type: string, format: date-time}
+        uploaded_by: {type: string, enum: [tenant, landlord]}
+        download_path: {type: string}
+
+    Settlement:
+      type: object
+      properties:
+        status: {type: string, enum: [proposed, agreed, disputed]}
+        proposed_at: {type: [string, 'null'], format: date-time}
+        responded_at: {type: [string, 'null'], format: date-time}
+        deposit_amount: {$ref: '#/components/schemas/Money'}
+        lines:
+          type: array
+          items:
+            type: object
+            properties:
+              category: {type: string, enum: [damage, rent_arrears, service_costs, energy, other]}
+              category_label: {type: string}
+              description: {type: string}
+              amount: {$ref: '#/components/schemas/Money'}
+              document_id: {type: [integer, 'null']}
+              document_path: {type: [string, 'null']}
+        deductions: {$ref: '#/components/schemas/Money'}
+        back_to_tenant: {$ref: '#/components/schemas/Money'}
+        interest: {$ref: '#/components/schemas/NullableMoney'}
+        can_respond: {type: boolean}
+        tenant_comment: {type: [string, 'null']}
+        dispute: {type: [object, 'null']}
+        note: {type: string}
+
+    PayoutChoice:
+      type: object
+      properties:
+        available: {type: boolean}
+        destination: {type: string, enum: [own, invest]}
+        choice:
+          oneOf:
+            - type: 'null'
+            - type: object
+              properties:
+                status: {type: string, enum: [chosen, cancelled, fallback, paid, unrecorded]}
+                chosen_at: {type: string, format: date-time}
+                paid: {$ref: '#/components/schemas/NullableMoney'}
+                paid_at: {type: [string, 'null'], format: date-time}
+        partner: {type: [string, 'null']}
+        risk_text: {type: string}
+        confirmation_text: {type: string}
+        explanation: {type: string}
+
+    Portfolio:
+      type: object
+      properties:
+        code: {type: string, enum: [defensief, neutraal, offensief]}
+        label: {type: string}
+        risk: {type: integer}
+        risk_scale: {type: integer}
+        summary: {type: string}
+        funds:
+          type: array
+          items:
+            type: object
+            properties:
+              fund: {type: string}
+              name: {type: string}
+              asset: {type: string}
+              weight_bps: {type: integer}
+              ongoing_charges_bps: {type: number}
+
+    Costs:
+      type: object
+      properties:
+        amount: {$ref: '#/components/schemas/Money'}
+        service_fee_bps: {type: integer}
+        ongoing_charges_bps: {type: number}
+        transaction_cost_bps: {type: integer}
+        service_1y: {$ref: '#/components/schemas/Money'}
+        fund_1y: {$ref: '#/components/schemas/Money'}
+        transactions: {$ref: '#/components/schemas/Money'}
+        total_1y: {$ref: '#/components/schemas/Money'}
+        service_3y: {$ref: '#/components/schemas/Money'}
+        fund_3y: {$ref: '#/components/schemas/Money'}
+        total_3y: {$ref: '#/components/schemas/Money'}
+        percent_per_year: {type: number}
+        note: {type: string}
+
+    Scenarios:
+      type: object
+      properties:
+        note: {type: string}
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              key: {type: string, enum: [gunstig, neutraal, ongunstig]}
+              label: {type: string}
+              yearly_return: {type: number}
+              value_after_1y: {$ref: '#/components/schemas/Money'}
+              value_after_3y: {$ref: '#/components/schemas/Money'}
+              result_1y: {$ref: '#/components/schemas/Money'}
+              result_3y: {$ref: '#/components/schemas/Money'}
+
+    Appropriateness:
+      type: object
+      properties:
+        result: {type: string, enum: [passend, niet_passend]}
+        reasons: {type: array, items: {type: string}}
+        reason_keys: {type: array, items: {type: string, enum: [thinks_no_loss, cannot_bear_loss, short_horizon, goal_mismatch, limited_knowledge, other]}}
+        created_at: {type: string, format: date-time}
+        warning_confirmed_at: {type: [string, 'null'], format: date-time}
+        may_continue: {type: boolean}
+        requires_confirmation: {type: boolean}
+        confirmation_text: {type: [string, 'null']}
+        risk_text: {type: string}
+
+    Terms:
+      type: object
+      properties:
+        partner:
+          type: object
+          properties:
+            name: {type: string}
+            version: {type: string}
+            text: {type: string}
+        depiqo:
+          type: object
+          properties:
+            version: {type: string}
+            text: {type: string}
+        accepted: {type: [object, 'null']}
+        risk_text: {type: string}
+
+    InvestAccount:
+      type: object
+      properties:
+        reference: {type: string}
+        status: {type: string, enum: [draft, pending, active, closed]}
+        status_label: {type: string}
+        portfolio: {type: [string, 'null']}
+        portfolio_label: {type: [string, 'null']}
+        pending_switch: {type: [string, 'null']}
+        switch_note: {type: [string, 'null']}
+        fee_rate_bps: {type: [integer, 'null']}
+        pending_fee_bps: {type: [integer, 'null']}
+        own_iban:
+          oneOf:
+            - type: 'null'
+            - type: object
+              properties:
+                masked: {type: string}
+                registered_at: {type: string, format: date-time}
+                usable_from: {type: string, format: date-time}
+                usable_now: {type: boolean}
+        opened_at: {type: [string, 'null'], format: date-time}
+        activated_at: {type: [string, 'null'], format: date-time}
+
+    InvestSummary:
+      type: object
+      properties:
+        day: {type: string, format: date}
+        value: {$ref: '#/components/schemas/Money'}
+        invested_value: {$ref: '#/components/schemas/Money'}
+        cash: {$ref: '#/components/schemas/Money'}
+        available: {$ref: '#/components/schemas/Money'}
+        reserved: {$ref: '#/components/schemas/Money'}
+        net_deposits: {$ref: '#/components/schemas/Money'}
+        result: {$ref: '#/components/schemas/Money'}
+        result_pct: {type: [number, 'null']}
+        fees_paid: {$ref: '#/components/schemas/Money'}
+        accrued_fee: {$ref: '#/components/schemas/Money'}
+        sellable: {$ref: '#/components/schemas/Money'}
+        fee_rate_bps: {type: integer}
+        positions:
+          type: array
+          items:
+            type: object
+            properties:
+              fund: {type: string}
+              name: {type: string}
+              asset: {type: string}
+              units_1e4: {type: integer}
+              units: {type: string}
+              price_1e4: {type: integer}
+              value: {$ref: '#/components/schemas/Money'}
+
+    ChartSeries:
+      type: object
+      description: Per range an array of [date, value_cents]
+      properties:
+        1M: {$ref: '#/components/schemas/Points'}
+        6M: {$ref: '#/components/schemas/Points'}
+        1Y: {$ref: '#/components/schemas/Points'}
+        max: {$ref: '#/components/schemas/Points'}
+
+    Points:
+      type: array
+      items:
+        type: array
+        prefixItems:
+          - {type: string, format: date}
+          - {type: integer}
+        minItems: 2
+        maxItems: 2
+
+    InvestOverview:
+      type: object
+      properties:
+        partner: {type: object, properties: {name: {type: string}, sandbox: {type: boolean}}}
+        role_text: {type: string}
+        separation_text: {type: string}
+        risk_text: {type: string}
+        offered_by_landlord: {type: boolean}
+        minimum_order: {$ref: '#/components/schemas/Money'}
+        account:
+          oneOf:
+            - $ref: '#/components/schemas/InvestAccount'
+            - type: 'null'
+        onboarding:
+          oneOf:
+            - type: 'null'
+            - type: object
+              properties:
+                next_step: {type: string, enum: [appropriateness, confirm_warning, terms, open_account]}
+                offered_by_landlord: {type: boolean}
+                terms_accepted: {type: boolean}
+                appropriateness: {type: [object, 'null']}
+        summary:
+          oneOf:
+            - $ref: '#/components/schemas/InvestSummary'
+            - type: 'null'
+        chart:
+          oneOf:
+            - $ref: '#/components/schemas/ChartSeries'
+            - type: 'null'
+        chart_net_deposits:
+          oneOf:
+            - $ref: '#/components/schemas/ChartSeries'
+            - type: 'null'
+        costs:
+          oneOf:
+            - $ref: '#/components/schemas/Costs'
+            - type: 'null'
+        withdrawals: {type: array, items: {$ref: '#/components/schemas/Withdrawal'}}
+
+    Quote:
+      type: object
+      properties:
+        quote_id: {type: string}
+        side: {type: string, enum: [buy, sell, switch]}
+        amount: {$ref: '#/components/schemas/Money'}
+        sell_all: {type: boolean}
+        portfolio: {$ref: '#/components/schemas/Portfolio'}
+        costs: {type: object, description: 'Costs for buy and switch; transaction costs only for sell'}
+        scenarios:
+          oneOf:
+            - $ref: '#/components/schemas/Scenarios'
+            - type: 'null'
+        risk_text: {type: string}
+        separation_text: {type: string}
+        role_text: {type: string}
+        execution_note: {type: string}
+        available: {$ref: '#/components/schemas/Money'}
+        sellable: {$ref: '#/components/schemas/Money'}
+        current_value: {$ref: '#/components/schemas/Money'}
+        requires_risk_acknowledgement: {type: boolean, const: true}
+        created_at: {type: string, format: date-time}
+        expires_at: {type: string, format: date-time}
+
+    Order:
+      type: object
+      properties:
+        id: {type: integer}
+        side: {type: string, enum: [buy, sell]}
+        portfolio: {type: string}
+        portfolio_label: {type: string}
+        amount: {$ref: '#/components/schemas/Money'}
+        sell_all: {type: boolean}
+        purpose: {type: string, enum: [order, switch_sell, switch_buy]}
+        status: {type: string, enum: [pending, executed, failed]}
+        status_label: {type: string}
+        executed_amount: {$ref: '#/components/schemas/NullableMoney'}
+        executed_day: {type: [string, 'null'], format: date}
+        created_at: {type: string, format: date-time}
+        error: {type: [string, 'null']}
+
+    Withdrawal:
+      type: object
+      properties:
+        id: {type: integer}
+        amount: {$ref: '#/components/schemas/Money'}
+        iban_masked: {type: string}
+        status: {type: string, enum: [pending, sent, acknowledged, confirmed, failed]}
+        status_label: {type: string}
+        day: {type: string, format: date}
+        created_at: {type: string, format: date-time}
+
+    InvestTransaction:
+      type: object
+      properties:
+        id: {type: integer}
+        kind: {type: string, enum: [deposit, payout_in, buy, sell, withdrawal, fee]}
+        amount: {$ref: '#/components/schemas/Money'}
+        description: {type: string}
+        day: {type: string, format: date}
+        at: {type: string, format: date-time}

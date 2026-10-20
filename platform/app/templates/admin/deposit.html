@@ -1,0 +1,58 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf, status_d, evidence_tag, sandbox_tag, holding, figures %}
+{% block title %}{{ d.reference }}{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb"><a href="{{ url_for('admin.reconciliation') }}">Afstemming</a> / <span class="mono">{{ d.reference }}</span> · {{ org.name }}</p><h1>{{ prop.address }}, {{ prop.city }}</h1></div>
+  <div class="row">{{ holding(d.holding) }}{{ sandbox_tag(acct.provider if acct else None) }} {{ status_d(d) }} {{ evidence_tag(d) }}</div></div>
+<section class="panel"><div class="panel-h"><h2>Bedragen</h2></div><div class="panel-b">{{ figures(balances) }}</div></section>
+<div class="grid g-main mt">
+  <div class="stack">
+    {% if d.holding == 'external' %}
+    <section class="panel" id="bewijs"><div class="panel-h"><h2>Bewijs vastleggen (Depiqo)</h2>{{ evidence_tag(d) }}</div>
+      <div class="panel-b stack">
+        {% if not d.evidence_level %}<p class="muted">De beheerder heeft de ontvangst nog niet verklaard.</p>
+        {% elif d.status in (S.CLOSED, S.CANCELLED) %}<p class="muted">Dossier gesloten.</p>
+        {% else %}
+        {% if d.evidence_level in ('declared', 'document') %}
+        <form class="stack" method="post" action="{{ url_for('admin.set_evidence', pid=d.pid) }}">{{ csrf() }}<input type="hidden" name="level" value="verified">
+          <h3 class="h3">Extern geverifieerd</h3>
+          <div class="field"><label for="note-v">Hoe is de ontvangst geverifieerd?</label><textarea id="note-v" name="note" placeholder="Bijvoorbeeld: bankafschrift opgevraagd bij de beheerder en gecontroleerd op naam, bedrag en datum."></textarea></div>
+          <div class="field"><label for="doc-v">Document (optioneel)</label><select id="doc-v" name="document_id"><option value="">Geen</option>{% for doc in docs if doc.kind in ('bankbewijs', 'blokkering') %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select></div>
+          <button class="btn btn-line">Vastleggen als extern geverifieerd</button></form>
+        {% endif %}
+        {% if d.evidence_level != 'legal' %}
+        <form class="stack" method="post" action="{{ url_for('admin.set_evidence', pid=d.pid) }}">{{ csrf() }}<input type="hidden" name="level" value="legal">
+          <h3 class="h3">Juridische zekerheid</h3>
+          {% if d.provider_kind == 'verhuurder_rekening' %}<p class="note warn">Geld op een rekening van de verhuurder is niet juridisch geblokkeerd. Dit niveau kan pas als de aanbieder is aangepast.</p>{% elif evidence_hint(d.provider_kind, 'legal') %}<p class="small muted">Past bij deze aanbieder: {{ evidence_hint(d.provider_kind, 'legal') }}.</p>{% endif %}
+          <div class="field"><label for="doc-l">Blokkeringsattest of bewijs e-DEPO</label><select id="doc-l" name="document_id"><option value="">Kies een document</option>{% for doc in docs if doc.kind == 'blokkering' %}<option value="{{ doc.id }}">{{ doc.filename }}</option>{% endfor %}</select><span class="hint">De beheerder uploadt het als "Blokkeringsattest of bewijs e-DEPO".</span></div>
+          <div class="field"><label for="note-l">Notitie</label><input id="note-l" name="note"></div>
+          <button class="btn btn-primary">Juridische zekerheid bevestigen</button></form>
+        {% endif %}
+        {% endif %}
+        {% if evidence_history %}<ul class="timeline">{% for e in evidence_history %}<li><span class="dot {{ 'staff' if e.set_by_staff else 'user' }}"></span><div>{{ EVIDENCE[e.level].label }}{% if e.filename %} · {{ e.filename }}{% endif %}{% if e.note %} · {{ e.note }}{% endif %}<div class="meta">{{ e.at|datetime_nl }} · {{ 'Depiqo' if e.set_by_staff else 'Beheerder' }}{% if e.user_name %} ({{ e.user_name }}){% endif %}</div></div></li>{% endfor %}</ul>{% endif %}
+      </div></section>
+    {% endif %}
+    {% if bank_instructions %}
+    <section class="panel"><div class="panel-h"><h2>Opdrachten aan de bank</h2></div>
+      <div class="table-wrap"><table class="t"><thead><tr><th>Opdracht</th><th>Sleutel</th><th>Status</th><th class="num">Pogingen</th><th>Melding</th><th></th></tr></thead><tbody>
+      {% for i in bank_instructions %}<tr><td>{{ INSTRUCTION_KINDS[i.kind] }}</td><td class="mono small">{{ i.idempotency_key }}</td><td>{{ INSTRUCTION_STATUSES[i.status] }}</td><td class="num">{{ i.attempts }}</td><td class="small">{{ i.last_error or '' }}</td>
+        <td>{% if i.status == 'failed' %}<form method="post" action="{{ url_for('admin.retry', instr_id=i.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Opnieuw</button></form>{% endif %}</td></tr>{% endfor %}
+      </tbody></table></div></section>
+    {% endif %}
+    <section class="panel"><div class="panel-h"><h2>Audittrail</h2></div>
+      <ul class="timeline panel-b">{% for e in events %}<li><span class="dot {{ e.actor_kind }}"></span><div>{{ e.message }}<div class="meta">{{ e.at|datetime_nl }}</div></div></li>{% endfor %}</ul></section>
+  </div>
+  <aside class="stack">
+    <section class="panel"><div class="panel-h"><h2>Gegevens</h2></div>
+      <dl class="facts panel-b"><dt>Organisatie</dt><dd>{{ org.name }}</dd><dt>Huurder</dt><dd>{{ tenant.name }}</dd><dt>Regio</dt><dd>{{ rules.name }}</dd>
+        <dt>Rekening</dt><dd class="mono">{{ (acct.iban if acct else d.external_iban)|iban or '—' }}</dd>
+        {% if d.holding == 'external' %}<dt>Aanbieder</dt><dd>{{ provider_label(d.provider_kind) }}{% if d.provider_name %}<br><span class="small muted">{{ d.provider_name }}</span>{% endif %}</dd>
+        <dt>Referentie</dt><dd class="mono wrap">{{ d.provider_reference or '—' }}</dd>
+        {% if d.guarantee_expires_on %}<dt>Garantie tot</dt><dd>{{ d.guarantee_expires_on|date_nl }}</dd>{% endif %}{% endif %}
+        <dt>Regels</dt><dd class="small">versie {{ d.rule_version }}</dd></dl></section>
+    <section class="panel"><div class="panel-h"><h2>Documenten</h2></div>
+      <div class="table-wrap"><table class="t"><tbody>{% for doc in docs %}<tr><td><a href="{{ url_for('admin.download', doc_id=doc.id) }}">{{ doc.filename }}</a><div class="small muted">{{ KINDS[doc.kind] }}</div></td></tr>
+      {% else %}<tr><td class="empty">Geen documenten.</td></tr>{% endfor %}</tbody></table></div></section>
+  </aside>
+</div>
+{% endblock %}

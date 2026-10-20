@@ -1,0 +1,10 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf, mark, status, holding, steps, deadline_box, flashes %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1>{{ title }}</h1>
+<div class="card">
+  <p>{{ text }}</p>
+  <a class="btn btn-dark" href="{{ url_for('auth.index') }}">Naar het begin</a>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf, mark, flashes, figures %}
+{% block title %}Mijn borgen{% endblock %}
+{% block body %}
+<div class="w">
+  <header class="w-top"><div class="bar"><span class="brand">{{ mark() }}depiqo</span>
+    <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form></div>
+    {% include "wallet/_tabs.html" %}
+    <div class="w-amount"><small>Welkom, {{ g.user.name.split(' ')[0] }}</small><b>Mijn borgen</b></div></header>
+  <main class="w-body">
+    {{ flashes() }}
+    {% for r in rows %}
+    {% set label, tone = display_status(r, True) %}
+    <a class="w-card" href="{{ url_for('wallet.deposit', pid=r.pid) }}"><div class="spread"><b>{{ r.address }}, {{ r.city }}</b><span class="badge t-{{ tone }}">{{ label }}</span></div><span class="muted small">{{ r.org_name }}</span>
+      {{ figures(figures_for[r.id], compact=True) }}</a>
+    {% else %}<div class="w-card"><p>Je hebt nog geen borg via Depiqo.</p></div>{% endfor %}
+  </main>
+  <p class="w-foot"><a href="{{ url_for('auth.security') }}">Beveiliging van je account</a></p>
+</div>
+{% endblock %}

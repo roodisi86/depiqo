@@ -1,0 +1,59 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf, status, status_d, partner_banner %}
+{% block title %}Depiqo-beheer{% endblock %}
+{% block content %}
+    <div class="topbar"><h1>Depiqo-beheer</h1>
+      <div class="row"><span class="small muted">Bankpartner</span>{% if partner.available %}<span class="badge {{ 't-wait' if partner.sandbox else 't-ok' }}">{{ partner.display_name }}</span>{% else %}<span class="badge t-alert">Geen partner</span>{% endif %}</div></div>
+    {{ partner_banner(partner) }}
+    <section class="panel" aria-labelledby="org-h"><div class="panel-h"><h2 id="org-h">Organisaties</h2><span class="small muted">{{ orgs|length }}</span></div>
+      <div class="table-wrap"><table class="t orgs">
+        <thead><tr><th>Organisatie</th><th>Plan</th><th class="num">Lopend</th><th class="num">Gebruikers</th><th>Pilot</th><th>Beheerder uitnodigen</th></tr></thead>
+        <tbody>{% for o in orgs %}{% set p = plans[o.id] %}
+        <tr class="has-sub"><td><b>{{ o.name }}</b><div class="small muted">{{ 'België' if o.country == 'BE' else 'Nederland' }}</div></td>
+          <td><span class="tag {{ 'depiqo' if p.code != 'essential' }}">{{ p.label }}</span><div class="small muted">{{ p.base_cents|eur }} · {{ p.included }} inbegrepen</div></td>
+          <td class="num">{{ o.active }}</td><td class="num">{{ o.members }}</td>
+          <td>{% if o.pilot_until %}tot {{ o.pilot_until|date_nl }}{% else %}<span class="muted">—</span>{% endif %}</td>
+          <td><form class="row invite-form" method="post" action="{{ url_for('admin.invite_admin', org_id=o.id) }}">{{ csrf() }}<label class="sr" for="inv-{{ o.id }}">E-mail beheerder</label><input id="inv-{{ o.id }}" name="email" type="email" placeholder="beheerder@bedrijf.nl"><button class="btn btn-sm btn-line">Uitnodigen</button></form></td></tr>
+        <tr class="sub"><td colspan="6"><details><summary class="small"><b>Plan en prijzen wijzigen</b></summary>
+          <form class="plan-form" method="post" action="{{ url_for('admin.set_plan', org_id=o.id) }}">{{ csrf() }}
+            <div class="field"><label for="from-{{ o.id }}">Vanaf maand</label><input id="from-{{ o.id }}" name="valid_from" value="{{ this_month }}" placeholder="JJJJ-MM"></div>
+            <div class="field"><label for="plan-{{ o.id }}">Plan</label><select id="plan-{{ o.id }}" name="plan">{% for code, x in PLANS.items() %}<option value="{{ code }}" {{ 'selected' if code == p.code }}>{{ x.label }}</option>{% endfor %}</select></div>
+            <div class="field"><label for="base-{{ o.id }}">Basis per maand (€)</label><input id="base-{{ o.id }}" name="base_cents" inputmode="decimal" value="{{ '%.2f'|format(p.base_cents / 100)|replace('.', ',') }}"></div>
+            <div class="field"><label for="incl-{{ o.id }}">Inbegrepen dossiers</label><input id="incl-{{ o.id }}" name="included" inputmode="numeric" value="{{ p.included }}"></div>
+            <div class="field"><label for="ext-{{ o.id }}">Extra, elders (€)</label><input id="ext-{{ o.id }}" name="extra_external_cents" inputmode="decimal" value="{{ '%.2f'|format(p.extra_external_cents / 100)|replace('.', ',') }}"></div>
+            <div class="field"><label for="dep-{{ o.id }}">Extra, Depiqo-rekening (€)</label><input id="dep-{{ o.id }}" name="extra_depiqo_cents" inputmode="decimal" value="{{ '%.2f'|format(p.extra_depiqo_cents / 100)|replace('.', ',') }}"></div>
+            <div class="field"><label for="new-{{ o.id }}">Per nieuw dossier (€)</label><input id="new-{{ o.id }}" name="new_dossier_cents" inputmode="decimal" value="{{ '%.2f'|format(p.new_dossier_cents / 100)|replace('.', ',') }}"></div>
+            <button class="btn btn-sm btn-primary">Opslaan</button>
+          </form>
+          <p class="small muted">De bedragen gelden alleen bij Enterprise. Essential en Professional hebben vaste prijzen. Een factuur gebruikt het plan dat geldt op de eerste dag van de maand.</p></details></td></tr>
+        {% endfor %}</tbody></table></div></section>
+    <div class="grid g-main mt">
+      <div class="stack">
+        <section class="panel"><div class="panel-h"><h2>Afwijkingen</h2><a class="small" href="{{ url_for('admin.reconciliation') }}">Afstemming openen ({{ totals.exceptions }})</a></div>
+          <div class="table-wrap"><table class="t"><tbody>
+          {% for r in exceptions %}<tr><td><a class="mono" href="{{ url_for('admin.deposit', pid=r.d.pid) }}">{{ r.d.reference }}</a><div class="small muted">{{ r.d.org_name }}</div></td><td>{{ status_d(r.d) }}</td><td class="small">{{ r.exceptions|join('. ') }}</td></tr>
+          {% else %}<tr><td class="empty">Geen afwijkingen.</td></tr>{% endfor %}</tbody></table></div></section>
+        <section class="panel"><div class="panel-h"><h2>Opdrachten aan de bank</h2>
+            <form method="post" action="{{ url_for('admin.dispatch') }}">{{ csrf() }}<input type="hidden" name="back" value="/admin"><button class="btn btn-sm btn-primary">Opdrachten versturen</button></form></div>
+          <div class="table-wrap"><table class="t"><thead><tr><th>Dossier</th><th>Opdracht</th><th>Status</th><th class="num">Pogingen</th><th>Melding</th><th></th></tr></thead><tbody>
+          {% for i in instructions %}<tr><td><a class="mono" href="{{ url_for('admin.deposit', pid=i.pid) }}">{{ i.reference }}</a><div class="small muted">{{ i.org_name }}</div></td><td>{{ INSTRUCTION_KINDS[i.kind] }}</td>
+            <td><span class="badge t-{{ 'alert' if i.status == 'failed' else 'wait' }}">{{ INSTRUCTION_STATUSES[i.status] }}</span></td><td class="num">{{ i.attempts }}</td><td class="small">{{ i.last_error or '' }}</td>
+            <td>{% if i.status == 'failed' %}<form method="post" action="{{ url_for('admin.retry', instr_id=i.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Opnieuw</button></form>{% endif %}</td></tr>
+          {% else %}<tr><td colspan="6" class="empty">Geen openstaande of mislukte opdrachten.</td></tr>{% endfor %}</tbody></table></div></section>
+        <section class="panel"><div class="panel-h"><h2>Wettelijke termijn verstreken</h2></div>
+          <div class="table-wrap"><table class="t"><tbody>{% for d, info in overdue %}<tr><td class="mono">{{ d.reference }}</td><td>{{ d.org_name }}</td><td>{{ status(d.status) }}</td><td>{{ -info.days_left }} dagen te laat</td></tr>
+          {% else %}<tr><td class="empty">Geen dossiers over de termijn.</td></tr>{% endfor %}</tbody></table></div></section>
+        <section class="panel"><div class="panel-h"><h2>Bankberichten met fouten</h2></div>
+          <div class="table-wrap"><table class="t"><tbody>{% for e in bank_errors %}<tr><td class="mono">{{ e.external_event_id }}</td><td>{{ e.type }}</td><td>{{ e.error }}{% if e.retryable %}<div class="small muted">Wordt opnieuw verwerkt als de bank het bericht nog eens stuurt.</div>{% endif %}</td><td class="small">{{ e.received_at|datetime_nl }}</td>
+            <td><form method="post" action="{{ url_for('admin.reprocess_event', event_id=e.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Opnieuw verwerken</button></form></td></tr>
+          {% else %}<tr><td class="empty">Geen fouten.</td></tr>{% endfor %}</tbody></table></div></section>
+      </div>
+      <div class="stack">
+        <form class="panel" method="post" action="{{ url_for('admin.create_org') }}">{{ csrf() }}<div class="panel-h"><h2>Nieuwe organisatie</h2></div>
+          <div class="panel-b stack"><div class="field"><label for="name">Naam</label><input id="name" name="name"></div>
+          <div class="field"><label for="country">Land</label><select id="country" name="country"><option value="NL">Nederland</option><option value="BE">België</option></select></div>
+          <div class="field"><label for="new-plan">Plan</label><select id="new-plan" name="plan"><option value="essential">Essential</option><option value="professional">Professional</option></select><span class="hint">Enterprise stel je daarna in bij de organisatie.</span></div>
+          <label class="check"><input type="checkbox" name="pilot" value="1" checked>Pilot: 6 maanden 100% korting</label><button class="btn btn-primary">Aanmaken</button></div></form>
+      </div>
+    </div>
+{% endblock %}

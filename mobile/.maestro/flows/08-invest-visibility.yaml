@@ -1,0 +1,43 @@
+# (h) Invest tab: hidden for a tenant whose landlord does not offer it (sofie, Stadswonen Gent), shown in the
+# sandbox for daan, with the test banner visible. Never places an order, never opens a buy screen.
+appId: com.getdepiqo.app.dev
+name: "h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan)"
+tags: [invest]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: sofie@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- waitForAnimationToEnd:
+    timeout: 5000
+- assertVisible:
+    id: "tab-profile"
+- assertNotVisible:
+    id: "tab-invest"
+- takeScreenshot: h-01-no-invest-sofie-${LANG_CODE}
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: daan@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "tab-invest"
+    timeout: 30000
+- tapOn:
+    id: "tab-invest"
+- extendedWaitUntil:
+    visible:
+      id: "invest-overview"
+    timeout: 30000
+- assertVisible:
+    id: "env-banner"
+    text: "(?s).*${T_ENV_SANDBOX}.*"
+- takeScreenshot: h-02-invest-daan-${LANG_CODE}

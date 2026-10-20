@@ -1,0 +1,27 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf, provider_fields, provider_tag, status_d %}
+{% block title %}Waar staat de borg{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div><p class="crumb"><a href="{{ url_for('business.deposits') }}">Borgen</a> / <a class="mono" href="{{ url_for('business.deposit', pid=d.pid) }}">{{ d.reference }}</a></p>
+    <h1>Waar staat de borg?</h1></div>
+  <div class="row">{{ provider_tag(d) }} {{ status_d(d) }}</div>
+</div>
+{% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+<div class="grid g-main">
+  <form method="post" class="panel" novalidate data-provider-form data-region="{{ d.region }}">{{ csrf() }}
+    <div class="panel-h"><h2>{{ prop.address }}, {{ prop.city }}</h2><span class="small muted">{{ rules.name }} · {{ d.amount_cents|eur }}</span></div>
+    <div class="panel-b stack">
+      {% if locked %}<p class="note">Depiqo heeft het bewijs voor deze aanbieder geverifieerd. Hier pas je alleen nog de vervaldatum van een garantie aan. Een andere aanbieder leg je vast via Depiqo, met nieuw bewijs.</p>{% endif %}
+      {{ provider_fields(form) }}
+      <div class="row"><button class="btn btn-primary">Opslaan</button><a class="btn btn-line" href="{{ url_for('business.deposit', pid=d.pid) }}">Annuleren</a></div>
+    </div>
+  </form>
+  <aside class="panel panel-b stack small">
+    <span class="label">Waarom dit belangrijk is</span>
+    <p>Je houdt je vastgoedsoftware en je huidige aanbieders. Depiqo houdt bij waar elke borg staat, zodat je al je borgen op één plek ziet.</p>
+    <p>De soort bepaalt welk bewijs past en welk vrijgaveformulier je bij het vertrek krijgt.</p>
+    <p class="muted">Elke wijziging staat in de audittrail van het dossier.</p>
+  </aside>
+</div>
+{% endblock %}

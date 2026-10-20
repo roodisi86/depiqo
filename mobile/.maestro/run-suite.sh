@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# Runs every Maestro flow in .maestro/flows once, in order, against the installed "Depiqo Dev" app.
+#
+#   mobile/.maestro/run-suite.sh <android|ios> <nl|fr|en> <out-dir>
+#
+# Needs: maestro on PATH, node, python3, a running CI backend (.github/scripts/start_backend.sh) and
+#   E2E_WORK  the backend's work dir (invite_token, totp_secret, db/depiqo.sqlite3)
+#   DEVICE    iOS only: the simulator UDID
+# Writes to <out-dir>: junit/<flow>.xml, debug/<flow>/ (Maestro's own logs and failure screenshots),
+# screenshots/*.png (takeScreenshot), maestro-env.txt (the UI strings used) and results.txt.
+# Every flow runs even when an earlier one failed; the exit code is non-zero when any flow failed.
+# Written for bash 3.2 too (macOS): empty arrays are expanded with ${a[@]+"${a[@]}"}.
+set -uo pipefail
+
+platform=${1:?android or ios}
+lang=${2:?nl, fr or en}
+out=${3:?output dir}
+here=$(cd "$(dirname "$0")" && pwd)
+mobile=$(dirname "$here")
+repo=$(dirname "$mobile")
+: "${E2E_WORK:?E2E_WORK must point at the backend work dir}"
+APP_ID=com.getdepiqo.app.dev
+
+case "$platform" in android|ios) ;; *) echo "unknown platform $platform" >&2; exit 2 ;; esac
+mkdir -p "$out/junit" "$out/debug" "$out/screenshots"
+out=$(cd "$out" && pwd)
+
+node "$mobile/scripts/maestro-env.mjs" "$lang" > "$out/maestro-env.txt" || { echo "maestro-env failed" >&2; exit 2; }
+envargs=(-e "PASSWORD=Depiqo-demo-2026" -e "PLATFORM=$platform")
+while IFS= read -r line; do
+  [ -n "$line" ] && envargs+=(-e "$line")
+done < "$out/maestro-env.txt"
+
+device_args=()
+if [ "$platform" = ios ]; then
+  : "${DEVICE:?DEVICE (simulator UDID) is required on iOS}"
+  device_args=(--device "$DEVICE")
+fi
+
+run_flow() {  # <name> <flow file> [extra maestro args...]
+  local name=$1 file=$2
+  shift 2
+  echo "::group::maestro $name ($platform, $lang)"
+  ( cd "$out/screenshots" && maestro ${device_args[@]+"${device_args[@]}"} test \
+      --format junit --output "$out/junit/$name.xml" \
+      --debug-output "$out/debug/$name" \
+      "${envargs[@]}" ${1+"$@"} "$file" )
+  local status=$?
+  echo "::endgroup::"
+  return $status
+}
+
+open_invite_link() {
+  local token
+  token=$(cat "$E2E_WORK/invite_token")
+  if [ "$platform" = android ]; then
+    adb shell am start -W -a android.intent.action.VIEW -d "depiqo://t/$token" "$APP_ID" > /dev/null
+  else
+    xcrun simctl openurl "$DEVICE" "depiqo://t/$token"
+  fi
+}
+
+failed=()
+: > "$out/results.txt"
+for file in "$here"/flows/*.yaml; do
+  name=$(basename "$file" .yaml)
+  extra=()
+  case "$name" in
+    *2fa*)
+      code=$(python3 "$repo/.github/scripts/totp_now.py" "$E2E_WORK/totp_secret") || { echo "totp_now failed" >&2; exit 2; }
+      extra=(-e "MFA_CODE=$code")
+      ;;
+    *invite-deeplink*)
+      if ! run_flow "$name-reset" "$here/subflows/reset-app.yaml"; then
+        failed+=("$name (reset)")
+        echo "$name FAILED (reset)" >> "$out/results.txt"
+        continue
+      fi
+      open_invite_link || { failed+=("$name (open link)"); echo "$name FAILED (open link)" >> "$out/results.txt"; continue; }
+      ;;
+  esac
+  if run_flow "$name" "$file" ${extra[@]+"${extra[@]}"}; then
+    echo "$name ok" >> "$out/results.txt"
+  else
+    failed+=("$name")
+    echo "$name FAILED" >> "$out/results.txt"
+  fi
+done
+
+# Maestro writes takeScreenshot files to the working directory; collect any it put elsewhere too.
+find "$out/debug" -name '*.png' | while IFS= read -r png; do
+  [ -e "$out/screenshots/$(basename "$png")" ] || cp "$png" "$out/screenshots/"
+done
+
+echo "---- $platform $lang"
+cat "$out/results.txt"
+if [ ${#failed[@]} -gt 0 ]; then
+  echo "FAILED flows ($platform, $lang): ${failed[*]}" >&2
+  exit 1
+fi

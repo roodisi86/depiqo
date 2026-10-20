@@ -1,0 +1,215 @@
+# iOS end-to-end: "Depiqo Dev" built in Release for the iPhone simulator (JS bundled, no signing), installed on an
+# iPhone 16 (or 15) simulator, driven by Maestro against the real Flask backend on 127.0.0.1:5000.
+#
+# Manual only by default: macOS minutes cost ten times Linux minutes on private repositories. To run it on every
+# push to main as well, remove the comment marks in front of `push:` and `branches:` below.
+name: iOS e2e
+
+on:
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: "Which run: nl, large-dark (bigger text + dark mode), fr-en, or all three"
+        type: choice
+        options: [nl, large-dark, fr-en, all]
+        default: nl
+  # push:
+  #   branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  NODE_VERSION: "20"
+  PYTHON_VERSION: "3.13"
+  JAVA_VERSION: "17"
+  MAESTRO_VERSION: "2.6.0"
+  CI: "true"
+  EXPO_NO_TELEMETRY: "1"
+  # expo install --fix changes package.json; prebuild must not stop on the dirty git tree in CI.
+  EXPO_NO_GIT_STATUS: "1"
+
+jobs:
+  build-app:
+    name: Build simulator app (Release, development, 127.0.0.1)
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      APP_ENV: development
+      EXPO_PUBLIC_API_URL: http://127.0.0.1:5000
+      OUT: ${{ github.workspace }}/ci-out/ios-build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Tool versions
+        run: |
+          mkdir -p "$OUT"
+          { sw_vers; xcodebuild -version; pod --version; node --version; } | tee "$OUT/versions.txt"
+
+      - name: Install
+        working-directory: mobile
+        run: |
+          if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+          npx expo install --fix 2>&1 | tee "$OUT/expo-install-fix.txt"
+
+      - name: Prebuild (ios, development, API http://127.0.0.1:5000)
+        working-directory: mobile
+        run: npx expo prebuild --platform ios --no-install 2>&1 | tee "$OUT/prebuild.txt"
+
+      - name: Check App Transport Security (local networking in development only, never arbitrary loads)
+        working-directory: mobile/ios
+        run: |
+          plist=$(ls */Info.plist | grep -v Pods | head -1)
+          cp "$plist" "$OUT/Info.plist"
+          plutil -extract NSAppTransportSecurity json -o "$OUT/ats.json" "$plist"
+          python3 - "$OUT/ats.json" <<'PY'
+          import json, sys
+          ats = json.load(open(sys.argv[1]))
+          print("NSAppTransportSecurity:", ats)
+          assert ats.get("NSAllowsLocalNetworking") is True, "development build must allow local networking"
+          assert ats.get("NSAllowsArbitraryLoads") in (None, False), "arbitrary loads must stay off"
+          assert "NSExceptionDomains" not in ats or "localhost" in ats["NSExceptionDomains"], ats
+          PY
+
+      - name: pod install
+        working-directory: mobile/ios
+        run: pod install --repo-update 2>&1 | tee "$OUT/pod-install.txt"
+
+      - name: xcodebuild (Release, iphonesimulator, no signing)
+        working-directory: mobile/ios
+        run: |
+          ws=$(ls -d *.xcworkspace | head -1)
+          scheme=${ws%.xcworkspace}
+          xcodebuild -list -workspace "$ws" -json > "$OUT/xcodebuild-list.json"
+          python3 - "$OUT/xcodebuild-list.json" "$scheme" <<'PY'
+          import json, sys
+          schemes = json.load(open(sys.argv[1]))["workspace"]["schemes"]
+          assert sys.argv[2] in schemes, f"scheme {sys.argv[2]!r} not in {schemes}"
+          PY
+          echo "workspace $ws, scheme $scheme"
+          if ! xcodebuild -workspace "$ws" -scheme "$scheme" -configuration Release -sdk iphonesimulator \
+              -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+              CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build > "$OUT/xcodebuild.txt" 2>&1; then
+            echo "::error::xcodebuild failed; full log in the ios-build-logs artifact (xcodebuild.txt)"
+            tail -80 "$OUT/xcodebuild.txt"
+            grep -E 'error:' "$OUT/xcodebuild.txt" | head -60
+            exit 1
+          fi
+          tail -5 "$OUT/xcodebuild.txt"
+
+      - name: Verify and package the .app
+        working-directory: mobile/ios
+        run: |
+          app=$(ls -d build/Build/Products/Release-iphonesimulator/*.app | head -1)
+          [ -d "$app" ] || { echo "::error::no .app"; exit 1; }
+          [ -f "$app/main.jsbundle" ] || { echo "::error::no main.jsbundle in the app (it would need Metro)"; exit 1; }
+          cfg=$(find "$app" -name app.config | head -1)
+          [ -n "$cfg" ] || { echo "::error::no embedded app.config (expo-constants)"; exit 1; }
+          python3 - "$cfg" <<'PY'
+          import json, sys
+          extra = json.load(open(sys.argv[1]))["extra"]
+          assert extra["appEnv"] == "development", extra
+          assert extra["apiUrl"] == "http://127.0.0.1:5000", extra["apiUrl"]
+          print("app: development, API http://127.0.0.1:5000")
+          PY
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$app/Info.plist" | grep -qx 'com.getdepiqo.app.dev'
+          ditto -c -k --keepParent "$app" "$OUT/DepiqoDev-simulator.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: ci-out/ios-build/DepiqoDev-simulator.zip
+          if-no-files-found: error
+          retention-days: 14
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-build-logs
+          path: |
+            ci-out/ios-build
+            !ci-out/ios-build/*.zip
+          if-no-files-found: warn
+          retention-days: 14
+
+  e2e:
+    name: Simulator + Maestro (${{ matrix.variant }})
+    needs: build-app
+    runs-on: macos-15
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: ${{ fromJSON((inputs.variant || 'nl') == 'all' && '["nl","large-dark","fr-en"]' || format('["{0}"]', inputs.variant || 'nl')) }}
+    env:
+      E2E_WORK: ${{ github.workspace }}/../e2e-work
+      RESULTS: ${{ github.workspace }}/ci-out/ios-e2e/${{ matrix.variant }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ios-simulator-app
+          path: ${{ runner.temp }}/app
+
+      - name: Start the backend (127.0.0.1:5000, fresh seed, sandbox)
+        run: |
+          pip install -r platform/requirements.txt
+          mkdir -p "$RESULTS"
+          .github/scripts/start_backend.sh 127.0.0.1:5000 "$E2E_WORK"
+
+      - name: Install Maestro ${{ env.MAESTRO_VERSION }}
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+          "$HOME/.maestro/bin/maestro" --version
+
+      - name: Run the suite on the simulator
+        run: |
+          cd "$RUNNER_TEMP/app" && ditto -x -k DepiqoDev-simulator.zip . && cd "$GITHUB_WORKSPACE"
+          app=$(ls -d "$RUNNER_TEMP"/app/*.app | head -1)
+          bash .github/scripts/ios_e2e_run.sh "${{ matrix.variant }}" "$app" "$RESULTS"
+
+      - name: Maestro report
+        if: always()
+        run: python3 .github/scripts/maestro_report.py "$RESULTS" "iOS e2e (${{ matrix.variant }})"
+
+      - name: Collect backend logs
+        if: always()
+        run: |
+          mkdir -p "$RESULTS/backend"
+          if [ -d "$E2E_WORK/logs" ]; then cp -r "$E2E_WORK/logs/." "$RESULTS/backend/"; fi
+          if [ -f "$E2E_WORK/backend.pid" ]; then kill "$(cat "$E2E_WORK/backend.pid")" 2>/dev/null || echo "backend already stopped"; fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-e2e-${{ matrix.variant }}
+          path: ci-out/ios-e2e/${{ matrix.variant }}
+          if-no-files-found: warn
+          retention-days: 30

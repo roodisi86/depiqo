@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf, mark, flashes, figures, status_d %}
+{% block title %}Mijn borg{% endblock %}
+{% block body %}
+<div class="w">
+  <header class="w-top">
+    <div class="bar"><a class="brand" href="{{ url_for('wallet.home') }}">{{ mark() }}depiqo</a>
+      <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form></div>
+    {% include "wallet/_tabs.html" %}
+    <div class="w-amount">
+      <small>Jouw {{ rules.term }} · {{ prop.address }}</small>
+      {% set label, tone = display_status(d, True) %}<span class="badge badge-on-dark t-{{ tone }}">{{ label }}</span>
+    </div>
+    {{ figures(balances, dark=True) }}
+    {% if acct and acct.provider == 'sandbox' %}<span class="sbx-dark">SANDBOX · geen echt geld</span>{% endif %}
+    {% if acct and not acct.ledger_interest_cents and acct.status != 'closed' %}<div class="interest">Rente: {{ '%.2f'|format(acct.interest_rate_bps / 100)|replace('.', ',') }}% per jaar, volledig voor jou, zodra je borg is gestort</div>{% endif %}
+  </header>
+
+  <main class="w-body" id="inhoud">
+    {{ flashes() }}
+
+    {% if opening %}
+    <section class="w-card"><h2>Je borgrekening wordt geopend</h2><p class="small muted">Je identiteit is bevestigd. De bank opent nu een rekening op jouw naam. Daarna zie je hier waar je stort.</p></section>
+    {% elif d.status in (S.ID_PENDING, S.ID_FAILED) and d.holding == 'depiqo' and not partner_status().available %}
+    <section class="w-card"><h2>Even geduld</h2><p class="note warn">Er is geen financiële partner gekoppeld. Je borgrekening kan nu niet worden geopend. Betaal niets en neem contact op met je verhuurder.</p></section>
+    {% elif d.status in (S.ID_PENDING, S.ID_FAILED) %}
+    <form class="w-card" method="post" action="{{ url_for('wallet.action', pid=d.pid, action='identiteit') }}">{{ csrf() }}
+      <h2>Bevestig je identiteit</h2>
+      <p class="small muted">De partnerbank opent de borgrekening op jouw naam. Daarvoor moet ze weten wie je bent.{% if sandbox() %} In de sandbox volstaan naam en geboortedatum.{% endif %}</p>
+      <div class="field"><label for="full_name">Volledige naam</label><input id="full_name" name="full_name" autocomplete="name"></div>
+      <div class="field"><label for="birth_date">Geboortedatum</label><input id="birth_date" name="birth_date" type="date" autocomplete="bday"></div>
+      <button class="btn btn-primary">Bevestigen</button>
+    </form>
+    {% endif %}
+
+    {% if pay_problem %}<section class="w-card"><h2>Stort je borg</h2><p class="note warn">{{ pay_problem }} Betaal nu niets.</p></section>{% endif %}
+    {% if instructions %}
+    <section class="w-card">
+      <h2>Stort je borg</h2>
+      <div class="pay">
+        <span class="small">Rekeningnummer</span><span class="mono">{{ instructions.iban|iban }}</span>
+        <span class="small">Ten name van</span><b>{{ instructions.beneficiary }}</b>
+        <span class="small">Bedrag</span><b>{{ instructions.amount_cents|eur }}</b>
+        <span class="small">Omschrijving</span><span class="mono">{{ instructions.reference }}</span>
+      </div>
+      <p class="small muted">{% if d.holding == 'depiqo' %}Deze rekening staat op jouw naam. Zodra de bank je storting en de blokkering bevestigt, zie je hier “Je borg staat veilig”.{% else %}Je verhuurder verklaart de ontvangst in Depiqo. Daarna zie je hier hoe sterk het bewijs is.{% endif %} Kloppen naam, bedrag en kenmerk niet met je huurcontract? Betaal niet en bel je verhuurder.</p>
+    </section>
+    {% endif %}
+
+    {% if settlement %}
+    <section class="w-card">
+      <h2>Eindafrekening</h2>
+      <div class="qa">
+        <div><span>Borg</span><b>{{ d.amount_cents|eur }}</b></div>
+        {% for l in lines %}<div><span>{{ CATEGORIES[l.category] }}: {{ l.description }}{% if l.document_id %} · <a href="{{ url_for('wallet.download', doc_id=l.document_id) }}">bewijs</a>{% endif %}</span><b>− {{ l.amount_cents|eur }}</b></div>{% endfor %}
+        <div><span><b>Terug naar jou</b></span><b>{{ (d.amount_cents - total)|eur }}</b></div>
+      </div>
+      {% if acct and acct.ledger_interest_cents %}<p class="small muted">Daarbovenop krijg je de rente: {{ acct.ledger_interest_cents|eur }}.</p>{% endif %}
+      {% if d.status == S.SETTLEMENT_PROPOSED %}
+        <form method="post" action="{{ url_for('wallet.action', pid=d.pid, action='akkoord') }}" data-confirm="Akkoord gaan met deze afrekening?">{{ csrf() }}<button class="btn btn-primary">Akkoord</button></form>
+        <details><summary><b>Ik ben het hier niet mee eens</b></summary>
+          <form class="stack" method="post" action="{{ url_for('wallet.action', pid=d.pid, action='betwisten') }}">{{ csrf() }}
+            <div class="field"><label for="reason">Waarmee ben je het oneens?</label><textarea id="reason" name="reason" placeholder="Bijvoorbeeld: de schade aan de deur was er al bij de start; zie de foto bij de plaatsbeschrijving."></textarea></div>
+            <button class="btn btn-line">Bezwaar indienen</button>
+            <p class="small muted">Depiqo beslist niet in een geschil. Jij en je verhuurder komen samen tot een akkoord, of de rechter beslist.</p>
+          </form></details>
+      {% elif d.status == S.DISPUTED %}<p class="note warn">Je hebt bezwaar gemaakt. Je verhuurder neemt contact met je op.</p>{% endif %}
+    </section>
+    {% endif %}
+
+    {% if d.holding == 'external' and d.provider_kind %}
+    <section class="w-card" aria-labelledby="where-h">
+      <h2 id="where-h">Waar staat je borg</h2>
+      {% if d.provider_kind == 'borggarantie' %}
+      <div class="where guarantee"><b>Je hebt geen geld gestort. Een derde staat garant. Bij schade kan die het bedrag op jou verhalen.</b></div>
+      {% elif d.provider_kind == 'ocmw' %}
+      <div class="where"><b>Het OCMW of je lokaal bestuur staat in voor je waarborg. Je hebt zelf geen geld gestort.</b></div>
+      {% endif %}
+      <div class="qa">
+        <div><span>Soort</span><b>{{ PROVIDER_KINDS[d.provider_kind].tenant if d.provider_kind not in ('borggarantie',) else 'Garantie of borgstelling door een derde' }}</b></div>
+        {% if d.provider_name %}<div><span>{{ 'Garantsteller' if d.provider_kind == 'borggarantie' else 'Aanbieder' }}</span><b>{{ d.provider_name }}</b></div>{% endif %}
+        {% if d.provider_reference %}<div><span>{{ PROVIDER_KINDS[d.provider_kind].reference_label }}</span><b class="mono">{{ d.provider_reference }}</b></div>{% endif %}
+        {% if d.guarantee_expires_on %}<div><span>Garantie geldig tot</span><b class="{{ 'late' if expiry and expiry[0] <= 60 }}">{{ d.guarantee_expires_on|date_nl }}</b></div>{% endif %}
+      </div>
+      {% if expiry and expiry[0] <= 60 %}<p class="note warn">{{ 'Je garantie is verlopen.' if expiry[0] < 0 else 'Je garantie loopt binnenkort af.' }} Neem contact op met je verhuurder en de garantsteller.</p>{% endif %}
+    </section>
+    {% endif %}
+
+    {% if release_form %}
+    <section class="w-card" aria-labelledby="rel-h">
+      <h2 id="rel-h">Vrijgave van je borg</h2>
+      <p class="small muted">Je borg staat bij een aanbieder. Die geeft hem vrij met een eigen procedure. Download het vrijgaveformulier, teken het samen met je verhuurder en stuur het mee met de aanvraag bij de aanbieder.</p>
+      <a class="btn btn-line" href="{{ url_for('wallet.release_form_pdf', pid=d.pid) }}">Vrijgaveformulier (PDF)</a>
+    </section>
+    {% endif %}
+
+    {% if invest_payout %}{% set ip = invest_payout %}
+    <section class="w-card" aria-labelledby="dob-h">
+      <h2 id="dob-h">Waar wil je jouw deel ontvangen?</h2>
+      {% if ip.choice and ip.choice.status == 'paid' %}
+        <p class="small">Je deel ({{ ip.choice.paid_cents|eur }}) is naar je beleggingsrekening bij {{ ip.partner }} gegaan.</p>
+      {% elif ip.choice and ip.choice.status == 'fallback' %}
+        <p class="note warn">Je deel gaat naar je eigen rekening. Doorbeleggen kon niet toen de uitbetaling startte: Beleggen was niet beschikbaar.</p>
+      {% elif ip.choice and ip.choice.status == 'unrecorded' %}
+        <p class="note">De bank heeft je deel aan {{ ip.partner }} betaald. Het staat nog niet op je beleggingsrekening; Depiqo volgt dit op.</p>
+      {% elif ip.can %}
+      <form class="stack" method="post" action="{{ url_for('invest.payout_choice', pid=d.pid) }}">{{ csrf() }}
+        <label class="check"><input type="radio" name="destination" value="own" {{ 'checked' if not ip.choice }}>Naar mijn eigen rekening</label>
+        <label class="check"><input type="radio" name="destination" value="invest" {{ 'checked' if ip.choice }}>Naar mijn beleggingsrekening bij {{ ip.partner }} (doorbeleggen)</label>
+        <p class="small warn-text">{{ INVEST_RISK }} Op je beleggingsrekening komt het geld eerst als vrij geld binnen.</p>
+        <label class="check"><input type="checkbox" name="confirm" value="1">Ik kies er zelf voor om mijn deel van de borg op mijn beleggingsrekening te ontvangen. Daar kan de waarde dalen.</label>
+        <button class="btn btn-line">Keuze opslaan</button>
+        <p class="small muted">{% if ip.choice %}Gekozen op {{ ip.choice.chosen_at|datetime_nl }}: je beleggingsrekening.{% else %}Nu: je eigen rekening.{% endif %} Je kunt dit wijzigen tot de uitbetaling start. Je verhuurder ziet alleen dat het naar jouw rekening gaat. Het geld komt eerst als vrij geld binnen; je kiest zelf of je het belegt.</p>
+      </form>
+      {% else %}
+        <p class="small">Je deel gaat naar je beleggingsrekening bij {{ ip.partner }}. Gekozen op {{ ip.choice.chosen_at|datetime_nl }}.</p>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    {% if split %}<section class="w-card"><h2>Uitbetaling</h2><div class="qa"><div><span>Naar jou</span><b>{{ split[0]|eur }}{% if invest_payout and invest_payout.choice %}<br><span class="small muted">op je beleggingsrekening</span>{% endif %}</b></div>{% if split[1] %}<div><span>Naar je verhuurder</span><b>{{ split[1]|eur }}</b></div>{% endif %}</div></section>{% endif %}
+
+    <section class="w-card">
+      <h2>Je borg in vier vragen</h2>
+      <div class="qa">
+        <div><span>Waar staat mijn geld?</span><b>{% if d.holding == 'depiqo' %}{{ 'Op een borgrekening op jouw naam' if acct else 'Op een borgrekening op jouw naam, zodra je identiteit is bevestigd' }}{% elif d.provider_kind == 'borggarantie' %}Er staat geen geld van jou: een derde staat garant{% elif d.provider_kind %}{{ PROVIDER_KINDS[d.provider_kind].tenant }}{% if d.provider_name %} ({{ d.provider_name }}){% endif %}{% if d.evidence_level %}<br><span class="small muted">{{ EVIDENCE[d.evidence_level].label }}</span>{% endif %}{% else %}Bij {{ org.name }}{% if d.evidence_level %}<br><span class="small muted">{{ EVIDENCE[d.evidence_level].label }}</span>{% endif %}{% endif %}</b></div>
+        <div><span>Wie is mijn verhuurder?</span><b>{{ org.name }}</b></div>
+        <div><span>Wanneer krijg ik het terug?</span><b>{% if deadline %}{{ 'Uiterlijk' if deadline.statutory else 'Streefdatum' }} {{ deadline.date|date_nl }}{% else %}{{ rules.release_note }}{% endif %}</b></div>
+        <div><span>Wat als ik het oneens ben?</span><b>Je kunt de afrekening betwisten in de app</b></div>
+      </div>
+    </section>
+
+    {% if invest_visibility() == 'unavailable' %}
+    <section class="w-card"><h2>Beleggen</h2><p class="small muted">Nog niet beschikbaar. Er is op dit moment geen beleggingspartner gekoppeld.</p></section>
+    {% endif %}
+
+    <section class="w-card">
+      <h2>Wat er gebeurde</h2>
+      <ul class="timeline">{% for e in events %}<li><span class="dot {{ e.actor_kind }}"></span><div>{{ e.message }}<div class="meta">{{ e.at|datetime_nl }}</div></div></li>{% endfor %}</ul>
+    </section>
+
+    <section class="w-card">
+      <h2>Documenten</h2>
+      <div class="qa">{% for doc in docs %}<div><span>{{ KINDS[doc.kind] }}</span><b><a href="{{ url_for('wallet.download', doc_id=doc.id) }}">{{ doc.filename[:32] }}</a></b></div>{% else %}<div><span>Nog geen documenten.</span></div>{% endfor %}</div>
+      {% if d.status not in (S.CLOSED, S.CANCELLED) %}
+      <form class="stack" method="post" enctype="multipart/form-data" action="{{ url_for('wallet.action', pid=d.pid, action='documenten') }}">{{ csrf() }}
+        <div class="field"><label for="kind">Soort</label><select id="kind" name="kind"><option value="photo">Foto</option><option value="inspection">Plaatsbeschrijving of opleverrapport</option><option value="other">Overig</option></select></div>
+        <div class="field"><label for="file">Bestand (PDF, JPG of PNG)</label><input id="file" type="file" name="file" accept="application/pdf,image/jpeg,image/png"></div>
+        <button class="btn btn-line">Toevoegen</button></form>{% endif %}
+    </section>
+  </main>
+  <p class="w-foot"><a href="{{ url_for('auth.security') }}">Beveiliging van je account</a><br>Depiqo houdt zelf geen geld aan. {% if sandbox() %}Dit is een sandbox: er wordt geen echt geld verwerkt.{% endif %} Depiqo vraagt nooit om je bankcode.</p>
+</div>
+{% endblock %}

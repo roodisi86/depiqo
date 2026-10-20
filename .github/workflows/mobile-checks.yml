@@ -1,0 +1,172 @@
+# Mobile (Expo SDK 53): the first real install, then type check, lint, unit tests and the language check, all with
+# the real libraries (jest-expo preset, real React Native and Expo types). Replaces mobile/.github/workflows/ci.yml.
+#
+# There is no package-lock.json yet. This workflow runs `npm install` + `npx expo install --fix` and uploads the
+# resulting package.json and package-lock.json as the artifact "lockfile". Commit that lockfile (download it, or
+# run this workflow by hand with "commit_lockfile" ticked); from then on the install step uses `npm ci`.
+name: Mobile checks
+
+on:
+  push:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-checks.yml"
+  pull_request:
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-checks.yml"
+  workflow_dispatch:
+    inputs:
+      commit_lockfile:
+        description: "Commit the generated package.json and package-lock.json back to this branch"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+    working-directory: mobile
+
+env:
+  NODE_VERSION: "20"
+  OUT: ${{ github.workspace }}/ci-out/mobile
+  CI: "true"
+  EXPO_NO_TELEMETRY: "1"
+  # expo install --fix changes package.json; prebuild must not stop on the dirty git tree in CI.
+  EXPO_NO_GIT_STATUS: "1"
+
+jobs:
+  checks:
+    name: Install, expo-doctor, tsc, eslint, jest, i18n
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      installed: ${{ steps.install.outputs.installed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install
+        id: install
+        run: |
+          mkdir -p "$OUT"
+          node --version | tee "$OUT/versions.txt"
+          npm --version | tee -a "$OUT/versions.txt"
+          if [ -f package-lock.json ]; then
+            echo "package-lock.json is committed: npm ci"
+            echo "had_lockfile=true" >> "$GITHUB_OUTPUT"
+            npm ci --no-audit --no-fund 2>&1 | tee "$OUT/npm-install.txt"
+          else
+            echo "::notice::No package-lock.json yet: npm install (the lockfile is uploaded as an artifact)"
+            echo "had_lockfile=false" >> "$GITHUB_OUTPUT"
+            npm install --no-audit --no-fund 2>&1 | tee "$OUT/npm-install.txt"
+          fi
+          echo "installed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Align Expo packages (npx expo install --fix)
+        run: |
+          npx expo install --fix 2>&1 | tee "$OUT/expo-install-fix.txt"
+          git diff --stat -- package.json package-lock.json | tee "$OUT/expo-install-fix-diff.txt"
+          git diff -- package.json > "$OUT/package.json.diff"
+          if [ "${{ steps.install.outputs.had_lockfile }}" = "true" ] && ! git diff --quiet -- package.json package-lock.json; then
+            echo "::error::package.json/package-lock.json are committed but expo install --fix still changes them. Commit the 'lockfile' artifact of this run."
+            exit 1
+          fi
+
+      - name: Upload lockfile (package.json + package-lock.json)
+        if: always() && steps.install.outputs.installed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lockfile
+          path: |
+            mobile/package.json
+            mobile/package-lock.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: expo-doctor (reports, does not fail the job)
+        run: |
+          set +e
+          npx --yes expo-doctor > "$OUT/expo-doctor.txt" 2>&1
+          code=$?
+          set -e
+          cat "$OUT/expo-doctor.txt"
+          echo "exit code: $code" >> "$OUT/expo-doctor.txt"
+          if [ "$code" -ne 0 ]; then
+            echo "::warning::expo-doctor reported problems (exit $code). See expo-doctor.txt in the mobile-checks artifact."
+          fi
+
+      - name: i18n key parity
+        run: node scripts/check-i18n.mjs 2>&1 | tee "$OUT/check-i18n.txt"
+
+      - name: JSON files are valid, no tokens in fixtures
+        run: node scripts/validate-json.mjs 2>&1 | tee "$OUT/validate-json.txt"
+
+      - name: Maestro UI strings exist in every language
+        run: |
+          for l in nl fr en; do node scripts/maestro-env.mjs "$l" > "$OUT/maestro-env-$l.txt"; done
+
+      - name: TypeScript (tsc --noEmit)
+        if: always() && steps.install.outputs.installed == 'true'
+        run: npx tsc --noEmit 2>&1 | tee "$OUT/tsc.txt"
+
+      - name: ESLint
+        if: always() && steps.install.outputs.installed == 'true'
+        run: npx eslint . 2>&1 | tee "$OUT/eslint.txt"
+
+      - name: Jest (jest-expo preset)
+        if: always() && steps.install.outputs.installed == 'true'
+        run: npx jest --ci --json --outputFile="$OUT/jest-results.json" 2>&1 | tee "$OUT/jest.txt"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-checks
+          path: ci-out/mobile
+          if-no-files-found: error
+          retention-days: 30
+
+  commit-lockfile:
+    name: Commit lockfile to the branch (manual, off by default)
+    needs: checks
+    if: always() && github.event_name == 'workflow_dispatch' && inputs.commit_lockfile && needs.checks.outputs.installed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: lockfile
+          path: mobile
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mobile/package.json mobile/package-lock.json
+          if git diff --cached --quiet; then
+            echo "Nothing to commit: the lockfile is already up to date."
+            exit 0
+          fi
+          git diff --cached --stat
+          git commit -m "mobile: package-lock.json from npm install + expo install --fix in CI (run ${{ github.run_id }})"
+          git push origin "HEAD:${{ github.ref_name }}"

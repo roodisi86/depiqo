@@ -1,0 +1,312 @@
+{
+  "address": {
+    "city": "Den Haag",
+    "postcode": "2517 AN",
+    "street": "Laan van Meerdervoort 88"
+  },
+  "amounts": [
+    {
+      "explanation": "Volgens het huurcontract",
+      "explanation_key": "per_lease",
+      "key": "obligation",
+      "known": true,
+      "label": "Vereiste borg",
+      "value": {
+        "cents": 310000,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Bevestigd door de bank",
+      "explanation_key": "bank_confirmed",
+      "key": "received",
+      "known": true,
+      "label": "Ontvangen",
+      "value": {
+        "cents": 310000,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Blokkering bevestigd door de bank",
+      "explanation_key": "lock_confirmed_by_bank",
+      "key": "locked",
+      "known": true,
+      "label": "Bevestigd geblokkeerd",
+      "value": {
+        "cents": 314682,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Bijgeschreven door de bank, voor de huurder",
+      "explanation_key": "interest_credited",
+      "key": "interest",
+      "known": true,
+      "label": "Rente",
+      "value": {
+        "cents": 4682,
+        "currency": "EUR"
+      }
+    }
+  ],
+  "deadline": null,
+  "display_key": "secured_bank_confirmed",
+  "display_label": "Je borg staat veilig",
+  "events": [
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 55,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,24",
+      "params": {
+        "amount_cents": 524
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 54,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,23",
+      "params": {
+        "amount_cents": 523
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 53,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,22",
+      "params": {
+        "amount_cents": 522
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 52,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,21",
+      "params": {
+        "amount_cents": 521
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 51,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,20",
+      "params": {
+        "amount_cents": 520
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 50,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,19",
+      "params": {
+        "amount_cents": 519
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 49,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,18",
+      "params": {
+        "amount_cents": 518
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 48,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,18",
+      "params": {
+        "amount_cents": 518
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 47,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 5,17",
+      "params": {
+        "amount_cents": 517
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 46,
+      "key": "status_changed",
+      "message": "Bank bevestigt: borg geblokkeerd ten gunste van de verhuurder",
+      "params": {
+        "from_status": "payment_received",
+        "to_status": "secured"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 45,
+      "key": "status_changed",
+      "message": "Storting van € 3.100,00 ontvangen; blokkering wordt aangevraagd bij de bank",
+      "params": {
+        "amount_cents": 310000,
+        "from_status": "awaiting_payment",
+        "to_status": "payment_received",
+        "total_cents": 310000
+      },
+      "type": "status"
+    },
+    {
+      "actor": "system",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 44,
+      "key": "status_changed",
+      "message": "Borgrekening geopend bij de partnerbank (sandbox)",
+      "params": {
+        "from_status": "id_pending",
+        "to_status": "awaiting_payment"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "tenant",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 42,
+      "key": "status_changed",
+      "message": "Huurder heeft de uitnodiging geaccepteerd",
+      "params": {
+        "from_status": "invited",
+        "to_status": "id_pending"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 41,
+      "key": "status_changed",
+      "message": "Uitnodiging verstuurd naar de huurder",
+      "params": {
+        "from_status": "concept",
+        "to_status": "invited"
+      },
+      "type": "status"
+    }
+  ],
+  "events_path": "/api/v1/deposits/9xeunnxp8zx2/events",
+  "evidence_level": null,
+  "holding": "depiqo",
+  "interest_note": "Rente: 2,00% per jaar, volledig voor jou",
+  "landlord": {
+    "name": "Voorbeeld Vastgoed BV"
+  },
+  "lease_end": null,
+  "lease_start": "2025-02-01",
+  "location": {
+    "account_open": true,
+    "assurance": {
+      "code": "bank",
+      "label": "Blokkering bevestigd door de bank",
+      "short": "Bank bevestigd",
+      "tone": "ok"
+    },
+    "evidence": null,
+    "guarantee": null,
+    "interest_rate_bps": 200,
+    "kind": "depiqo_account",
+    "label": "Borgrekening op jouw naam bij de partnerbank",
+    "provider_name": null,
+    "reference": null,
+    "reference_label": null,
+    "sandbox": true
+  },
+  "move_out_date": null,
+  "next_action": null,
+  "payment_instructions": null,
+  "payment_problem": null,
+  "payout": null,
+  "pid": "9xeunnxp8zx2",
+  "progress": {
+    "current": "secured",
+    "on_hold": false,
+    "steps": [
+      {
+        "code": "invited",
+        "label": "Uitnodiging",
+        "state": "done"
+      },
+      {
+        "code": "id_pending",
+        "label": "Identiteit",
+        "state": "done"
+      },
+      {
+        "code": "awaiting_payment",
+        "label": "Storten",
+        "state": "done"
+      },
+      {
+        "code": "secured",
+        "label": "Borg veilig",
+        "state": "current"
+      },
+      {
+        "code": "move_out",
+        "label": "Vertrek",
+        "state": "upcoming"
+      },
+      {
+        "code": "settlement",
+        "label": "Afrekening",
+        "state": "upcoming"
+      },
+      {
+        "code": "payout",
+        "label": "Uitbetaling",
+        "state": "upcoming"
+      },
+      {
+        "code": "closed",
+        "label": "Afgerond",
+        "state": "upcoming"
+      }
+    ]
+  },
+  "provider_kind": null,
+  "reference": "DPQ-001-00004",
+  "region": "NL",
+  "release_form_available": false,
+  "release_rule": "Terug binnen 14 dagen na het einde van de huur, of binnen 30 dagen als kosten worden verrekend.",
+  "rent": {
+    "cents": 155000,
+    "currency": "EUR"
+  },
+  "status": "secured",
+  "status_label": "Je borg is geregistreerd",
+  "term": "waarborgsom",
+  "tone": "ok",
+  "updated_at": "2026-10-20T12:17:27+00:00"
+}

@@ -1,0 +1,24 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Facturen{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">Depiqo-beheer</p><h1>Facturen</h1></div></div>
+<p class="note">Zet een factuur op betaald zodra het geld binnen is. Een fout op een uitgereikte factuur herstel je met een creditnota; daarna kan de organisatie die maand opnieuw factureren.</p>
+<section class="panel mt">
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Nummer</th><th>Organisatie</th><th>Periode</th><th>Datum</th><th>Te betalen voor</th><th>Status</th><th class="num">Totaal</th><th>Acties</th></tr></thead>
+    <tbody>{% for i in rows %}{% set code, label, tone = B.payment_state(i) %}
+      <tr><td class="mono"><a href="{{ url_for('admin.invoice_pdf', number=i.number) }}">{{ i.number }}</a>{% if i.credit_for_number %}<div class="small muted">crediteert {{ i.credit_for_number }}</div>{% endif %}</td>
+        <td>{{ i.org_name }}</td><td class="nowrap">{{ i.period }}</td><td class="nowrap">{{ i.issued_at|date_nl }}</td><td class="nowrap">{{ i.due_at|date_nl if i.due_at and i.kind == 'invoice' else '—' }}</td>
+        <td><span class="badge t-{{ tone }}">{{ label }}</span>{% if i.note %}<div class="small muted">{{ i.note }}</div>{% endif %}</td>
+        <td class="num">{{ i.total_cents|eur }}</td>
+        <td><div class="row tight">
+          {% if i.kind == 'invoice' and i.payment_status == 'open' and i.status == 'issued' %}<form method="post" action="{{ url_for('admin.invoice_action', invoice_id=i.id, action='betaald') }}">{{ csrf() }}<button class="btn btn-sm btn-line">Betaald</button></form>{% endif %}
+          {% if i.kind == 'invoice' and i.status == 'issued' %}<details class="inline-details"><summary class="small">Crediteren</summary>
+            <form class="row tight mt" method="post" action="{{ url_for('admin.invoice_action', invoice_id=i.id, action='crediteren') }}" data-confirm="Factuur {{ i.number }} crediteren?">{{ csrf() }}
+              <label class="sr" for="reason-{{ i.id }}">Reden</label><input id="reason-{{ i.id }}" name="reason" placeholder="Reden"><button class="btn btn-sm btn-danger">Creditnota</button></form></details>{% endif %}
+        </div></td></tr>
+    {% else %}<tr><td colspan="8" class="empty">Nog geen facturen.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Team{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">{{ g.org.name }}</p><h1>Team en rechten</h1></div></div>
+<div class="grid g-main">
+  <div class="stack">
+    <section class="panel">
+      <div class="table-wrap"><table class="t">
+        <thead><tr><th>Naam</th><th>Rol</th><th>Laatst ingelogd</th>{% if can('team.manage') %}<th></th>{% endif %}</tr></thead>
+        <tbody>{% for m in members %}<tr>
+          <td><b>{{ m.name }}</b><div class="small muted">{{ m.email }}</div></td>
+          <td>{% if can('team.manage') and m.user_id != g.user.id %}
+            <form class="row" method="post" action="{{ url_for('business.team_member', member_id=m.id) }}">{{ csrf() }}<label class="sr" for="role-{{ m.id }}">Rol</label>
+              <select id="role-{{ m.id }}" name="role" class="auto-submit">{% for k, v in ROLE_LABELS.items() %}<option value="{{ k }}" {{ 'selected' if m.role == k }}>{{ v }}</option>{% endfor %}</select>
+              <noscript><button class="btn btn-sm btn-line">Opslaan</button></noscript></form>
+            {% else %}{{ ROLE_LABELS[m.role] }}{% endif %}</td>
+          <td class="small">{{ m.last_login_at|datetime_nl if m.last_login_at else 'Nog niet' }}</td>
+          {% if can('team.manage') %}<td>{% if m.user_id != g.user.id %}<form method="post" action="{{ url_for('business.team_member', member_id=m.id) }}" data-confirm="Toegang van {{ m.name }} intrekken?">{{ csrf() }}<input type="hidden" name="remove" value="1"><button class="btn btn-sm btn-danger">Intrekken</button></form>{% endif %}</td>{% endif %}
+        </tr>{% endfor %}</tbody>
+      </table></div>
+    </section>
+    {% if invites %}<section class="panel"><div class="panel-h"><h2>Openstaande uitnodigingen</h2></div>
+      <div class="table-wrap"><table class="t"><tbody>{% for i in invites %}<tr><td>{{ i.email }}</td><td>{{ ROLE_LABELS[i.role] }}</td><td class="small muted">geldig tot {{ i.expires_at|date_nl }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+    <section class="panel"><div class="panel-h"><h2>Wat elke rol mag</h2></div>
+      <div class="table-wrap"><table class="t"><thead><tr><th>Handeling</th>{% for k, v in ROLE_LABELS.items() %}<th>{{ v }}</th>{% endfor %}</tr></thead><tbody>
+      {% set names = {'deposit.view': 'Borgen bekijken', 'deposit.edit': 'Borgen aanmaken en uitnodigen', 'deposit.confirm_receipt': 'Ontvangst bevestigen (elders)', 'deposit.payout': 'Uitbetaling starten', 'deposit.legal_hold': 'Juridische blokkade', 'document.upload': 'Documenten uploaden', 'settlement.edit': 'Eindafrekening opstellen', 'dispute.resolve': 'Geschil afsluiten', 'team.manage': 'Team beheren', 'billing.view': 'Facturen bekijken', 'billing.issue': 'Facturen aanmaken', 'settings.edit': 'Instellingen wijzigen', 'export': 'Exporteren'} %}
+      {% for p, roles in PERMISSIONS.items() %}<tr><td>{{ names[p] }}</td>{% for k in ROLE_LABELS %}<td>{{ 'Ja' if k in roles else '—' }}</td>{% endfor %}</tr>{% endfor %}
+      </tbody></table></div></section>
+  </div>
+  {% if can('team.manage') %}
+  <form class="panel" method="post">{{ csrf() }}
+    <div class="panel-h"><h2>Collega uitnodigen</h2></div>
+    <div class="panel-b stack">
+      {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+      <div class="field"><label for="email">E-mailadres</label><input id="email" name="email" type="email"></div>
+      <div class="field"><label for="role">Rol</label><select id="role" name="role">{% for k, v in ROLE_LABELS.items() %}<option value="{{ k }}" {{ 'selected' if k == 'manager' }}>{{ v }}</option>{% endfor %}</select></div>
+      <button class="btn btn-primary">Uitnodiging versturen</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

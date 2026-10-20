@@ -1,0 +1,6 @@
+{% if invest_visibility() == 'available' %}
+<nav class="w-tabs" aria-label="Onderdelen">
+  <a href="{{ url_for('wallet.home') }}" class="{{ '' if request.endpoint.startswith('invest.') else 'on' }}">Mijn borg</a>
+  <a href="{{ url_for('invest.index') }}" class="{{ 'on' if request.endpoint.startswith('invest.') else '' }}">Beleggen</a>
+</nav>
+{% endif %}

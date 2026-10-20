@@ -1,0 +1,15 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Code invullen{% endblock %}
+{% block content %}
+<h1>Nog één stap.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <p>Open je authenticator-app en vul de code van 6 cijfers in voor Depiqo.</p>
+  <div class="field"><label for="code">Code</label><input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" autofocus required>
+    <span class="hint">Telefoon kwijt? Vul een van je herstelcodes in, zoals abcde-fghjk. Elke herstelcode werkt één keer.</span></div>
+  <button class="btn btn-primary" type="submit">Inloggen</button>
+  <a class="small" href="{{ url_for('auth.login') }}">Opnieuw beginnen</a>
+</form>
+{% endblock %}

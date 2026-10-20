@@ -1,0 +1,63 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Unit economics{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">Depiqo-beheer · {{ ue.period }}</p><h1>Unit economics</h1></div></div>
+<div class="banner warn" role="note"><b>Partnerkosten zijn aannames.</b> Er zijn nog geen contracten met een bank of andere partner. Pas de bedragen hieronder aan zodra er offertes of contracten zijn. Omzet volgt de prijslogica van de plannen voor deze maand.</div>
+
+{% set t = ue.total %}
+<div class="kpis">
+  <div class="kpi"><span>Actieve dossiers</span><b>{{ t.external + t.depiqo }}</b><small>{{ t.depiqo }} Depiqo-rekening · {{ t.external }} elders</small></div>
+  <div class="kpi"><span>MRR volgens plannen</span><b>{{ t.list|eur(False) }}</b><small>Voor pilotkorting</small></div>
+  <div class="kpi"><span>MRR gefactureerd</span><b>{{ t.billed|eur(False) }}</b><small>Na pilotkorting</small></div>
+  <div class="kpi"><span>Partnerkosten (aanname)</span><b>{{ t.cost|eur(False) }}</b><small>{{ t.new_depiqo }} nieuwe Depiqo-rekeningen</small></div>
+  <div class="kpi {{ 'alert' if t.margin < 0 }}"><span>Brutomarge</span><b>{{ t.margin|eur(False) }}</b><small>{% if t.margin_per_dossier is not none %}{{ t.margin_per_dossier|eur }} per dossier{% endif %}</small></div>
+</div>
+
+{% set neg = ue.per_plan|selectattr('marginal_depiqo', 'lt', 0)|list %}
+{% if neg %}<div class="banner alert" role="status"><b>Negatieve marge per Depiqo-borgrekening.</b> Bij {{ neg|map(attribute='label')|join(' en ') }} is de prijs per extra dossier op een Depiqo-borgrekening lager dan de aangenomen partnerkosten. Elk extra dossier boven de inbegrepen dossiers kost dan geld.</div>{% endif %}
+
+  <section class="panel">
+    <div class="panel-h"><h2>Per organisatie</h2></div>
+    <div class="table-wrap"><table class="t ue orgs-ue">
+      <thead><tr><th>Organisatie</th><th class="num">Depiqo</th><th class="num">Elders</th><th class="num">Nieuw</th><th class="num">MRR plan</th><th class="num">MRR gefactureerd</th><th class="num">Partnerkosten</th><th class="num">Marge</th><th class="num">Per dossier</th></tr></thead>
+      <tbody>{% for r in ue.rows %}
+        <tr class="{{ 'row-error' if r.warn }}"><td><b>{{ r.org.name }}</b><div class="small muted">{{ r.plan.label }}{% if r.pilot %} · pilot{% endif %}</div></td>
+          <td class="num">{{ r.depiqo }}</td><td class="num">{{ r.external }}</td><td class="num">{{ r.new }}</td>
+          <td class="num">{{ r.list|eur }}</td><td class="num">{{ r.billed|eur }}</td><td class="num">{{ r.cost|eur }}</td>
+          <td class="num {{ 'late' if r.margin < 0 }}">{{ r.margin|eur }}</td>
+          <td class="num">{% if r.margin_per_dossier is none %}<span class="muted">—</span>{% else %}<span class="{{ 'late' if r.margin_per_dossier < 0 }}">{{ r.margin_per_dossier|eur }}</span>{% if r.pilot %}<div class="small muted">{{ r.margin_list_per_dossier|eur }} na pilot</div>{% endif %}{% endif %}</td></tr>
+        <tr class="sub-note"><td colspan="9" class="small muted">Marge per extra Depiqo-dossier: <b class="{{ 'late' if r.marginal_depiqo < 0 }}">{{ r.marginal_depiqo|eur }}</b> per maand ({{ r.plan.extra_depiqo_cents|eur }} prijs min {{ ue.cost.partner_cost_active_cents|eur }} kosten). Per nieuw dossier: <b class="{{ 'late' if r.marginal_new < 0 }}">{{ r.marginal_new|eur }}</b> eenmalig.{% if r.warn %} <b class="late">Controleer de prijs.</b>{% endif %}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+  </section>
+{% set iv = ue.invest %}
+<section class="panel mt" aria-labelledby="inv-h">
+  <div class="panel-h"><h2 id="inv-h">Depiqo Invest</h2><span class="small muted">Servicevergoeding {{ iv.fee_bps|bps }} per jaar over de waarde · <a href="{{ url_for('invest_admin.home') }}">naar Beleggen</a></span></div>
+  <div class="kpis panel-b">
+    <div class="kpi"><span>Belegd vermogen (AUM)</span><b>{{ iv.aum|eur(False) }}</b><small>Actieve rekeningen, inclusief vrij geld</small></div>
+    <div class="kpi"><span>Actieve beleggers</span><b>{{ iv.investors }}</b><small>{{ iv.accounts }} actieve rekeningen</small></div>
+    <div class="kpi"><span>Servicekosten deze maand</span><b>{{ iv.charged|eur }}</b><small>Verrekend · {{ iv.accrued|eur }} opgebouwd</small></div>
+    <div class="kpi"><span>Omzet per maand (lopend)</span><b>{{ iv.run_rate|eur }}</b><small>AUM × vergoeding / 12</small></div>
+    <div class="kpi {{ 'alert' if iv.margin < 0 }}"><span>Marge per maand</span><b>{{ iv.margin|eur }}</b><small>Na {{ iv.cost|eur }} partnerkosten (aanname)</small></div>
+  </div>
+</section>
+<div class="grid g-2 mt">
+    <form class="panel" method="post">{{ csrf() }}
+      <div class="panel-h"><h2>Aannames partnerkosten</h2></div>
+      <div class="panel-b stack">
+        {% for key, (label, default) in SETTINGS.items() %}
+        <div class="field"><label for="{{ key }}">{{ label }} (€)</label><input id="{{ key }}" name="{{ key }}" inputmode="decimal" value="{{ '%.2f'|format(ue.cost[key] / 100)|replace('.', ',') }}"><span class="hint">Standaard {{ default|eur }}</span></div>
+        {% endfor %}
+        <button class="btn btn-primary">Opslaan</button>
+      </div>
+    </form>
+    <section class="panel">
+      <div class="panel-h"><h2>Per plan, per extra dossier</h2></div>
+      <div class="table-wrap"><table class="t"><thead><tr><th>Plan</th><th class="num">Depiqo-dossier per maand</th><th class="num">Nieuw dossier</th></tr></thead><tbody>
+        {% for p in ue.per_plan %}<tr><td>{{ p.label }}</td><td class="num {{ 'late' if p.marginal_depiqo < 0 }}">{{ p.marginal_depiqo|eur }}</td><td class="num {{ 'late' if p.marginal_new < 0 }}">{{ p.marginal_new|eur }}</td></tr>{% endfor %}
+      </tbody></table></div>
+      <p class="panel-b small muted">Prijs per extra dossier min de aangenomen partnerkosten. Inbegrepen dossiers vallen onder de basisprijs.</p>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% from "macros.html" import status_d, evidence_tag, sandbox_tag, holding, provider_tag %}
+<div class="kpis mt">
+  <div class="kpi"><span>Lopende dossiers</span><b>{{ totals.dossiers }}</b></div>
+  <div class="kpi"><span>Vereiste borg</span><b>{{ totals.obligation|eur(False) }}</b></div>
+  <div class="kpi"><span>Saldo bij de bank</span><b>{{ totals.ledger|eur(False) }}</b></div>
+  <div class="kpi"><span>Bevestigd geblokkeerd</span><b>{{ totals.locked|eur(False) }}</b></div>
+  <div class="kpi {{ 'alert' if totals.exceptions }}"><span>Afwijkingen</span><b>{{ totals.exceptions }}</b></div>
+</div>
+<section class="panel">
+  <div class="table-wrap"><table class="t recon">
+    <thead><tr><th>Dossier</th>{% if show_org %}<th>Organisatie</th>{% endif %}<th>Status en bewijs</th><th class="num">Vereiste borg</th><th class="num">Saldo bank</th><th class="num">Geblokkeerd</th><th>Bankopdracht</th><th>Afwijking</th></tr></thead>
+    <tbody>{% for r in rows %}{% set d = r.d %}
+      <tr class="{{ 'row-error' if r.exceptions }}">
+        <td><a class="rowlink" href="{{ url_for(detail_endpoint|default('business.deposit'), pid=d.pid) }}">{{ d.reference }}</a><div class="small muted">{{ d.address }}, {{ d.city }}</div><div class="row tight">{{ holding(d.holding) }}{{ provider_tag(d) }}{{ sandbox_tag(d.provider) }}</div></td>
+        {% if show_org %}<td>{{ d.org_name }}</td>{% endif %}
+        <td><div class="stack tight">{{ status_d(d) }}{{ evidence_tag(d) }}</div></td>
+        <td class="num">{{ r.obligation|eur }}</td>
+        <td class="num">{% if r.ledger is none %}<span class="muted" title="Geen rekening bij de partnerbank">—</span>{% else %}<span class="{{ 'late' if r.ledger < r.obligation and d.status in ('secured', 'move_out', 'settlement_proposed', 'agreed', 'disputed') }}">{{ r.ledger|eur }}</span>{% endif %}</td>
+        <td class="num">{% if r.locked is none %}<span class="muted">—</span>{% else %}{{ r.locked|eur }}{% endif %}</td>
+        <td>{% if r.instruction %}<span class="badge t-{{ r.instruction.tone }}">{{ r.instruction.status }}</span><div class="small muted">{{ r.instruction.kind }}{% if r.instruction.attempts > 1 %} · {{ r.instruction.attempts }} pogingen{% endif %}</div>{% else %}<span class="muted">—</span>{% endif %}</td>
+        <td>{% if r.exceptions %}<ul class="errs">{% for e in r.exceptions %}<li>{{ e }}</li>{% endfor %}</ul>{% else %}<span class="badge t-ok">Klopt</span>{% endif %}</td>
+      </tr>
+    {% else %}<tr><td colspan="{{ 8 if show_org else 7 }}" class="empty">Geen afwijkingen. Dossiers, bank en bewijs kloppen met elkaar.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>

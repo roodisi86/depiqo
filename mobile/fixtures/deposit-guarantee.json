@@ -1,0 +1,184 @@
+{
+  "address": {
+    "city": "Rotterdam",
+    "postcode": "3012 BR",
+    "street": "Witte de Withstraat 50"
+  },
+  "amounts": [
+    {
+      "explanation": "Volgens het huurcontract",
+      "explanation_key": "per_lease",
+      "key": "obligation",
+      "known": true,
+      "label": "Vereiste borg",
+      "value": {
+        "cents": 250000,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Geen geld gestort: een derde staat garant",
+      "explanation_key": "guarantee_no_money",
+      "key": "received",
+      "known": false,
+      "label": "Ontvangen",
+      "value": null
+    },
+    {
+      "explanation": "Geen juridische blokkering aangetoond",
+      "explanation_key": "no_legal_lock",
+      "key": "locked",
+      "known": false,
+      "label": "Bevestigd geblokkeerd",
+      "value": null
+    },
+    {
+      "explanation": "Valt buiten Depiqo bij een borg elders",
+      "explanation_key": "outside_depiqo",
+      "key": "interest",
+      "known": false,
+      "label": "Rente",
+      "value": null
+    }
+  ],
+  "deadline": null,
+  "display_key": "secured_declared",
+  "display_label": "Ontvangst verklaard door je verhuurder",
+  "events": [
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:28+00:00",
+      "id": 150,
+      "key": "status_changed",
+      "message": "Ontvangst verklaard door de beheerder (nog geen bankbewijs)",
+      "params": {
+        "from_status": "awaiting_payment",
+        "to_status": "secured"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "tenant",
+      "at": "2026-10-20T12:17:28+00:00",
+      "id": 149,
+      "key": "status_changed",
+      "message": "Huurder heeft de uitnodiging geaccepteerd",
+      "params": {
+        "from_status": "invited",
+        "to_status": "awaiting_payment"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:28+00:00",
+      "id": 148,
+      "key": "status_changed",
+      "message": "Uitnodiging verstuurd naar de huurder",
+      "params": {
+        "from_status": "concept",
+        "to_status": "invited"
+      },
+      "type": "status"
+    }
+  ],
+  "events_path": "/api/v1/deposits/6h29m8x7jcbe/events",
+  "evidence_level": "declared",
+  "holding": "external",
+  "interest_note": null,
+  "landlord": {
+    "name": "Voorbeeld Vastgoed BV"
+  },
+  "lease_end": "2027-02-28",
+  "lease_start": "2025-03-01",
+  "location": {
+    "account_open": null,
+    "assurance": {
+      "code": "declared",
+      "label": "Verklaard door beheerder",
+      "short": "Verklaard",
+      "tone": "wait"
+    },
+    "evidence": {
+      "label": "Verklaard door beheerder",
+      "level": "declared",
+      "tenant": "Ontvangst verklaard door je verhuurder"
+    },
+    "guarantee": {
+      "days_left": 162,
+      "expires_on": "2027-03-31",
+      "kind": "borggarantie",
+      "text": "Je hebt geen geld gestort. Een derde staat garant. Bij schade kan die het bedrag op jou verhalen.",
+      "warning": null,
+      "warning_key": null
+    },
+    "interest_rate_bps": null,
+    "kind": "borggarantie",
+    "label": "Een derde staat garant. Je hebt geen geld gestort.",
+    "provider_name": "Garantiefonds C",
+    "reference": "GF-2025-0042",
+    "reference_label": "Certificaatnummer",
+    "sandbox": false
+  },
+  "move_out_date": null,
+  "next_action": null,
+  "payment_instructions": null,
+  "payment_problem": null,
+  "payout": null,
+  "pid": "6h29m8x7jcbe",
+  "progress": {
+    "current": "secured",
+    "on_hold": false,
+    "steps": [
+      {
+        "code": "invited",
+        "label": "Uitnodiging",
+        "state": "done"
+      },
+      {
+        "code": "awaiting_payment",
+        "label": "Borg regelen",
+        "state": "done"
+      },
+      {
+        "code": "secured",
+        "label": "Borg geregistreerd",
+        "state": "current"
+      },
+      {
+        "code": "move_out",
+        "label": "Vertrek",
+        "state": "upcoming"
+      },
+      {
+        "code": "settlement",
+        "label": "Afrekening",
+        "state": "upcoming"
+      },
+      {
+        "code": "payout",
+        "label": "Vrijgave",
+        "state": "upcoming"
+      },
+      {
+        "code": "closed",
+        "label": "Afgerond",
+        "state": "upcoming"
+      }
+    ]
+  },
+  "provider_kind": "borggarantie",
+  "reference": "DPQ-001-00016",
+  "region": "NL",
+  "release_form_available": false,
+  "release_rule": "Terug binnen 14 dagen na het einde van de huur, of binnen 30 dagen als kosten worden verrekend.",
+  "rent": {
+    "cents": 125000,
+    "currency": "EUR"
+  },
+  "status": "secured",
+  "status_label": "Je borg is geregistreerd",
+  "term": "waarborgsom",
+  "tone": "wait",
+  "updated_at": "2026-10-20T12:17:28+00:00"
+}

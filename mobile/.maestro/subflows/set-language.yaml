@@ -1,0 +1,27 @@
+# After login: choose the run language in Profiel (the option labels Nederlands/Français/English never change),
+# check the profile shows it, and go back to the deposits tab. env: LANG_CODE, T_PROFILE_LANGUAGE.
+appId: com.getdepiqo.app.dev
+---
+- extendedWaitUntil:
+    visible:
+      id: "tab-profile"
+    timeout: 45000
+- tapOn:
+    id: "tab-profile"
+- extendedWaitUntil:
+    visible:
+      id: "profile-screen"
+    timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "language-${LANG_CODE}"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    id: "language-${LANG_CODE}"
+- extendedWaitUntil:
+    visible:
+      text: "${T_PROFILE_LANGUAGE}"
+    timeout: 10000
+- tapOn:
+    id: "tab-deposits"

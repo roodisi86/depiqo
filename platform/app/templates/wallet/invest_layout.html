@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "macros.html" import csrf, mark, flashes %}
+{% block body %}
+<div class="w">
+  <header class="w-top">
+    <div class="bar"><a class="brand" href="{{ url_for('wallet.home') }}">{{ mark() }}depiqo</a>
+      <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form></div>
+    {% include "wallet/_tabs.html" %}
+    {% block hero %}{% endblock %}
+  </header>
+  <main class="w-body" id="inhoud">
+    {{ flashes() }}
+    {% block content %}{% endblock %}
+    <section class="w-card invest-note" aria-label="Je borg en de rol van Depiqo">
+      <p class="small"><b>Je borg blijft apart.</b> {{ INVEST_SEPARATION }}</p>
+      <p class="small muted">{{ role_text }}{% if partner.is_sandbox %} <span class="sbx-inline">SANDBOX · geen echt geld</span>{% endif %}</p>
+      <p class="small muted">Depiqo geeft geen advies. De partner beoordeelt of beleggen bij je past, voert je orders uit, bewaart je beleggingen op jouw naam en stuurt de officiële overzichten.</p>
+    </section>
+  </main>
+  <p class="w-foot"><a href="{{ url_for('auth.security') }}">Beveiliging van je account</a></p>
+</div>
+{% endblock %}

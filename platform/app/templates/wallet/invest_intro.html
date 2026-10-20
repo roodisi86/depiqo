@@ -1,0 +1,40 @@
+{% extends "wallet/invest_layout.html" %}
+{% block title %}Beleggen{% endblock %}
+{% block hero %}<div class="w-amount"><small>Depiqo Invest</small><h1 class="w-title">Beleggen met je eigen geld</h1></div>{% endblock %}
+{% block content %}
+<section class="w-card risk" aria-labelledby="risk-h">
+  <h2 id="risk-h">Lees dit eerst</h2>
+  <p class="note warn"><b>Je kunt geld verliezen.</b> {{ INVEST_RISK }}</p>
+  <p class="small muted">Beleg alleen met geld dat je een paar jaar kunt missen. Je borg doet niet mee en blijft op de geblokkeerde borgrekening.</p>
+</section>
+
+<section class="w-card" aria-labelledby="how-h">
+  <h2 id="how-h">Zo werkt het</h2>
+  <ol class="invest-steps">
+    <li class="{{ 'done' if appr }}"><b>Kennis- en ervaringstoets</b><span class="small muted">Acht korte vragen. De partner kijkt of beleggen bij je past.</span></li>
+    <li class="{{ 'done' if acct and acct.portfolio }}"><b>Kies een portefeuille</b><span class="small muted">Defensief, Neutraal of Offensief. Je ziet vooraf de kosten in euro en scenario's.</span></li>
+    <li><b>Voorwaarden en rekening</b><span class="small muted">De partner opent een beleggingsrekening op jouw naam.</span></li>
+    <li><b>Storten en kopen</b><span class="small muted">Je maakt geld over naar de partner en koopt vanaf € 25.</span></li>
+  </ol>
+  {% if not appr %}
+    <a class="btn btn-primary" href="{{ url_for('invest.questionnaire') }}">Start de toets</a>
+  {% elif not may_continue %}
+    <a class="btn btn-primary" href="{{ url_for('invest.result') }}">Bekijk je uitslag</a>
+  {% elif acct and acct.portfolio %}
+    <a class="btn btn-primary" href="{{ url_for('invest.terms') }}">Verder naar de voorwaarden</a>
+    <a class="btn btn-line" href="{{ url_for('invest.choose') }}">Andere portefeuille kiezen</a>
+  {% else %}
+    <a class="btn btn-primary" href="{{ url_for('invest.choose') }}">Kies een portefeuille</a>
+  {% endif %}
+</section>
+
+<section class="w-card" aria-labelledby="cost-h">
+  <h2 id="cost-h">Wat het kost</h2>
+  <div class="qa">
+    <div><span>Servicekosten Depiqo</span><b>{{ fee_bps|bps }} per jaar</b></div>
+    <div><span>Lopende kosten van de fondsen</span><b>0,10% tot 0,22% per jaar</b></div>
+    <div><span>Transactiekosten</span><b>€ 0 bij deze partner</b></div>
+  </div>
+  <p class="small muted">Voordat je iets afspreekt, zie je wat dit in euro is voor het bedrag dat je invult.</p>
+</section>
+{% endblock %}

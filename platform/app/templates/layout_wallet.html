@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import mark, flashes, csrf %}
+{% block body %}
+<div class="w">
+  <header class="w-top">
+    <div class="bar"><a class="brand" href="{{ url_for('wallet.home') }}">{{ mark() }}depiqo</a>
+      <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form></div>
+  </header>
+  <main class="w-body" id="inhoud">
+    {{ flashes() }}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

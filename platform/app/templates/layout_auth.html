@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% from "macros.html" import mark, flashes, csrf %}
+{% block body %}
+<main class="auth">
+  <div class="auth-box">
+    <a class="brand" href="{{ url_for('auth.index') }}">{{ mark() }}depiqo</a>
+    {% block content %}{% endblock %}
+  </div>
+</main>
+{% endblock %}

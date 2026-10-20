@@ -1,0 +1,75 @@
+# (a) Login without 2FA -> deposits list -> deposit detail -> the four separate amounts.
+# Mila (Witte de Withstraat 50) has a guarantee by a third party: she paid nothing, so "Ontvangen" must be "—"
+# (never the required amount), and so must "Bevestigd geblokkeerd" (only declared) and "Rente" (held elsewhere).
+appId: com.getdepiqo.app.dev
+name: "a. Login (mila), borgen, vier bedragen, — bij onbekend"
+tags: [wallet, amounts]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: mila@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- assertVisible:
+    id: "env-banner"
+- assertVisible:
+    text: "(?s).*Witte de Withstraat 50.*"
+- takeScreenshot: a-01-deposits-${LANG_CODE}
+- tapOn:
+    id: "deposit-card"
+- extendedWaitUntil:
+    visible:
+      id: "deposit-detail"
+    timeout: 30000
+# The four rows, in this order, each with its own label. Unknown is spoken as "nog niet bekend" (amount.unknownA11y)
+# in the accessibility label and drawn as "—".
+- scrollUntilVisible:
+    element:
+      id: "amount-obligation"
+    direction: DOWN
+    timeout: 20000
+- assertVisible:
+    id: "amount-obligation"
+    text: "(?s).*${T_AMOUNT_OBLIGATION}.*2.500.00.*"
+- scrollUntilVisible:
+    element:
+      id: "amount-received"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "amount-received"
+    text: "(?s).*${T_AMOUNT_RECEIVED}.*${T_AMOUNT_UNKNOWN}.*"
+- assertNotVisible:
+    id: "amount-received"
+    text: "(?s).*${T_AMOUNT_RECEIVED}.*2.500.00.*"
+- scrollUntilVisible:
+    element:
+      id: "amount-locked"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "amount-locked"
+    text: "(?s).*${T_AMOUNT_LOCKED}.*${T_AMOUNT_UNKNOWN}.*"
+- scrollUntilVisible:
+    element:
+      id: "amount-interest"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "amount-interest"
+    text: "(?s).*${T_AMOUNT_INTEREST}.*${T_AMOUNT_UNKNOWN}.*"
+# Android exposes the drawn texts under the accessible row as well: check the dash itself.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - assertVisible:
+          text: "—"
+          childOf:
+            id: "amount-received"
+- takeScreenshot: a-02-amounts-mila-${LANG_CODE}

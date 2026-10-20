@@ -1,0 +1,59 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Import controleren{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb"><a href="{{ url_for('business.deposits') }}">Borgen</a> / <a href="{{ url_for('business.import_upload') }}">Importeren</a></p><h1>Controleer je import</h1></div>
+  <div class="row"><span class="small muted">{{ batch.filename }}</span>
+    <span class="badge t-{{ {'preview': 'wait', 'committed': 'ok', 'discarded': 'neutral'}[batch.status] }}">{{ {'preview': 'Voorbeeld', 'committed': 'Geïmporteerd', 'discarded': 'Geannuleerd'}[batch.status] }}</span></div></div>
+
+<div class="kpis kpis-3">
+  <div class="kpi"><span>Rijen</span><b>{{ batch.row_count }}</b></div>
+  <div class="kpi"><span>Zonder fouten</span><b>{{ batch.row_count - batch.error_count }}</b></div>
+  <a class="kpi {{ 'alert' if batch.error_count }}" href="{{ url_for('business.import_preview', batch_id=batch.id, toon='fouten') }}"><span>Met fouten</span><b>{{ batch.error_count }}</b></a>
+</div>
+
+{% if batch.status == 'preview' %}
+<section class="panel panel-b">
+  {% if batch.error_count %}
+    <div class="spread"><p><b>Nog niet importeren.</b> {{ batch.error_count }} {{ 'rij heeft' if batch.error_count == 1 else 'rijen hebben' }} een fout. Pas je bestand aan en upload het opnieuw. Zo komt je portefeuille in één keer en volledig binnen.</p>
+      <div class="row"><a class="btn btn-primary" href="{{ url_for('business.import_upload') }}">Nieuw bestand uploaden</a>
+      <form method="post" action="{{ url_for('business.import_action', batch_id=batch.id, action='annuleren') }}">{{ csrf() }}<button class="btn btn-line">Annuleren</button></form></div></div>
+  {% else %}
+    <form class="spread" method="post" action="{{ url_for('business.import_action', batch_id=batch.id, action='bevestigen') }}" data-confirm="{{ batch.row_count }} borgen importeren?">{{ csrf() }}
+      <div class="stack"><p><b>Alles klopt.</b> {{ batch.row_count }} borgen worden in één keer toegevoegd.</p>
+        {% if warn_count %}<p class="small warn-text">{{ warn_count }} {{ 'rij heeft' if warn_count == 1 else 'rijen hebben' }} een waarschuwing over de aanbieder. Dat houdt de import niet tegen; controleer het wel.</p>{% endif %}
+        <label class="check"><input type="checkbox" name="send_invites" value="1">Stuur de huurders een uitnodiging voor Depiqo Wallet</label></div>
+      <div class="row"><button class="btn btn-primary">Importeren</button></div>
+    </form>
+    <form class="mt" method="post" action="{{ url_for('business.import_action', batch_id=batch.id, action='annuleren') }}">{{ csrf() }}<button class="linkbtn dark">Annuleren zonder te importeren</button></form>
+  {% endif %}
+</section>
+{% elif batch.status == 'committed' %}
+<p class="note">Geïmporteerd op {{ batch.committed_at|datetime_nl }}: {{ batch.imported_count }} borgen.</p>
+{% endif %}
+
+<section class="panel mt">
+  <div class="panel-h"><h2>Rijen</h2>
+    <div class="row"><a class="btn btn-sm {{ 'btn-dark' if show != 'fouten' else 'btn-line' }}" href="{{ url_for('business.import_preview', batch_id=batch.id) }}">Alle {{ total }}</a>
+      <a class="btn btn-sm {{ 'btn-dark' if show == 'fouten' else 'btn-line' }}" href="{{ url_for('business.import_preview', batch_id=batch.id, toon='fouten') }}">Alleen fouten</a></div></div>
+  <div class="table-wrap"><table class="t import">
+    <thead><tr><th class="num">Regel</th><th>Adres</th><th>Huurder</th><th>Regio</th><th class="num">Huur</th><th class="num">Borg</th><th>Start</th><th>Waar</th><th>Aanbieder</th><th>Controle</th></tr></thead>
+    <tbody>{% for r in rows %}{% set v = r['values'] %}
+      <tr class="{{ 'row-error' if r.errors }}"><td class="num mono">{{ r.line }}</td>
+        <td>{{ v.address }}<div class="small muted">{{ v.postcode }} {{ v.city }}</div></td>
+        <td>{{ v.tenant_name }}<div class="small muted">{{ v.tenant_email }}</div></td>
+        <td>{{ REGIONS[r.data.region].name if r.data.region in REGIONS else v.region }}</td>
+        <td class="num">{{ r.data.rent_cents|eur if r.data.rent_cents else v.rent }}</td>
+        <td class="num">{{ r.data.amount_cents|eur if r.data.amount_cents else v.amount }}</td>
+        <td>{{ r.data.lease_start|date_nl if r.data.lease_start else v.lease_start }}</td>
+        <td>{{ {'external': 'Elders', 'depiqo': 'Depiqo'}.get(r.data.holding, v.holding) }}</td>
+        <td>{% if r.data.provider_kind %}{{ PROVIDER_KINDS[r.data.provider_kind].short }}{% elif v.provider_kind %}{{ v.provider_kind }}{% elif r.data.holding == 'external' %}<span class="muted">Onbekend</span>{% else %}<span class="muted">—</span>{% endif %}
+          {% if r.data.provider_name %}<div class="small muted">{{ r.data.provider_name }}</div>{% endif %}{% if r.data.provider_reference %}<div class="small muted mono">{{ r.data.provider_reference }}</div>{% endif %}
+          {% if r.data.guarantee_expires_on %}<div class="small muted">tot {{ r.data.guarantee_expires_on|date_nl }}</div>{% endif %}</td>
+        <td>{% if r.errors %}<ul class="errs">{% for e in r.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% else %}<span class="badge t-ok">In orde</span>{% endif %}
+          {% if r.get('warnings') %}<ul class="warns">{% for w in r.warnings %}<li>{{ w }}</li>{% endfor %}</ul>{% endif %}</td></tr>
+    {% else %}<tr><td colspan="10" class="empty">Geen rijen met fouten.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% if truncated %}<p class="panel-b small muted">Alleen de eerste 1.000 rijen worden getoond.</p>{% endif %}
+</section>
+{% endblock %}

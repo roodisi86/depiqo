@@ -1,0 +1,91 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf, mark, status_d, evidence_tag, holding, steps, deadline_box, partner_banner %}
+{% block title %}Overzicht{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div><p class="crumb">{{ g.org.name }}</p><h1>Welkom terug, {{ g.user.name.split(' ')[0] }}</h1></div>
+  {% if can('deposit.edit') %}<a class="btn btn-primary" href="{{ url_for('business.new_deposit') }}">Nieuwe borg</a>{% endif %}
+</div>
+{{ partner_banner(partner) }}
+
+<div class="kpis">
+  <a class="kpi" href="{{ url_for('business.deposits', filter='lopend') }}"><span>Lopende dossiers</span><b>{{ kpi.active }}</b></a>
+  <div class="kpi"><span>Bevestigd geblokkeerd</span><b>{{ kpi.locked_value|eur(False) }}</b><small>Bank of juridisch bewijs</small></div>
+  <a class="kpi {{ 'warn' if kpi.declared_only }}" href="{{ url_for('business.deposits', filter='lopend', waar='external') }}"><span>Elders, niet geverifieerd</span><b>{{ kpi.declared_only }}</b><small>Alleen verklaard of bankbewijs</small></a>
+  <a class="kpi {{ 'alert' if kpi.due_soon }}" href="{{ url_for('business.deposits', filter='actie') }}"><span>Termijn binnen 7 dagen</span><b>{{ kpi.due_soon }}</b></a>
+  <a class="kpi {{ 'alert' if kpi.disputes }}" href="{{ url_for('business.deposits', filter='actie') }}"><span>Geschillen</span><b>{{ kpi.disputes }}</b></a>
+</div>
+
+<div class="grid g-main">
+  <section class="panel" aria-labelledby="act-h">
+    <div class="panel-h"><h2 id="act-h">Vandaag te doen</h2><span class="small muted">{{ kpi.tasks }} taken · meest dringend eerst</span></div>
+    {% if groups %}
+    <div class="tasks">
+    {% for grp in groups %}
+      <section class="task-group" aria-labelledby="tg-{{ grp.key }}">
+        <h3 id="tg-{{ grp.key }}"><span>{{ grp.label }}</span><span class="count">{{ grp.tasks|length }}</span></h3>
+        <ul>
+        {% for a in grp.tasks[:5] %}
+          <li class="task">
+            <div class="task-main"><a class="rowlink" href="{{ url_for('business.deposit', pid=a.d.pid) }}">{{ a.d.address }}</a>
+              <span class="small muted">{{ a.d.city }} · {{ a.d.tenant_name }} · {{ a.reason }}</span></div>
+            <div class="task-when tabnum">{% if a.deadline %}{% if a.deadline.days_left < 0 %}<b class="late">{{ -a.deadline.days_left }} d te laat</b>{% elif a.deadline.days_left == 0 %}<b class="late">vandaag</b>{% else %}{{ a.deadline.days_left }} d{% endif %}{% if not a.deadline.statutory %} <span class="small muted">(intern)</span>{% endif %}{% else %}<span class="muted small">geen termijn</span>{% endif %}</div>
+            <div class="task-do">
+            {% set kind, target, label = a.action %}
+            {% if kind == 'post' and ((target == 'uitnodigen' and can('deposit.edit')) or (target == 'herinneren' and can('deposit.remind'))) %}
+              <form method="post" action="{{ url_for('business.deposit_action', pid=a.d.pid, action=target) }}">{{ csrf() }}<input type="hidden" name="next" value="dashboard"><button class="btn btn-sm btn-line">{{ label }}</button></form>
+            {% else %}
+              <a class="btn btn-sm btn-line" href="{{ url_for('business.deposit', pid=a.d.pid) }}{{ target if kind == 'link' else '' }}">{{ label if kind == 'link' else 'Bekijken' }}</a>
+            {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+        </ul>
+        {% if grp.tasks|length > 5 %}<p class="small more"><a href="{{ url_for('business.deposits', filter='actie') }}">en nog {{ grp.tasks|length - 5 }}</a></p>{% endif %}
+      </section>
+    {% endfor %}
+    </div>
+    {% else %}<p class="empty">Niets te doen vandaag. Alle dossiers lopen volgens plan.</p>{% endif %}
+  </section>
+
+  <div class="stack">
+    <section class="panel" aria-labelledby="where-h">
+      <div class="panel-h"><h2 id="where-h">Waar staan je borgen</h2><span class="small muted">Lopende dossiers</span></div>
+      {% if places %}
+      <div class="table-wrap"><table class="t places">
+        <thead><tr><th>Waar</th><th class="num">Aantal</th><th class="num">Borg</th><th class="num" title="Alleen verklaard door de beheerder">Verklaard</th></tr></thead>
+        <tbody>
+        {% for p in places %}<tr class="{{ 'unknown' if p.key == 'onbekend' }}"><td><a class="rowlink" href="{{ url_for('business.deposits', filter='lopend', aanbieder=p.key) }}" title="{{ p.full }}">{{ p.label }}</a></td>
+          <td class="num">{{ p.n }}</td><td class="num">{{ p.total|eur(False) }}</td>
+          <td class="num">{% if p.declared is none %}<span class="muted" title="De bank bevestigt">—</span>{% elif p.declared %}<b class="warn-text">{{ p.declared }}</b>{% else %}<span class="muted">0</span>{% endif %}</td></tr>{% endfor %}
+        <tr class="total"><td>Totaal</td><td class="num">{{ places_total.n }}</td><td class="num">{{ places_total.total|eur(False) }}</td><td class="num">{{ places_total.declared }}</td></tr>
+        </tbody></table></div>
+      <div class="panel-b stack small">
+        <p class="muted">"Verklaard": de beheerder verklaarde de ontvangst, er is nog geen bewijs. Je houdt je huidige aanbieders; Depiqo houdt bij waar elke borg staat.</p>
+        {% if places_total.expiring %}<p class="note warn">{% if can('reconciliation.view') %}<a href="{{ url_for('business.reconciliation') }}">{% endif %}<b>{{ places_total.expiring }} {{ 'garantie verloopt' if places_total.expiring == 1 else 'garanties verlopen' }}</b> binnen 60 dagen of {{ 'is' if places_total.expiring == 1 else 'zijn' }} al verlopen.{% if can('reconciliation.view') %}</a>{% endif %}</p>{% endif %}
+      </div>
+      {% else %}<p class="empty">Nog geen lopende dossiers.</p>{% endif %}
+    </section>
+    <section class="panel" aria-labelledby="mix-h">
+      <div class="panel-h"><h2 id="mix-h">Portefeuille</h2></div>
+      <div class="panel-b stack">
+        <dl class="facts">
+          <dt>Op Depiqo-borgrekening</dt><dd class="tabnum">{{ kpi.on_depiqo }} van {{ kpi.active }}</dd>
+          <dt>Wacht op huurder</dt><dd class="tabnum">{{ kpi.awaiting }}</dd>
+          <dt>Rente voor huurders</dt><dd class="tabnum">{{ kpi.interest|eur }}</dd>
+          {% if est %}<dt>Kosten deze maand</dt><dd class="tabnum">{{ est.total|eur }}{% if est.pilot %} <span class="small muted">(pilot)</span>{% endif %}</dd>{% endif %}
+        </dl>
+        <p class="small muted">"Bevestigd geblokkeerd" telt alleen borgen die de bank heeft geblokkeerd of waarvoor juridische zekerheid is aangetoond. Een verklaring van ontvangst telt niet mee.</p>
+      </div>
+    </section>
+    <section class="panel" aria-labelledby="ev-h">
+      <div class="panel-h"><h2 id="ev-h">Laatste gebeurtenissen</h2></div>
+      <ul class="timeline panel-b">
+        {% for e in events %}
+        <li><span class="dot {{ e.actor_kind }}"></span><div><a href="{{ url_for('business.deposit', pid=e.pid) }}">{{ e.reference }}</a> · {{ e.message }}<div class="meta">{{ e.at|datetime_nl }}</div></div></li>
+        {% else %}<li><span></span><span class="muted">Nog geen gebeurtenissen.</span></li>{% endfor %}
+      </ul>
+    </section>
+  </div>
+</div>
+{% endblock %}

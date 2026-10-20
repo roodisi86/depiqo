@@ -1,0 +1,66 @@
+{% extends "layout_app.html" if g.membership else ("layout_admin.html" if g.user.is_staff else "layout_wallet.html") %}
+{% from "macros.html" import csrf %}
+{% block title %}Beveiliging{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">{{ user.email }}</p><h1>Beveiliging</h1></div></div>
+{% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+{% if message %}<div class="flash ok" role="status">{{ message }}</div>{% endif %}
+<div class="grid g-main sec-grid">
+  <section class="panel" aria-labelledby="tfa-h">
+    <div class="panel-h"><h2 id="tfa-h">Twee-stapsverificatie</h2>{% if enabled %}<span class="badge t-ok">Aan</span>{% else %}<span class="badge t-wait">Uit</span>{% endif %}</div>
+    <div class="panel-b stack">
+    {% if codes %}
+      <p><b>Je herstelcodes.</b> Bewaar ze op papier of in een wachtwoordmanager. Je ziet ze maar één keer. Elke code werkt één keer, als je je telefoon kwijt bent.</p>
+      <ul class="codes" aria-label="Herstelcodes">{% for c in codes %}<li class="mono">{{ c }}</li>{% endfor %}</ul>
+      <a class="btn btn-primary" href="{{ url_for('auth.security') }}">Ik heb ze bewaard</a>
+    {% elif enabled %}
+      <p>Bij het inloggen vragen we na je wachtwoord een code uit je authenticator-app. Ingeschakeld op {{ user.totp_enabled_at|datetime_nl }}.</p>
+      <p class="small muted">Nog {{ left }} herstelcodes over.</p>
+      <details><summary><b>Nieuwe herstelcodes maken</b></summary>
+        <form class="row align-end mt" method="post">{{ csrf() }}<input type="hidden" name="action" value="codes">
+          <div class="field"><label for="code-new">Code uit je app</label><input id="code-new" name="code" inputmode="numeric" autocomplete="one-time-code"></div>
+          <button class="btn btn-line">Nieuwe codes</button></form></details>
+      <details><summary><b>Twee-stapsverificatie uitzetten</b></summary>
+        <form class="row align-end mt" method="post" data-confirm="Twee-stapsverificatie uitzetten? Je account is dan minder goed beschermd.">{{ csrf() }}<input type="hidden" name="action" value="disable">
+          <div class="field"><label for="code-off">Code uit je app of herstelcode</label><input id="code-off" name="code" autocomplete="one-time-code"></div>
+          <button class="btn btn-danger">Uitzetten</button></form></details>
+    {% elif pending %}
+      <ol class="setup">
+        <li><b>Voeg Depiqo toe aan je authenticator-app</b><span class="small muted">Gebruik de app op je telefoon of je wachtwoordmanager. Kies "sleutel handmatig invoeren" en neem deze sleutel over.</span>
+          <div class="secret"><span class="small muted">Sleutel</span><span class="mono" data-totp-secret="{{ pending }}">{{ grouped }}</span>
+            <span class="small muted">Type: op tijd gebaseerd, 6 cijfers, elke 30 seconden.</span></div>
+          <details><summary class="small">Link voor apps die een otpauth-link openen</summary><p class="mono wrap small">{{ uri }}</p></details></li>
+        <li><b>Vul de code in die de app toont.</b>
+          <form class="row align-end mt" method="post">{{ csrf() }}<input type="hidden" name="action" value="confirm">
+            <div class="field"><label for="code">Code van 6 cijfers</label><input id="code" name="code" inputmode="numeric" autocomplete="one-time-code" autofocus></div>
+            <button class="btn btn-primary">Bevestigen en aanzetten</button></form></li>
+      </ol>
+      <form method="post">{{ csrf() }}<input type="hidden" name="action" value="cancel"><button class="linkbtn dark">Stoppen</button></form>
+    {% else %}
+      <p>Met twee-stapsverificatie heb je naast je wachtwoord een code van je telefoon nodig. Een gestolen wachtwoord is dan niet genoeg.</p>
+      <form method="post">{{ csrf() }}<input type="hidden" name="action" value="start"><button class="btn btn-primary">Twee-stapsverificatie instellen</button></form>
+    {% endif %}
+    </div>
+  </section>
+  <section class="panel" aria-labelledby="dev-h">
+    <div class="panel-h"><h2 id="dev-h">Apps en apparaten</h2><span class="badge t-neutral">{{ devices|length }}</span></div>
+    <div class="panel-b stack">
+    {% if devices %}
+      <p class="small muted">Hier ben je ingelogd in de Depiqo-app. Herken je een apparaat niet? Meld het af en wijzig je wachtwoord.</p>
+      <ul class="devices" aria-label="Apparaten">{% for d in devices %}
+        <li class="spread"><div><b>{{ d.device_name }}</b><br><span class="small muted">{{ 'iPhone of iPad' if d.platform == 'ios' else 'Android' }} · app {{ d.app_version }} · laatst gezien {{ d.last_seen_at|datetime_nl }}{% if d.mfa_at %} · met code{% endif %}</span></div>
+          <form method="post" data-confirm="Dit apparaat afmelden? De app op dat apparaat vraagt opnieuw om in te loggen.">{{ csrf() }}<input type="hidden" name="action" value="revoke_device"><input type="hidden" name="device_id" value="{{ d.id }}"><button class="btn btn-line btn-sm">Afmelden</button></form></li>
+      {% endfor %}</ul>
+    {% else %}
+      <p class="small muted">Je bent niet ingelogd in de Depiqo-app.</p>
+    {% endif %}
+    </div>
+  </section>
+  <section class="panel panel-b stack small">
+    <span class="label">Goed om te weten</span>
+    <p>Depiqo vraagt nooit om je code via mail of telefoon.</p>
+    <p>Medewerkers van Depiqo en beheerders van een organisatie moeten twee-stapsverificatie aanzetten.</p>
+    <p class="muted">Werkt je code niet? Controleer of de tijd op je telefoon automatisch wordt ingesteld.</p>
+  </section>
+</div>
+{% endblock %}

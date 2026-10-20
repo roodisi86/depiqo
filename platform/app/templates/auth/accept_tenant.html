@@ -1,0 +1,28 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf, mark, status, holding, steps, deadline_box, flashes %}
+{% block title %}Je borgverzoek{% endblock %}
+{% block content %}
+<h1>Je {{ 'waarborgsom' if deposit.region == 'NL' else 'huurwaarborg' }}, helder geregeld.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <p>Controleer eerst of dit verzoek klopt:</p>
+  <div class="qa">
+    <div><span>Verhuurder of beheerder</span><b>{{ org.name }}</b></div>
+    <div><span>Woning</span><b>{{ prop.address }}, {{ prop.city }}</b></div>
+    <div><span>Bedrag</span><b>{{ deposit.amount_cents|eur }}</b></div>
+    <div><span>Kenmerk</span><b class="mono">{{ deposit.reference }}</b></div>
+    <div><span>Waar staat je borg</span><b>{{ 'Op een borgrekening op jouw naam' if deposit.holding == 'depiqo' else 'Bij je verhuurder' }}</b></div>
+  </div>
+  <label class="check"><input type="checkbox" name="confirm_details" value="1">De naam van mijn verhuurder, het adres en het bedrag kloppen.</label>
+  {% if existing %}
+    <p class="small muted">Je hebt al een Depiqo-account met {{ tenant.email }}. {% if not g.user %}Je logt eerst in.{% endif %}</p>
+    <button class="btn btn-primary" type="submit">{{ 'Toevoegen aan mijn account' if g.user else 'Inloggen en doorgaan' }}</button>
+  {% else %}
+    <div class="field"><label for="password">Kies een wachtwoord voor {{ tenant.email }}</label><input id="password" name="password" type="password" autocomplete="new-password" required><span class="hint">Minstens 12 tekens.</span></div>
+    <button class="btn btn-primary" type="submit">Doorgaan</button>
+  {% endif %}
+  <p class="small muted">Klopt er iets niet? Stop dan hier en bel je verhuurder op een nummer dat je zelf opzoekt. Depiqo vraagt nooit om je bankcode.</p>
+</form>
+{% if sandbox() %}<p class="sub small">Sandbox: er wordt geen echt geld verwerkt.</p>{% endif %}
+{% endblock %}

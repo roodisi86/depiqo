@@ -1,0 +1,55 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf, provider_fields %}
+{% block title %}Nieuwe borg{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb"><a href="{{ url_for('business.deposits') }}">Borgen</a></p><h1>Nieuwe borg</h1></div></div>
+{% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+<form method="post" class="stack" novalidate id="new-deposit" data-provider-form>
+  {{ csrf() }}
+  <div class="grid g-2">
+    <fieldset>
+      <legend>Woning</legend>
+      {% if props %}
+      <div class="field"><label for="property_id">Bestaand pand</label>
+        <select id="property_id" name="property_id"><option value="">Nieuw pand invullen</option>
+        {% for p in props %}<option value="{{ p.id }}" data-region="{{ p.region }}" {{ 'selected' if form.get('property_id') == p.id|string }}>{{ p.address }}, {{ p.city }} ({{ REGIONS[p.region].name }})</option>{% endfor %}</select></div>
+      {% endif %}
+      <div class="form-grid" id="new-property">
+        <div class="field full"><label for="address">Adres</label><input id="address" name="address" value="{{ form.get('address', '') }}" autocomplete="street-address"></div>
+        <div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode" value="{{ form.get('postcode', '') }}"></div>
+        <div class="field"><label for="city">Plaats</label><input id="city" name="city" value="{{ form.get('city', '') }}"></div>
+      </div>
+      <div class="field"><label for="region">Regio en regels</label>
+        <select id="region" name="region">{% for code, r in REGIONS.items() %}<option value="{{ code }}" {{ 'selected' if form.get('region') == code }}>{{ r.name }}: maximaal {{ r.max_months }} maanden {{ r.rent_basis }}</option>{% endfor %}</select>
+        <span class="hint">Regelversie {{ RULE_VERSION }}, gecontroleerd op 18 oktober 2026. Deze versie blijft gelden voor dit dossier, ook als de regels later veranderen.</span></div>
+    </fieldset>
+    <fieldset>
+      <legend>Huurder</legend>
+      <div class="field"><label for="tenant_name">Naam</label><input id="tenant_name" name="tenant_name" value="{{ form.get('tenant_name', '') }}" autocomplete="off"></div>
+      <div class="field"><label for="tenant_email">E-mailadres</label><input id="tenant_email" name="tenant_email" type="email" value="{{ form.get('tenant_email', '') }}" autocomplete="off"></div>
+      <div class="field"><label for="tenant_phone">Telefoon (optioneel)</label><input id="tenant_phone" name="tenant_phone" value="{{ form.get('tenant_phone', '') }}" autocomplete="off"></div>
+    </fieldset>
+  </div>
+  <fieldset>
+    <legend>Huurcontract en borg</legend>
+    <div class="form-grid">
+      <div class="field"><label for="lease_start">Ingangsdatum</label><input id="lease_start" name="lease_start" type="date" value="{{ form.get('lease_start', '') }}"></div>
+      <div class="field"><label for="lease_end">Einddatum (optioneel)</label><input id="lease_end" name="lease_end" type="date" value="{{ form.get('lease_end', '') }}"></div>
+      <div class="field"><label for="rent">Huur per maand (€)</label><input id="rent" name="rent" inputmode="decimal" value="{{ form.get('rent', '') }}" placeholder="1.200,00"><span class="hint" id="rent-hint">In Nederland de kale huur, zonder servicekosten.</span></div>
+      <div class="field"><label for="amount">Borg (€)</label><input id="amount" name="amount" inputmode="decimal" value="{{ form.get('amount', '') }}" placeholder="2.400,00"><span class="hint" id="max-hint">Het maximum wordt gecontroleerd bij opslaan.</span></div>
+    </div>
+    <div class="label">Waar komt de borg te staan?</div>
+    <div class="choice">
+      <label class="{{ 'off' if not partner.available }}"><input type="radio" name="holding" value="depiqo" {{ 'checked' if form.get('holding', 'depiqo') == 'depiqo' and partner.available }} {{ 'disabled' if not partner.available }}><span><b>Depiqo-borgrekening</b>{% if partner.available %}Op naam van de huurder bij de partnerbank. De huurder krijgt rente. Boven je inbegrepen dossiers betaal je {{ plan.extra_depiqo_cents|eur }} per maand.{% else %}Er is geen financiële partner gekoppeld. Deze keuze is nu niet beschikbaar.{% endif %}</span></label>
+      <label><input type="radio" name="holding" value="external" {{ 'checked' if form.get('holding') == 'external' }}><span><b>Elders, bij je huidige aanbieder</b>Rekening van de verhuurder, geblokkeerde bankrekening, e-DEPO, verzekeraar of garantie. Boven je inbegrepen dossiers betaal je {{ plan.extra_external_cents|eur }} per maand.</span></label>
+    </div>
+    <div class="provider-box" data-provider-box>
+      {{ provider_fields(form) }}
+    </div>
+  </fieldset>
+  <div class="row">
+    <button class="btn btn-primary" type="submit" name="send_invite" value="1">Opslaan en huurder uitnodigen</button>
+    <button class="btn btn-line" type="submit">Opslaan als concept</button>
+  </div>
+</form>
+{% endblock %}

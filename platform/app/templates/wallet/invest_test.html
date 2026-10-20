@@ -1,0 +1,19 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Kennis- en ervaringstoets{% endblock %}
+{% block hero %}<div class="w-amount"><small>Stap 1 van 4</small><h1 class="w-title">Kennis- en ervaringstoets</h1></div>{% endblock %}
+{% block content %}
+<form class="w-card stack" method="post" novalidate>{{ csrf() }}
+  <p class="small muted">Er zijn geen goede of foute mensen, wel goede of foute antwoorden. De partner gebruikt je antwoorden om te kijken of beleggen bij je past. Je antwoorden worden bewaard met datum en tijd.</p>
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  {% for q in QUESTIONS %}
+  <fieldset class="q">
+    <legend>{{ loop.index }}. {{ q.text }}</legend>
+    {% for value, label, _ in q.options %}
+    <label class="check"><input type="radio" name="{{ q.key }}" value="{{ value }}" {{ 'checked' if answers.get(q.key) == value }} required>{{ label }}</label>
+    {% endfor %}
+  </fieldset>
+  {% endfor %}
+  <button class="btn btn-primary">Toets afronden</button>
+</form>
+{% endblock %}

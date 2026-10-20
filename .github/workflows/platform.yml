@@ -1,0 +1,103 @@
+# Platform (Flask): unit tests (plain and with TZ=UTC, including the mobile contract test), the API smoke test
+# against a running server, and the platform's own headless browser test (Playwright, Chromium).
+# Everything runs in development + sandbox: no real partners, no real money.
+name: Platform
+
+on:
+  push:
+    paths:
+      - "platform/**"
+      - ".github/workflows/platform.yml"
+      - ".github/scripts/**"
+  pull_request:
+    paths:
+      - "platform/**"
+      - ".github/workflows/platform.yml"
+      - ".github/scripts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: platform-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PYTHON_VERSION: "3.13"
+  OUT: ${{ github.workspace }}/ci-out/platform
+
+jobs:
+  tests:
+    name: Unit tests, smoke test, browser test
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            platform/requirements.txt
+            platform/requirements-dev.txt
+
+      - name: Install
+        working-directory: platform
+        run: |
+          mkdir -p "$OUT"
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+          pip freeze > "$OUT/pip-freeze.txt"
+
+      - name: Unit tests
+        working-directory: platform
+        run: python -m unittest discover -s tests -v 2>&1 | tee "$OUT/unittest.txt"
+
+      - name: Unit tests with TZ=UTC
+        working-directory: platform
+        env:
+          TZ: UTC
+        run: python -m unittest discover -s tests -v 2>&1 | tee "$OUT/unittest-tz-utc.txt"
+
+      - name: Mobile contract test (also part of the runs above; separate log)
+        working-directory: platform
+        run: python -m unittest tests.test_mobile_contract -v 2>&1 | tee "$OUT/mobile-contract.txt"
+
+      - name: API smoke test against a running server (gunicorn, fresh seed)
+        run: |
+          .github/scripts/start_backend.sh 127.0.0.1:5000 "$RUNNER_TEMP/smoke"
+          python platform/tests/api_smoke.py http://127.0.0.1:5000 2>&1 | tee "$OUT/api-smoke.txt"
+          kill "$(cat "$RUNNER_TEMP/smoke/backend.pid")"
+
+      - name: Install Chromium for the browser test
+        working-directory: platform
+        run: python -m playwright install --with-deps chromium
+
+      - name: Browser test (headless Chromium, fresh seed)
+        run: |
+          .github/scripts/start_backend.sh 127.0.0.1:5000 "$RUNNER_TEMP/browser" --no-e2e-data
+          mkdir -p "$OUT/browser-screens"
+          python platform/tests/e2e_browser.py "$OUT/browser-screens" 2>&1 | tee "$OUT/e2e-browser.txt"
+          kill "$(cat "$RUNNER_TEMP/browser/backend.pid")"
+
+      - name: Collect server logs
+        if: always()
+        run: |
+          mkdir -p "$OUT/server"
+          for d in smoke browser; do
+            if [ -d "$RUNNER_TEMP/$d/logs" ]; then cp -r "$RUNNER_TEMP/$d/logs" "$OUT/server/$d"; fi
+          done
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: platform-results
+          path: ci-out/platform
+          if-no-files-found: error
+          retention-days: 30

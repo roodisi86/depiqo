@@ -1,0 +1,18 @@
+{% extends "layout_admin.html" %}
+{% block title %}Support{% endblock %}
+{% block content %}
+  <div class="topbar"><div><p class="crumb">Depiqo-beheer</p><h1>Support</h1></div>
+    <nav class="row" aria-label="Filter op status">{% for key in ('open', 'answered', 'closed', 'all') %}
+      <a class="btn btn-sm {{ 'btn-primary' if status == key else 'btn-line' }}" href="{{ url_for('support_admin.index', status=key) }}">{{ STATUS_LABELS[key] if key != 'all' else 'Alle' }}{% if key != 'all' %} ({{ counts.get(key, 0) }}){% endif %}</a>
+    {% endfor %}</nav></div>
+  <section class="panel"><div class="table-wrap"><table class="t">
+    <thead><tr><th>#</th><th>Ontvangen</th><th>Huurder</th><th>Onderwerp</th><th>Borg</th><th>Berichten</th><th>Status</th></tr></thead>
+    <tbody>{% for t in rows %}<tr>
+      <td class="mono"><a href="{{ url_for('support_admin.ticket', ticket_id=t.id) }}">{{ t.id }}</a></td>
+      <td class="small">{{ t.created_at|datetime_nl }}</td><td>{{ t.name }}<br><span class="small muted">{{ t.email }}</span></td>
+      <td><a href="{{ url_for('support_admin.ticket', ticket_id=t.id) }}">{{ t.subject }}</a><br><span class="small muted">{{ CATEGORIES[t.category] }} · {{ t.language }}</span></td>
+      <td class="mono">{{ t.reference or '—' }}</td><td>{{ t.n }}</td>
+      <td><span class="badge t-{{ {'open': 'wait', 'answered': 'ok', 'closed': 'neutral'}[t.status] }}">{{ STATUS_LABELS[t.status] }}</span></td></tr>
+    {% else %}<tr><td colspan="7" class="empty">Geen vragen met deze status.</td></tr>{% endfor %}</tbody>
+  </table></div></section>
+{% endblock %}

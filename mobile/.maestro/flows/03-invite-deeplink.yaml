@@ -1,0 +1,38 @@
+# (c) Invitation deep link. Before this flow the runner resets the app and opens depiqo://t/<token> itself
+# (adb shell am start / xcrun simctl openurl); the token is a fresh one for Noor's open invitation (Biltstraat 301),
+# made by .github/scripts/e2e_prepare.py. Anti-phishing: landlord, address and amount are shown before anything
+# else. Nothing is accepted, so the run stays repeatable.
+appId: com.getdepiqo.app.dev
+name: "c. Uitnodiging via deep link: verhuurder, adres, bedrag"
+tags: [invite, deeplink]
+---
+# iOS may ask whether to open the app for the custom scheme.
+- runFlow:
+    when:
+      platform: iOS
+      visible: "Open"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible:
+      id: "invite-screen"
+    timeout: 45000
+- assertVisible:
+    id: "invite-landlord"
+    text: "(?s).*Voorbeeld Vastgoed BV.*"
+- assertVisible:
+    id: "invite-address"
+    text: "(?s).*Biltstraat 301.*3572 AS.*Utrecht.*"
+- scrollUntilVisible:
+    element:
+      id: "invite-amount"
+    direction: DOWN
+    timeout: 10000
+- assertVisible:
+    id: "invite-amount"
+    text: "(?s).*2.750.00.*"
+- assertVisible:
+    id: "invite-reference"
+- assertNotVisible:
+    id: "tab-profile"
+- takeScreenshot: c-01-invite

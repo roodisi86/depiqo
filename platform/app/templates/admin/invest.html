@@ -1,0 +1,71 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Beleggen{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">Depiqo-beheer · {{ partner.display_name }}</p><h1>Beleggen</h1></div>
+  <span class="small muted">Koersdatum {{ ov.day|date_nl }}</span></div>
+{% if not partner.available %}<div class="banner alert" role="status"><b>Geen beleggingspartner.</b> {{ partner.reason }} Beleggen is verborgen voor huurders en alle routes weigeren.</div>{% endif %}
+<p class="note">Depiqo-medewerkers zien totalen en rekeningen, maar plaatsen nooit orders voor een huurder. Beheerders van organisaties zien niets van Beleggen.</p>
+
+<div class="kpis mt">
+  <div class="kpi"><span>Belegd vermogen</span><b>{{ ov.aum|eur(False) }}</b><small>Actieve rekeningen</small></div>
+  <div class="kpi"><span>Actieve beleggers</span><b>{{ ov.investors }}</b><small>Met waarde boven nul</small></div>
+  <div class="kpi"><span>Rekeningen</span><b>{{ ov.by_status.active }}</b><small>{{ ov.by_status.pending }} wachten · {{ ov.by_status.draft }} in aanvraag</small></div>
+  <div class="kpi"><span>Toets: passend</span><b>{{ ov.appr.get('passend', 0) }}</b><small>Laatste uitslag per persoon</small></div>
+  <div class="kpi {{ 'warn' if ov.appr.get('niet_passend') }}"><span>Toets: niet passend</span><b>{{ ov.appr.get('niet_passend', 0) }}</b><small>{{ ov.confirmed }} toch doorgegaan na waarschuwing</small></div>
+</div>
+
+<div class="grid g-main">
+  <section class="panel" aria-labelledby="acc-h">
+    <div class="panel-h"><h2 id="acc-h">Rekeningen</h2></div>
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Huurder</th><th>Status</th><th>Portefeuille</th><th class="num">Waarde</th><th></th></tr></thead>
+      <tbody>{% for r in ov.rows %}{% set a = r.a %}
+        <tr><td>{{ a.email }}<div class="small muted mono">{{ a.reference }}</div></td>
+          <td><span class="badge t-{{ {'active': 'ok', 'pending': 'wait', 'draft': 'neutral', 'closed': 'done'}[a.status] }}">{{ {'active': 'Actief', 'pending': 'Wacht op partner', 'draft': 'In aanvraag', 'closed': 'Gesloten'}[a.status] }}</span></td>
+          <td>{{ PORTFOLIOS[a.portfolio].label if a.portfolio else '—' }}</td>
+          <td class="num">{{ r.value|eur if a.status in ('active', 'closed') else '—' }}</td>
+          <td>{% if a.status == 'pending' and partner.is_sandbox %}<form method="post" action="{{ url_for('invest_admin.activate', account_id=a.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Activeren (sandbox)</button></form>{% endif %}</td></tr>
+      {% else %}<tr><td colspan="5" class="empty">Nog geen beleggingsrekeningen.</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+  <div class="stack">
+    {% if partner.is_sandbox %}
+    <section class="note sandbox stack" aria-label="Sandbox-beleggingspartner">
+      <b>Sandbox-beleggingspartner</b>
+      <span class="small">De partner voert orders, opnames en servicekosten uit als zijn klok een dag vooruit gaat, tegen de koers van die dag. Een maandeinde verrekent de servicekosten.</span>
+      <div class="row">
+        <form method="post" action="{{ url_for('invest_admin.staff_action', action='dag-vooruit') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Koersen een dag vooruitzetten</button></form>
+        <form method="post" action="{{ url_for('invest_admin.staff_action', action='servicekosten') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Servicekosten verrekenen</button></form>
+        <form method="post" action="{{ url_for('invest_admin.staff_action', action='versturen') }}">{{ csrf() }}<button class="btn btn-line btn-sm">Opdrachten versturen</button></form>
+      </div>
+    </section>
+    {% endif %}
+    <form class="panel" method="post" action="{{ url_for('invest_admin.staff_action', action='servicevergoeding') }}">{{ csrf() }}
+      <div class="panel-h"><h2>Servicevergoeding</h2></div>
+      <p class="panel-b small muted">Geldt voor nieuwe rekeningen. Bestaande rekeningen krijgen een voorstel en houden hun vergoeding tot de huurder akkoord gaat.{% if ov.pending_fee %} {{ ov.pending_fee }} voorstel(len) open.{% endif %}</p>
+      <div class="panel-b row align-end"><div class="field grow"><label for="fee_pct">Per jaar over de waarde (%)</label><input id="fee_pct" name="fee_pct" inputmode="decimal" value="{{ '%.2f'|format(fee_bps / 100)|replace('.', ',') }}"></div><button class="btn btn-line">Opslaan</button></div>
+    </form>
+    <section class="panel" aria-labelledby="org-h">
+      <div class="panel-h"><h2 id="org-h">Per organisatie</h2></div>
+      <div class="table-wrap"><table class="t"><tbody>{% for o in orgs %}
+        <tr><td>{{ o.name }}</td><td><form class="row tight" method="post" action="{{ url_for('invest_admin.toggle_org', org_id=o.id) }}">{{ csrf() }}<input type="hidden" name="enabled" value="{{ '0' if o.invest_enabled else '1' }}">
+          <span class="badge t-{{ 'ok' if o.invest_enabled else 'neutral' }}">{{ 'Huurders zien Beleggen' if o.invest_enabled else 'Uit' }}</span><button class="btn btn-sm btn-line">{{ 'Uitzetten' if o.invest_enabled else 'Aanzetten' }}</button></form></td></tr>
+      {% endfor %}</tbody></table></div>
+    </section>
+    <section class="panel" aria-labelledby="fail-h">
+      <div class="panel-h"><h2 id="fail-h">Mislukte opdrachten</h2></div>
+      <div class="table-wrap"><table class="t"><tbody>{% for i in ov.failed %}
+        <tr><td>{{ i.kind }} · {{ i.email }}<div class="small muted">{{ i.last_error }}</div></td><td>{% if i.retryable %}<form method="post" action="{{ url_for('invest_admin.retry', instr_id=i.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Opnieuw</button></form>{% else %}<span class="small muted" title="De huurder zag dit als mislukt en plaatst zelf een nieuwe order of opname">Definitief</span>{% endif %}</td></tr>
+      {% else %}<tr><td class="empty">Geen mislukte opdrachten.</td></tr>{% endfor %}
+      {% for e in ov.events_err %}<tr><td class="small">Bericht {{ e.type }}: {{ e.error }}{% if e.retryable %} <span class="badge t-wait">wacht op herhaling</span>{% endif %}</td><td><form method="post" action="{{ url_for('invest_admin.reprocess', event_id=e.id) }}">{{ csrf() }}<button class="btn btn-sm btn-line">Opnieuw verwerken</button></form></td></tr>{% endfor %}</tbody></table></div>
+    </section>
+    <section class="panel" aria-labelledby="dob-h">
+      <div class="panel-h"><h2 id="dob-h">Doorbeleggen met een afwijking</h2></div>
+      <div class="table-wrap"><table class="t"><tbody>{% for c in ov.payout_exceptions %}
+        <tr><td><a class="mono" href="{{ url_for('admin.deposit', pid=c.pid) }}">{{ c.deposit_reference }}</a> · {{ c.email }}<div class="small muted">{{ {'fallback': 'Naar eigen rekening betaald', 'unrecorded': 'Betaald aan de partner, niet verwerkt'}[c.status] }}: {{ c.note }}{% if c.paid_cents %} · {{ c.paid_cents|eur }}{% endif %}</div></td></tr>
+      {% else %}<tr><td class="empty">Geen afwijkingen.</td></tr>{% endfor %}</tbody></table></div>
+    </section>
+  </div>
+</div>
+{% endblock %}

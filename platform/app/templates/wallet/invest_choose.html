@@ -1,0 +1,44 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Kies een portefeuille{% endblock %}
+{% block hero %}<div class="w-amount"><small>Stap 2 van 4</small><h1 class="w-title">Kies een portefeuille</h1></div>{% endblock %}
+{% block content %}
+<section class="w-card">
+  <p class="note warn"><b>Je kunt geld verliezen.</b> {{ INVEST_RISK }}</p>
+  <form class="row align-end" method="get">
+    <div class="field grow"><label for="bedrag">Bedrag voor het rekenvoorbeeld (€)</label><input id="bedrag" name="bedrag" inputmode="decimal" value="{{ '%.2f'|format(amount / 100)|replace('.', ',') }}"></div>
+    <button class="btn btn-line">Bereken</button>
+  </form>
+  <p class="small muted">Alle bedragen hieronder gaan uit van {{ amount|eur }}. Je zit nergens aan vast tot je de voorwaarden accepteert en geld overmaakt.</p>
+</section>
+
+{% for o in options %}{% set c = o.costs %}
+<form class="w-card portfolio {{ 'chosen' if acct.portfolio == o.code }}" method="post" aria-labelledby="pf-{{ o.code }}">{{ csrf() }}
+  <input type="hidden" name="portfolio" value="{{ o.code }}">
+  <div class="spread"><h2 id="pf-{{ o.code }}">{{ o.p.label }}</h2>
+    <span class="risk-class" title="Risicoklasse {{ o.p.risk }} van 7">Risico {{ o.p.risk }}/7 <span class="meter" aria-hidden="true">{% for i in range(1, 8) %}<i class="{{ 'on' if i <= o.p.risk }}"></i>{% endfor %}</span></span></div>
+  <p class="small">{{ o.p.summary }}</p>
+  <table class="t mini"><thead><tr><th>Fonds</th><th class="num">Deel</th><th class="num">Lopende kosten</th></tr></thead><tbody>
+    {% for f, w in o.p.weights.items() %}<tr><td>{{ FUNDS[f].name }}</td><td class="num">{{ (w / 100)|int }}%</td><td class="num">{{ FUNDS[f].ocf_bps|bps }}</td></tr>{% endfor %}
+  </tbody></table>
+
+  <h3 class="h3">Kosten op {{ amount|eur }}</h3>
+  <table class="t mini"><thead><tr><th>Kosten</th><th class="num">1 jaar</th><th class="num">3 jaar</th></tr></thead><tbody>
+    <tr><td>Servicekosten Depiqo ({{ c.fee_bps|bps }} per jaar)</td><td class="num">{{ c.service_1y|eur }}</td><td class="num">{{ c.service_3y|eur }}</td></tr>
+    <tr><td>Lopende kosten fondsen ({{ c.ocf_bps|bps }} per jaar)</td><td class="num">{{ c.fund_1y|eur }}</td><td class="num">{{ c.fund_3y|eur }}</td></tr>
+    <tr><td>Transactiekosten</td><td class="num">{{ c.tx|eur }}</td><td class="num">{{ c.tx|eur }}</td></tr>
+    <tr class="total"><td>Totaal</td><td class="num">{{ c.total_1y|eur }}</td><td class="num">{{ c.total_3y|eur }}</td></tr>
+  </tbody></table>
+  <p class="small muted">Uitgaande van een gelijkblijvende waarde. De lopende kosten zitten in de koers van de fondsen.</p>
+
+  <h3 class="h3">Scenario's, geen voorspelling</h3>
+  <table class="t mini"><thead><tr><th>Scenario</th><th class="num">Na 1 jaar</th><th class="num">Na 3 jaar</th></tr></thead><tbody>
+    {% for sc in o.scenarios %}<tr class="sc-{{ sc.key }}"><td>{{ sc.label }} <span class="small muted">({{ '%+.0f'|format(sc.rate * 100) }}% per jaar)</span></td>
+      <td class="num">{{ sc.y1|eur }}<div class="small {{ 'late' if sc.y1_result < 0 }}">{{ '+' if sc.y1_result >= 0 }}{{ sc.y1_result|eur }}</div></td>
+      <td class="num">{{ sc.y3|eur }}<div class="small {{ 'late' if sc.y3_result < 0 }}">{{ '+' if sc.y3_result >= 0 }}{{ sc.y3_result|eur }}</div></td></tr>{% endfor %}
+  </tbody></table>
+  <p class="small muted">Dit zijn voorbeelden van mogelijke uitkomsten na kosten, geen voorspelling. Het kan beter en ook slechter uitpakken dan het ongunstige scenario.</p>
+  <button class="btn {{ 'btn-primary' if o.code == 'neutraal' else 'btn-line' }}">Kies {{ o.p.label }}</button>
+</form>
+{% endfor %}
+{% endblock %}

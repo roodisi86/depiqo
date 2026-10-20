@@ -1,0 +1,6 @@
+Flask>=3.1,<4
+Werkzeug>=3.1,<4
+reportlab>=4.0
+gunicorn>=22
+# zoneinfo needs a time zone database; slim containers may not have one (app/util.py uses Europe/Amsterdam).
+tzdata>=2024.1

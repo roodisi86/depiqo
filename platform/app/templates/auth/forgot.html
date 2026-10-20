@@ -1,0 +1,13 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Wachtwoord vergeten{% endblock %}
+{% block content %}
+<h1>Nieuw wachtwoord kiezen.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if sent %}<div class="flash ok" role="status">Als dit adres bij ons bekend is, staat er binnen een paar minuten een link in je mailbox. De link is een uur geldig.</div>{% endif %}
+  <div class="field"><label for="email">E-mailadres</label><input id="email" name="email" type="email" autocomplete="username" required></div>
+  <button class="btn btn-primary" type="submit">Stuur een link</button>
+  <a class="small" href="{{ url_for('auth.login') }}">Terug naar inloggen</a>
+</form>
+{% endblock %}

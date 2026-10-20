@@ -1,0 +1,59 @@
+# (d) Settlement, view only. Sanne (Kerkstraat 12-2) has a proposed settlement. The flow never taps
+# "Akkoord gaan" or "Bezwaar maken", so the seeded state stays the same for every run.
+appId: com.getdepiqo.app.dev
+name: "d. Eindafrekening bekijken (sanne), niet reageren"
+tags: [wallet, settlement]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: sanne@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- tapOn:
+    id: "deposit-card"
+- extendedWaitUntil:
+    visible:
+      id: "deposit-detail"
+    timeout: 30000
+# A Depiqo account with money confirmed by the (sandbox) bank: "Ontvangen" shows the amount, not "—".
+- scrollUntilVisible:
+    element:
+      id: "amount-received"
+    direction: DOWN
+    timeout: 20000
+- assertVisible:
+    id: "amount-received"
+    text: "(?s).*${T_AMOUNT_RECEIVED}.*2.400.00.*"
+- scrollUntilVisible:
+    element:
+      id: "open-settlement"
+    direction: UP
+    timeout: 20000
+- tapOn:
+    id: "open-settlement"
+- extendedWaitUntil:
+    visible:
+      id: "settlement-screen"
+    timeout: 30000
+- assertVisible:
+    text: "${T_SETTLEMENT_LINES}"
+# Line descriptions come from the server (Dutch in every language).
+- scrollUntilVisible:
+    element:
+      text: "(?s).*Herstel badkamerdeur.*"
+    direction: DOWN
+    timeout: 15000
+- takeScreenshot: d-01-settlement-${LANG_CODE}
+- scrollUntilVisible:
+    element:
+      id: "settlement-agree"
+    direction: DOWN
+    timeout: 20000
+- assertVisible:
+    id: "settlement-dispute"
+- takeScreenshot: d-02-settlement-buttons-${LANG_CODE}

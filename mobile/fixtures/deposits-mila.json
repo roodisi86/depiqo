@@ -1,0 +1,65 @@
+{
+  "items": [
+    {
+      "address": {
+        "city": "Rotterdam",
+        "postcode": "3012 BR",
+        "street": "Witte de Withstraat 50"
+      },
+      "amounts": [
+        {
+          "explanation": "Volgens het huurcontract",
+          "explanation_key": "per_lease",
+          "key": "obligation",
+          "known": true,
+          "label": "Vereiste borg",
+          "value": {
+            "cents": 250000,
+            "currency": "EUR"
+          }
+        },
+        {
+          "explanation": "Geen geld gestort: een derde staat garant",
+          "explanation_key": "guarantee_no_money",
+          "key": "received",
+          "known": false,
+          "label": "Ontvangen",
+          "value": null
+        },
+        {
+          "explanation": "Geen juridische blokkering aangetoond",
+          "explanation_key": "no_legal_lock",
+          "key": "locked",
+          "known": false,
+          "label": "Bevestigd geblokkeerd",
+          "value": null
+        },
+        {
+          "explanation": "Valt buiten Depiqo bij een borg elders",
+          "explanation_key": "outside_depiqo",
+          "key": "interest",
+          "known": false,
+          "label": "Rente",
+          "value": null
+        }
+      ],
+      "display_key": "secured_declared",
+      "display_label": "Ontvangst verklaard door je verhuurder",
+      "evidence_level": "declared",
+      "holding": "external",
+      "landlord": {
+        "name": "Voorbeeld Vastgoed BV"
+      },
+      "pid": "6h29m8x7jcbe",
+      "provider_kind": "borggarantie",
+      "reference": "DPQ-001-00016",
+      "region": "NL",
+      "status": "secured",
+      "status_label": "Je borg is geregistreerd",
+      "term": "waarborgsom",
+      "tone": "wait",
+      "updated_at": "2026-10-20T12:17:28+00:00"
+    }
+  ],
+  "next_cursor": null
+}

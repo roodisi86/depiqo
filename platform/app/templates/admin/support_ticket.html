@@ -1,0 +1,30 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Vraag #{{ t.id }}{% endblock %}
+{% block content %}
+  <div class="topbar"><div><p class="crumb"><a href="{{ url_for('support_admin.index') }}">Support</a> · #{{ t.id }}</p><h1>{{ t.subject }}</h1></div>
+    <span class="badge t-{{ {'open': 'wait', 'answered': 'ok', 'closed': 'neutral'}[t.status] }}">{{ STATUS_LABELS[t.status] }}</span></div>
+  <div class="grid g-main">
+    <section class="panel" aria-labelledby="msg-h"><div class="panel-h"><h2 id="msg-h">Berichten</h2></div>
+      <div class="panel-b stack">
+      {% for m in msgs %}
+        <article class="support-msg {{ m.author_kind }}"><p class="small muted">{{ 'Huurder' if m.author_kind == 'tenant' else 'Depiqo (' ~ (m.author or 'medewerker') ~ ')' }} · {{ m.created_at|datetime_nl }}</p>
+          <pre class="mail">{{ m.body }}</pre></article>
+      {% endfor %}
+      {% if t.status != 'closed' %}
+        <form class="stack" method="post">{{ csrf() }}<input type="hidden" name="action" value="reply">
+          <div class="field"><label for="body">Antwoord</label><textarea id="body" name="body" rows="5"></textarea></div>
+          <p class="small muted">De huurder krijgt een melding in de app, zonder de tekst in de pushmelding. Schrijf in de taal van de vraag ({{ t.language }}).</p>
+          <button class="btn btn-primary">Antwoord versturen</button></form>
+      {% endif %}
+      </div></section>
+    <section class="panel panel-b stack small">
+      <span class="label">Vraag</span>
+      <p>{{ t.name }}<br><span class="muted">{{ t.email }}</span></p>
+      <p>Onderwerp: {{ CATEGORIES[t.category] }}<br>Taal: {{ t.language }}<br>Ontvangen: {{ t.created_at|datetime_nl }}</p>
+      {% if t.reference %}<p>Borg: <a class="mono" href="{{ url_for('admin.deposit', pid=t.pid) }}">{{ t.reference }}</a></p>{% endif %}
+      <form method="post">{{ csrf() }}<input type="hidden" name="action" value="{{ 'reopen' if t.status == 'closed' else 'close' }}">
+        <button class="btn btn-line btn-sm">{{ 'Weer openen' if t.status == 'closed' else 'Sluiten' }}</button></form>
+    </section>
+  </div>
+{% endblock %}

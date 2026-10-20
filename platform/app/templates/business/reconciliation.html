@@ -1,0 +1,10 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import status_d, evidence_tag, sandbox_tag, holding %}
+{% block title %}Afstemming{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">{{ g.org.name }}</p><h1>Afstemming</h1></div>
+  <div class="row"><a class="btn btn-sm {{ 'btn-dark' if only else 'btn-line' }}" href="{{ url_for('business.reconciliation') }}">Alleen afwijkingen</a>
+  <a class="btn btn-sm {{ 'btn-line' if only else 'btn-dark' }}" href="{{ url_for('business.reconciliation', alles='1') }}">Alle lopende dossiers</a></div></div>
+<p class="note">Per dossier: wat de huurder verschuldigd is, wat de bank meldt, de status van de opdrachten aan de bank en het bewijs. Een afwijking vraagt om actie van jou of van Depiqo.</p>
+{% include "partials/reconciliation_table.html" %}
+{% endblock %}

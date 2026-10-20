@@ -1,0 +1,311 @@
+{
+  "address": {
+    "city": "Utrecht",
+    "postcode": "3511 AX",
+    "street": "Oudegracht 140"
+  },
+  "amounts": [
+    {
+      "explanation": "Volgens het huurcontract",
+      "explanation_key": "per_lease",
+      "key": "obligation",
+      "known": true,
+      "label": "Vereiste borg",
+      "value": {
+        "cents": 195000,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Bevestigd door de bank",
+      "explanation_key": "bank_confirmed",
+      "key": "received",
+      "known": true,
+      "label": "Ontvangen",
+      "value": {
+        "cents": 195000,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Blokkering bevestigd door de bank",
+      "explanation_key": "lock_confirmed_by_bank",
+      "key": "locked",
+      "known": true,
+      "label": "Bevestigd geblokkeerd",
+      "value": {
+        "cents": 196304,
+        "currency": "EUR"
+      }
+    },
+    {
+      "explanation": "Bijgeschreven door de bank, voor de huurder",
+      "explanation_key": "interest_credited",
+      "key": "interest",
+      "known": true,
+      "label": "Rente",
+      "value": {
+        "cents": 1304,
+        "currency": "EUR"
+      }
+    }
+  ],
+  "deadline": {
+    "date": "2026-10-28",
+    "days_left": 8,
+    "statutory": true,
+    "why": "Wettelijke termijn: 14 dagen zonder verrekening na het einde van de huur."
+  },
+  "display_key": "agreed",
+  "display_label": "Akkoord, uitbetaling volgt",
+  "events": [
+    {
+      "actor": "tenant",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 31,
+      "key": "status_changed",
+      "message": "Huurder gaat akkoord met de afrekening (€ 0,00 inhoudingen)",
+      "params": {
+        "from_status": "settlement_proposed",
+        "to_status": "agreed"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 30,
+      "key": "status_changed",
+      "message": "Eindafrekening voorgesteld aan de huurder: € 0,00 inhoudingen",
+      "params": {
+        "from_status": "move_out",
+        "to_status": "settlement_proposed"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 28,
+      "key": "status_changed",
+      "message": "Vertrek gestart; vertrekdatum 2026-10-14",
+      "params": {
+        "from_status": "secured",
+        "to_status": "move_out"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 27,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 3,27",
+      "params": {
+        "amount_cents": 327
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 26,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 3,26",
+      "params": {
+        "amount_cents": 326
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 25,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 3,26",
+      "params": {
+        "amount_cents": 326
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 24,
+      "key": "interest_credited",
+      "message": "Rente bijgeschreven: € 3,25",
+      "params": {
+        "amount_cents": 325
+      },
+      "type": "interest"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 23,
+      "key": "status_changed",
+      "message": "Bank bevestigt: borg geblokkeerd ten gunste van de verhuurder",
+      "params": {
+        "from_status": "payment_received",
+        "to_status": "secured"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "bank",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 22,
+      "key": "status_changed",
+      "message": "Storting van € 1.950,00 ontvangen; blokkering wordt aangevraagd bij de bank",
+      "params": {
+        "amount_cents": 195000,
+        "from_status": "awaiting_payment",
+        "to_status": "payment_received",
+        "total_cents": 195000
+      },
+      "type": "status"
+    },
+    {
+      "actor": "system",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 21,
+      "key": "status_changed",
+      "message": "Borgrekening geopend bij de partnerbank (sandbox)",
+      "params": {
+        "from_status": "id_pending",
+        "to_status": "awaiting_payment"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "tenant",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 19,
+      "key": "status_changed",
+      "message": "Huurder heeft de uitnodiging geaccepteerd",
+      "params": {
+        "from_status": "invited",
+        "to_status": "id_pending"
+      },
+      "type": "status"
+    },
+    {
+      "actor": "user",
+      "at": "2026-10-20T12:17:27+00:00",
+      "id": 18,
+      "key": "status_changed",
+      "message": "Uitnodiging verstuurd naar de huurder",
+      "params": {
+        "from_status": "concept",
+        "to_status": "invited"
+      },
+      "type": "status"
+    }
+  ],
+  "events_path": "/api/v1/deposits/c7am7zs2bh4t/events",
+  "evidence_level": null,
+  "holding": "depiqo",
+  "interest_note": "Rente: 2,00% per jaar, volledig voor jou",
+  "landlord": {
+    "name": "Voorbeeld Vastgoed BV"
+  },
+  "lease_end": "2026-10-14",
+  "lease_start": "2022-03-01",
+  "location": {
+    "account_open": true,
+    "assurance": {
+      "code": "bank",
+      "label": "Blokkering bevestigd door de bank",
+      "short": "Bank bevestigd",
+      "tone": "ok"
+    },
+    "evidence": null,
+    "guarantee": null,
+    "interest_rate_bps": 200,
+    "kind": "depiqo_account",
+    "label": "Borgrekening op jouw naam bij de partnerbank",
+    "provider_name": null,
+    "reference": null,
+    "reference_label": null,
+    "sandbox": true
+  },
+  "move_out_date": "2026-10-14",
+  "next_action": {
+    "code": "choose_payout_destination",
+    "description": "Op je eigen rekening (standaard) of op je beleggingsrekening. Wijzigen kan tot de uitbetaling start.",
+    "label": "Kies waar je jouw deel ontvangt"
+  },
+  "payment_instructions": null,
+  "payment_problem": null,
+  "payout": {
+    "to_landlord": {
+      "cents": 0,
+      "currency": "EUR"
+    },
+    "to_tenant": {
+      "cents": 196304,
+      "currency": "EUR"
+    }
+  },
+  "pid": "c7am7zs2bh4t",
+  "progress": {
+    "current": "payout",
+    "on_hold": false,
+    "steps": [
+      {
+        "code": "invited",
+        "label": "Uitnodiging",
+        "state": "done"
+      },
+      {
+        "code": "id_pending",
+        "label": "Identiteit",
+        "state": "done"
+      },
+      {
+        "code": "awaiting_payment",
+        "label": "Storten",
+        "state": "done"
+      },
+      {
+        "code": "secured",
+        "label": "Borg veilig",
+        "state": "done"
+      },
+      {
+        "code": "move_out",
+        "label": "Vertrek",
+        "state": "done"
+      },
+      {
+        "code": "settlement",
+        "label": "Afrekening",
+        "state": "done"
+      },
+      {
+        "code": "payout",
+        "label": "Uitbetaling",
+        "state": "current"
+      },
+      {
+        "code": "closed",
+        "label": "Afgerond",
+        "state": "upcoming"
+      }
+    ]
+  },
+  "provider_kind": null,
+  "reference": "DPQ-001-00002",
+  "region": "NL",
+  "release_form_available": false,
+  "release_rule": "Terug binnen 14 dagen na het einde van de huur, of binnen 30 dagen als kosten worden verrekend.",
+  "rent": {
+    "cents": 97500,
+    "currency": "EUR"
+  },
+  "status": "agreed",
+  "status_label": "Akkoord, uitbetaling volgt",
+  "term": "waarborgsom",
+  "tone": "ok",
+  "updated_at": "2026-10-20T12:17:27+00:00"
+}

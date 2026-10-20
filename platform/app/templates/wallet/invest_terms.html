@@ -1,0 +1,20 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Voorwaarden{% endblock %}
+{% block hero %}<div class="w-amount"><small>Stap 3 van 4</small><h1 class="w-title">Voorwaarden en rekening</h1></div>{% endblock %}
+{% block content %}
+<section class="w-card">
+  <div class="qa">
+    <div><span>Portefeuille</span><b>{{ PORTFOLIOS[acct.portfolio].label }} · risico {{ PORTFOLIOS[acct.portfolio].risk }}/7</b></div>
+    <div><span>Partner</span><b>{{ partner.display_name }}</b></div>
+    <div><span>Rekening op naam van</span><b>{{ g.user.name }}</b></div>
+  </div>
+</section>
+<form class="w-card stack" method="post">{{ csrf() }}
+  <h2>Akkoord</h2>
+  <label class="check"><input type="checkbox" name="accept_partner" value="1" required><span>{{ TERMS.partner.text }}</span></label>
+  <label class="check"><input type="checkbox" name="accept_depiqo" value="1" required><span>{{ TERMS.depiqo.text }}</span></label>
+  <p class="small muted">Je akkoord wordt bewaard met de versie, datum en tijd. {{ INVEST_RISK }}</p>
+  <button class="btn btn-primary">Rekening openen</button>
+</form>
+{% endblock %}

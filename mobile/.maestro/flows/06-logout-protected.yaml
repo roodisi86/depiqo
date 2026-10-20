@@ -1,0 +1,46 @@
+# (f) Logout, then the protected screens are out of reach: a deep link into the app and a cold start both end on
+# the login screen.
+appId: com.getdepiqo.app.dev
+name: "f. Uitloggen, beschermde schermen niet bereikbaar"
+tags: [auth, session]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: thomas@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- runFlow: ../subflows/logout.yaml
+- takeScreenshot: f-01-logged-out-${LANG_CODE}
+# A link to a protected screen (Invest) must land on the login screen.
+- openLink: depiqo://app-link/beleggen
+- runFlow:
+    when:
+      platform: iOS
+      visible: "Open"
+    commands:
+      - tapOn: "Open"
+- extendedWaitUntil:
+    visible:
+      id: "login-email"
+    timeout: 30000
+- assertNotVisible:
+    id: "invest-overview"
+- assertNotVisible:
+    id: "deposit-card"
+- assertNotVisible:
+    id: "tab-profile"
+# A cold start must not restore the ended session.
+- stopApp
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "login-email"
+    timeout: 45000
+- assertNotVisible:
+    id: "tab-profile"
+- takeScreenshot: f-02-relaunch-${LANG_CODE}

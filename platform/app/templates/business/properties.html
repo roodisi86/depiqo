@@ -1,0 +1,27 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Panden{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">{{ g.org.name }}</p><h1>Panden</h1></div></div>
+<div class="grid g-main">
+  <section class="panel">
+    <div class="table-wrap"><table class="t">
+      <thead><tr><th>Adres</th><th>Plaats</th><th>Regio</th><th class="num">Open dossiers</th></tr></thead>
+      <tbody>{% for p in rows %}<tr><td>{{ p.address }}</td><td>{{ p.postcode }} {{ p.city }}</td><td>{{ REGIONS[p.region].name }}</td><td class="num">{{ p.open_count }}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">Nog geen panden. Een pand wordt ook aangemaakt bij een nieuwe borg.</td></tr>{% endfor %}</tbody>
+    </table></div>
+  </section>
+  {% if can('deposit.edit') %}
+  <form class="panel" method="post">{{ csrf() }}
+    <div class="panel-h"><h2>Pand toevoegen</h2></div>
+    <div class="panel-b stack">
+      {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+      <div class="field"><label for="address">Adres</label><input id="address" name="address"></div>
+      <div class="form-grid"><div class="field"><label for="postcode">Postcode</label><input id="postcode" name="postcode"></div><div class="field"><label for="city">Plaats</label><input id="city" name="city"></div></div>
+      <div class="field"><label for="region">Regio</label><select id="region" name="region">{% for code, r in REGIONS.items() %}<option value="{{ code }}">{{ r.name }}</option>{% endfor %}</select></div>
+      <button class="btn btn-primary">Toevoegen</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}

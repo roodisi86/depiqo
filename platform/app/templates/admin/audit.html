@@ -1,0 +1,9 @@
+{% extends "layout_admin.html" %}
+{% block title %}Auditlog{% endblock %}
+{% block content %}
+  <div class="topbar"><div><p class="crumb">Depiqo-beheer</p><h1>Auditlog</h1></div></div>
+  <section class="panel"><div class="table-wrap"><table class="t">
+    <thead><tr><th>Tijd</th><th>Gebruiker</th><th>Organisatie</th><th>Actie</th><th>Doel</th><th>IP</th></tr></thead>
+    <tbody>{% for a in rows %}<tr><td class="small">{{ a.at|datetime_nl }}</td><td>{{ a.email or '—' }}</td><td class="mono">{{ a.org_id or '—' }}</td><td class="mono">{{ a.action }}</td><td class="mono">{{ a.target or '' }}</td><td class="mono">{{ a.ip or '' }}</td></tr>{% endfor %}</tbody>
+  </table></div></section>
+{% endblock %}

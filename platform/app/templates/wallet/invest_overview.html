@@ -1,0 +1,159 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Beleggen{% endblock %}
+{% block hero %}
+<div class="w-amount">
+  <small>Beleggingsrekening {{ acct.reference }} · {{ PORTFOLIOS[acct.portfolio].label if acct.portfolio else '' }}</small>
+  {% if s %}<b class="tabnum">{{ s.total|eur }}</b>
+  <div class="hero-result {{ 'down' if s.result < 0 }}">{{ '+' if s.result >= 0 }}{{ s.result|eur }}{% if s.result_pct is not none %} ({{ '%+.2f'|format(s.result_pct)|replace('.', ',') }}%){% endif %} <span>resultaat sinds de start</span></div>
+  {% else %}<h1 class="w-title">Rekening wordt geopend</h1>{% endif %}
+</div>
+{% if s %}<dl class="figs figs-dark">
+  <div class="fig"><dt>Ingelegd</dt><dd><b class="tabnum">{{ s.net_in|eur }}</b><span>Stortingen min opnames</span></dd></div>
+  <div class="fig"><dt>Belegd</dt><dd><b class="tabnum">{{ s.invested_value|eur }}</b><span>Waarde van je fondsen</span></dd></div>
+  <div class="fig"><dt>Vrij geld</dt><dd><b class="tabnum">{{ s.available|eur }}</b><span>{% if s.reserved %}{{ s.reserved|eur }} gereserveerd{% else %}Klaar om te beleggen{% endif %}</span></dd></div>
+  <div class="fig"><dt>Kosten tot nu</dt><dd><b class="tabnum">{{ s.fees|eur }}</b><span>Servicekosten Depiqo</span></dd></div>
+</dl>{% endif %}
+{% endblock %}
+{% block content %}
+{% if acct.status == 'pending' %}
+<section class="w-card">
+  <h2>De partner controleert je gegevens</h2>
+  <p class="small muted">{{ partner.display_name }} opent je rekening na een eigen controle van je identiteit. Je krijgt bericht zodra je kunt storten.{% if partner.is_sandbox %} In de sandbox activeert een Depiqo-medewerker de rekening.{% endif %}</p>
+</section>
+{% else %}
+
+{% if acct.pending_fee_bps is not none %}
+<form class="w-card warn-card stack" method="post" action="{{ url_for('invest.action', action='servicevergoeding') }}" aria-labelledby="fee-h">{{ csrf() }}
+  <h2 id="fee-h">Voorstel: nieuwe servicevergoeding</h2>
+  <p class="small">Depiqo stelt {{ acct.pending_fee_bps|bps }} per jaar voor in plaats van {{ acct.fee_rate_bps|bps }}. Tot je akkoord gaat, blijft {{ acct.fee_rate_bps|bps }} gelden. Na je akkoord geldt de nieuwe vergoeding vanaf vandaag, nooit met terugwerkende kracht.</p>
+  <label class="check"><input type="checkbox" name="accept" value="1" required>Ik ga akkoord met {{ acct.pending_fee_bps|bps }} per jaar vanaf vandaag.</label>
+  <button class="btn btn-line">Akkoord</button>
+  <p class="small muted">Niet akkoord? Dan hoef je niets te doen. Je kunt je beleggingen altijd verkopen en opnemen.</p>
+</form>
+{% endif %}
+{% if acct.switch_note %}<section class="w-card"><p class="note warn">{{ acct.switch_note }}</p></section>{% endif %}
+{% if acct.pending_switch %}<section class="w-card"><p class="note">Je portefeuille wordt gewisseld naar {{ PORTFOLIOS[acct.pending_switch].label }}. Eerst verkoopt de partner je fondsen, daarna koopt hij de nieuwe portefeuille. Tot dat klaar is, blijft {{ PORTFOLIOS[acct.portfolio].label }} staan.</p></section>{% endif %}
+{% if not offered %}<section class="w-card"><p class="note">Je verhuurder biedt Beleggen niet meer aan. Nieuwe aankopen en wisselen kunnen niet meer. Verkopen, opnemen en je overzichten blijven werken.</p></section>{% endif %}
+
+<section class="w-card" aria-labelledby="chart-h">
+  <div class="spread"><h2 id="chart-h">Waarde over tijd</h2><span class="small muted">Koers van {{ s.day|date_nl }}</span></div>
+  {% if chart %}
+  <svg class="chart" viewBox="0 0 {{ chart.width }} {{ chart.height }}" role="img" aria-label="Waarde van {{ chart.start|date_nl }} tot {{ chart.end|date_nl }}: nu {{ chart.last|eur }}">
+    <line class="chart-axis" x1="0" y1="{{ chart.base }}" x2="{{ chart.width }}" y2="{{ chart.base }}"/>
+    <polygon class="chart-area" points="{{ chart.area }}"/>
+    <polyline class="chart-net" points="{{ chart.net }}"/>
+    <polyline class="chart-value" points="{{ chart.value }}"/>
+  </svg>
+  <div class="spread small muted"><span>{{ chart.start|date_nl }}</span><span>{{ chart.end|date_nl }}</span></div>
+  <p class="legend small"><span class="key key-value"></span>Waarde <span class="key key-net"></span>Ingelegd <span class="muted">· hoogste {{ chart.hi|eur(False) }}, laagste {{ chart.lo|eur(False) }}</span></p>
+  {% else %}<p class="small muted">Je grafiek verschijnt na je eerste storting.</p>{% endif %}
+</section>
+
+<section class="w-card" aria-labelledby="pos-h">
+  <h2 id="pos-h">Je fondsen</h2>
+  {% if s.positions %}
+  <div class="qa">{% for p in s.positions %}<div><span>{{ p.name }}<br><span class="small">{{ p.units_1e4|units }} stuks × {{ (p.price_1e4 / 100)|round|int|eur }}</span></span><b class="tabnum">{{ p.value|eur }}</b></div>{% endfor %}
+    <div><span>Vrij geld</span><b class="tabnum">{{ s.cash|eur }}</b></div></div>
+  {% else %}<p class="small muted">Nog geen fondsen. Stort eerst en koop daarna.</p>{% endif %}
+</section>
+
+<section class="w-card" aria-labelledby="dep-h">
+  <h2 id="dep-h">Storten</h2>
+  <div class="pay">
+    <span class="small">Rekeningnummer van de partner (klantengeld)</span><span class="mono">{{ pay.iban|iban }}</span>
+    <span class="small">Ten name van</span><b>{{ pay.beneficiary }}</b>
+    <span class="small">Omschrijving (verplicht)</span><span class="mono">{{ pay.reference }}</span>
+  </div>
+  <p class="small muted">Maak over vanaf je eigen rekening. Met de omschrijving weet de partner dat het geld van jou is.</p>
+  {% if partner.is_sandbox %}
+  <form class="row align-end sandbox-form" method="post" action="{{ url_for('invest.action', action='storten') }}">{{ csrf() }}
+    <div class="field grow"><label for="dep_amount">Sandbox: simuleer een storting (€)</label><input id="dep_amount" name="amount" inputmode="decimal" placeholder="500,00"></div>
+    <button class="btn btn-line">Simuleer storting</button></form>
+  {% endif %}
+</section>
+
+{% if offered and not acct.pending_switch %}
+<form class="w-card stack" method="get" action="{{ url_for('invest.buy_confirm') }}" aria-labelledby="buy-h">
+  <h2 id="buy-h">Kopen</h2>
+  <p class="small muted">Je koopt {{ PORTFOLIOS[acct.portfolio].label }} met vrij geld, vanaf {{ MIN_ORDER|eur }}. Je ziet eerst de kosten voor dit bedrag. De partner voert je order uit tegen de volgende koers.</p>
+  <p class="small warn-text">{{ INVEST_RISK }}</p>
+  <div class="field"><label for="buy_amount">Bedrag (€), beschikbaar {{ s.available|eur }}</label><input id="buy_amount" name="bedrag" inputmode="decimal" placeholder="400,00"></div>
+  <button class="btn btn-primary">Kosten bekijken</button>
+</form>
+{% endif %}
+
+<form class="w-card stack" method="post" action="{{ url_for('invest.action', action='verkopen') }}" aria-labelledby="sell-h">{{ csrf() }}
+  <h2 id="sell-h">Verkopen</h2>
+  <div class="field"><label for="sell_amount">Bedrag (€), te verkopen {{ s.sellable|eur }}</label><input id="sell_amount" name="amount" inputmode="decimal" placeholder="100,00"></div>
+  <label class="check"><input type="checkbox" name="all" value="1">Alles verkopen</label>
+  <p class="small warn-text">De partner verkoopt tegen de volgende koers. Die kan lager zijn dan nu. {{ INVEST_RISK }}</p>
+  <button class="btn btn-line">Verkooporder plaatsen</button>
+</form>
+
+<section class="w-card stack" aria-labelledby="out-h">
+  <h2 id="out-h">Geld opnemen</h2>
+  <p class="small muted">Alleen naar je eigen, geregistreerde rekening. Alleen vrij geld kan eruit; verkoop eerst als dat nodig is. Servicekosten die al zijn opgebouwd, blijven staan.</p>
+  {% if acct.own_iban %}
+  <div class="qa"><div><span>Je rekening</span><b class="mono">{{ acct.own_iban|iban }}{% if acct.own_iban_holder %}<br><span class="small muted">op naam van {{ acct.own_iban_holder }}</span>{% endif %}</b></div></div>
+  {% if acct.own_iban_usable_from and acct.own_iban_usable_from > now_iso %}<p class="small note">Te gebruiken vanaf {{ acct.own_iban_usable_from|datetime_nl }}. Dat is een veiligheidsmaatregel na een nieuw rekeningnummer.</p>{% endif %}
+  <form class="stack" method="post" action="{{ url_for('invest.action', action='opnemen') }}">{{ csrf() }}
+    <div class="field"><label for="out_amount">Bedrag (€), beschikbaar {{ s.available|eur }}</label><input id="out_amount" name="amount" inputmode="decimal" placeholder="100,00"></div>
+    <button class="btn btn-line">Opnemen</button>
+  </form>
+  {% endif %}
+  <details {{ 'open' if not acct.own_iban }}>
+    <summary><b>{{ 'Ander rekeningnummer registreren' if acct.own_iban else 'Je eigen rekeningnummer registreren' }}</b></summary>
+    <form class="stack" method="post" action="{{ url_for('invest.action', action='rekening') }}">{{ csrf() }}
+      <div class="field"><label for="own_iban">IBAN op jouw naam</label><input id="own_iban" name="iban" placeholder="NL00 BANK 0123 4567 89"></div>
+      {% if two_factor %}<div class="field"><label for="own_code">Code uit je authenticator-app</label><input id="own_code" name="code" inputmode="numeric" autocomplete="one-time-code"><span class="hint">Met een geldige code kun je het rekeningnummer direct gebruiken.</span></div>
+      {% else %}<p class="small muted">Zonder twee-stapsverificatie kun je een nieuw rekeningnummer pas na {{ cooling_off_days }} dagen gebruiken. Zet twee-stapsverificatie aan onder Beveiliging om dat te versnellen.</p>{% endif %}
+      <p class="small muted">De partner controleert of de rekening op jouw naam staat. Je krijgt een e-mail bij elke wijziging.</p>
+      <button class="btn btn-line">Registreren</button>
+    </form>
+  </details>
+  {% for w in withdrawals %}<p class="small note">Opname van {{ w.amount_cents|eur }} naar {{ w.iban|iban }}: {{ w.label|lower }}.</p>{% endfor %}
+</section>
+
+<section class="w-card" aria-labelledby="ord-h">
+  <h2 id="ord-h">Orders</h2>
+  <div class="qa">{% for o in orders %}<div><span>{{ 'Koop' if o.side == 'buy' else 'Verkoop' }} {{ PORTFOLIOS[o.portfolio].label }}{% if o.sell_all %}, alles{% endif %}{% if o.purpose != 'order' %} · wissel{% endif %}<br><span class="small">{{ o.created_day|date_nl }}</span></span>
+    <b class="tabnum">{% if o.status == 'executed' %}{{ o.executed_amount_cents|eur }}<br><span class="badge t-ok">Uitgevoerd</span>{% elif o.status == 'failed' %}{{ o.amount_cents|eur }}<br><span class="badge t-alert">Mislukt</span>{% else %}{{ o.amount_cents|eur }}<br><span class="badge t-wait">Wacht op koers</span>{% endif %}</b></div>
+  {% else %}<div><span>Nog geen orders.</span></div>{% endfor %}</div>
+</section>
+
+<section class="w-card" aria-labelledby="tx-h">
+  <h2 id="tx-h">Transacties</h2>
+  <div class="qa">{% for t in txs %}<div><span>{{ t.description }}<br><span class="small">{{ t.day|date_nl }}</span></span><b class="tabnum {{ 'late' if t.amount_cents < 0 and t.kind == 'fee' }}">{{ '+' if t.amount_cents > 0 }}{{ t.amount_cents|eur }}</b></div>
+  {% else %}<div><span>Nog geen transacties.</span></div>{% endfor %}</div>
+  {% if txs|length >= 10 %}<p class="small muted">De laatste tien. Alle transacties staan in je maandoverzichten.</p>{% endif %}
+</section>
+
+<section class="w-card" aria-labelledby="cost-h">
+  <h2 id="cost-h">Kosten</h2>
+  <div class="qa">
+    <div><span>Servicekosten Depiqo betaald</span><b class="tabnum">{{ s.fees|eur }}</b></div>
+    <div><span>Opgebouwd deze maand, nog niet verrekend</span><b class="tabnum">{{ s.accrued_fee|eur }}</b></div>
+    {% if costs %}<div><span>Verwacht komend jaar op {{ s.total|eur }}</span><b class="tabnum">{{ costs.total_1y|eur }}</b></div>{% endif %}
+  </div>
+  <p class="small muted">Servicekosten: {{ s.fee_rate_bps|bps }} per jaar over de waarde van je fondsen, elke dag opgebouwd en per maand verrekend. De lopende kosten van de fondsen ({{ costs.ocf_bps|bps if costs else '' }} per jaar) zitten in de koers.</p>
+</section>
+
+{% if offered and not acct.pending_switch %}
+<details class="w-card" aria-label="Portefeuille wisselen">
+  <summary><b>Portefeuille wisselen</b></summary>
+  <form class="stack" method="get" action="{{ url_for('invest.switch_confirm') }}">
+    <p class="small">Wisselen betekent: de partner verkoopt al je fondsen en koopt daarna de nieuwe portefeuille met de opbrengst. Tussen verkoop en aankoop kan de koers veranderen. Je ziet eerst de kosten en scenario's van de nieuwe portefeuille.</p>
+    {% for c in others %}<label class="check"><input type="radio" name="portefeuille" value="{{ c }}" required>{{ PORTFOLIOS[c].label }}, risico {{ PORTFOLIOS[c].risk }}/7: {{ PORTFOLIOS[c].summary }}</label>{% endfor %}
+    <button class="btn btn-line">Kosten en scenario's bekijken</button>
+  </form>
+</details>
+{% endif %}
+
+<section class="w-card" aria-labelledby="st-h">
+  <h2 id="st-h">Maandoverzichten</h2>
+  <div class="qa">{% for p in periods[:12] %}<div><span>{{ p }}</span><b><a href="{{ url_for('invest.statement', period=p) }}">PDF</a></b></div>{% else %}<div><span>Nog geen overzichten.</span></div>{% endfor %}</div>
+  <p class="small muted">Het officiële overzicht en de jaaropgave voor de belasting komen van de partner.</p>
+</section>
+{% endif %}
+{% endblock %}

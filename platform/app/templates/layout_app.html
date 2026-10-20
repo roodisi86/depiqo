@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% from "macros.html" import mark, flashes, csrf, twofa_banner %}
+{% block body %}
+<div class="shell">
+  <aside class="side" aria-label="Navigatie">
+    <a class="brand" href="{{ url_for('business.dashboard') }}">{{ mark() }}depiqo</a>
+    <div class="org-name">{{ g.org.name }}</div>
+    {% set ep = request.endpoint %}
+    <nav class="nav">
+      <a href="{{ url_for('business.dashboard') }}" class="{{ 'on' if ep == 'business.dashboard' }}">Overzicht</a>
+      <a href="{{ url_for('business.deposits') }}" class="{{ 'on' if ep in ('business.deposits', 'business.deposit', 'business.new_deposit', 'business.import_upload', 'business.import_preview') }}">Borgen</a>
+      <a href="{{ url_for('business.properties') }}" class="{{ 'on' if ep == 'business.properties' }}">Panden</a>
+      <a href="{{ url_for('business.team') }}" class="{{ 'on' if ep == 'business.team' }}">Team</a>
+      {% if can('reconciliation.view') %}<a href="{{ url_for('business.reconciliation') }}" class="{{ 'on' if ep == 'business.reconciliation' }}">Afstemming</a>{% endif %}
+      {% if can('billing.view') %}<a href="{{ url_for('business.billing_page') }}" class="{{ 'on' if ep == 'business.billing_page' }}">Facturatie</a>{% endif %}
+      <a href="{{ url_for('business.settings') }}" class="{{ 'on' if ep == 'business.settings' }}">Instellingen</a>
+      <a href="{{ url_for('auth.security') }}" class="{{ 'on' if ep == 'auth.security' }}">Beveiliging</a>
+      {% if g.user.is_staff %}<a href="{{ url_for('admin.home') }}">Depiqo-beheer</a>{% endif %}
+    </nav>
+    <div class="foot">
+      {% if sandbox() %}<span class="sandbox-pill">SANDBOX · GEEN ECHT GELD</span>{% endif %}
+      <span><b>{{ g.user.name }}</b><br>{{ ROLE_LABELS[g.membership.role] }}</span>
+      <form method="post" action="{{ url_for('auth.logout') }}">{{ csrf() }}<button class="linkbtn" type="submit">Uitloggen</button></form>
+    </div>
+  </aside>
+  <main class="main" id="inhoud">
+    {{ twofa_banner() }}
+    {{ flashes() }}
+    {% block content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

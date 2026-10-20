@@ -1,0 +1,11 @@
+# Fresh start: no session, no stored language, no keychain items (iOS keeps the keychain across reinstalls).
+appId: com.getdepiqo.app.dev
+---
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - clearKeychain
+- launchApp:
+    clearState: true
+    stopApp: true

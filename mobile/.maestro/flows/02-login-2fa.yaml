@@ -1,0 +1,37 @@
+# (b) Two-step verification. CI gives lars@huurder.test TOTP (.github/scripts/e2e_prepare.py, platform functions);
+# the runner makes a fresh code right before this flow (.github/scripts/totp_now.py) and passes it as MFA_CODE.
+appId: com.getdepiqo.app.dev
+name: "b. Login met 2FA (lars)"
+tags: [auth, 2fa]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: lars@huurder.test
+- extendedWaitUntil:
+    visible:
+      id: "mfa-code"
+    timeout: 30000
+- assertNotVisible:
+    id: "tab-profile"
+- takeScreenshot: b-01-mfa-${LANG_CODE}
+- tapOn:
+    id: "mfa-code"
+- inputText: ${MFA_CODE}
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      id: "mfa-submit"
+    direction: DOWN
+    timeout: 10000
+- tapOn:
+    id: "mfa-submit"
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- assertVisible:
+    text: "(?s).*Overtoom 310.*"
+- takeScreenshot: b-02-after-2fa-${LANG_CODE}

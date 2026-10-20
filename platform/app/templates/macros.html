@@ -1,0 +1,88 @@
+{% macro mark(fg='#FFFFFF', acc='#63DED0') -%}
+<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="30" cy="39" r="14" fill="none" stroke="{{ fg }}" stroke-width="10"/><path d="M49 10V54" stroke="{{ fg }}" stroke-width="10" stroke-linecap="round"/><circle cx="30" cy="39" r="6.5" fill="{{ acc }}"/></svg>
+{%- endmacro %}
+
+{% macro status(s, tenant=False) -%}
+<span class="badge t-{{ TONE[s] }}">{{ (TENANT_LABELS if tenant else LABELS)[s] }}</span>
+{%- endmacro %}
+
+{% macro holding(h) -%}
+{% if h == 'depiqo' %}<span class="tag depiqo">Depiqo-borgrekening</span>{% else %}<span class="tag">Elders</span>{% endif %}
+{%- endmacro %}
+
+{% macro steps(s) -%}
+<div class="steps" role="img" aria-label="Voortgang: {{ LABELS[s] }}">
+{% set idx = S.PATH.index(s) if s in S.PATH else -1 %}
+{% for p in S.PATH %}<i class="{{ 'done' if loop.index0 < idx else ('now' if loop.index0 == idx else '') }}"></i>{% endfor %}
+</div>
+{%- endmacro %}
+
+{% macro flashes() -%}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for cat, msg in messages %}<div class="flash {{ cat }}" role="status">{{ msg }}</div>{% endfor %}
+{% endwith %}
+{%- endmacro %}
+
+{% macro csrf() -%}<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">{%- endmacro %}
+
+{% macro deadline_box(info) -%}
+{% if info %}
+<div class="deadline {{ 'late' if info.days_left < 0 else '' }}">
+  <b>{% if info.days_left < 0 %}{{ -info.days_left }} d te laat{% elif info.days_left == 0 %}vandaag{% else %}{{ info.days_left }} d{% endif %}</b>
+  <div class="small"><div>{{ 'Uiterlijk' if info.statutory else 'Streefdatum' }} {{ info.date|date_nl }}</div><div class="muted">{{ info.why }}</div></div>
+</div>
+{% endif %}
+{%- endmacro %}
+
+
+{# Status of one deposit row. SECURED shows its evidence: only bank-confirmed or legal security is green. #}
+{% macro status_d(d, tenant=False) -%}
+{% set label, tone = display_status(d, tenant) %}<span class="badge t-{{ tone }}">{{ label }}</span>
+{%- endmacro %}
+
+{# Evidence of the security, whatever the status. Shown next to the status in lists. #}
+{% macro evidence_tag(d) -%}
+{% set a = assurance(d) %}{% if a %}<span class="ev ev-{{ a.tone }}" title="{{ a.label }}">{{ a.short }}</span>{% elif d.holding == 'external' and d.status not in (S.CONCEPT, S.CANCELLED) %}<span class="ev ev-neutral" title="Ontvangst nog niet verklaard">Geen bewijs</span>{% endif %}
+{%- endmacro %}
+
+{% macro sandbox_tag(provider) -%}
+{% if provider == 'sandbox' %}<span class="tag sbx" title="Sandboxrekening: geen echt geld">SANDBOX</span>{% endif %}
+{%- endmacro %}
+
+{# Four separate figures: never show the obligation as money held. #}
+{% macro figures(items, dark=False, compact=False) -%}
+<dl class="figs {{ 'figs-dark' if dark }} {{ 'figs-compact' if compact }}">
+{% for f in items %}<div class="fig {{ 'fig-unknown' if f.value is none }}"><dt>{{ f.label }}</dt><dd><b class="tabnum">{{ f.value|eur if f.value is not none else '—' }}</b>{% if not compact or f.value is none %}<span>{{ f.note }}</span>{% endif %}</dd></div>{% endfor %}
+</dl>
+{%- endmacro %}
+
+{% macro twofa_banner() -%}
+{% if should_enable_2fa() %}<div class="banner warn" role="status"><b>Zet twee-stapsverificatie aan.</b> Je account heeft beheerrechten. Een code uit een app op je telefoon beschermt het tegen gestolen wachtwoorden. <a href="{{ url_for('auth.security') }}">Nu instellen</a></div>{% endif %}
+{%- endmacro %}
+
+{% macro partner_banner(p) -%}
+{% if not p.available %}<div class="banner alert" role="status"><b>Er is geen financiële partner gekoppeld.</b> Er kan geen borgrekening worden geopend en er gaat geen opdracht naar een bank. Borgen die elders staan, werken wel.</div>{% endif %}
+{%- endmacro %}
+
+{# 0.4.0: where a deposit held elsewhere sits. Nothing for a Depiqo account (the holding tag says it). #}
+{% macro provider_tag(d) -%}
+{% if d.holding == 'external' %}{% if d.provider_kind %}<span class="tag prov" title="{{ PROVIDER_KINDS[d.provider_kind].label }}">{{ PROVIDER_KINDS[d.provider_kind].short }}</span>{% else %}<span class="tag prov-unknown" title="Leg vast waar de borg staat">Aanbieder onbekend</span>{% endif %}{% endif %}
+{%- endmacro %}
+
+{# Provider fields for a deposit held elsewhere. The form element carries data-provider-form; region warnings
+   come from data attributes per option and are shown by app.js (and again after saving, by the server). #}
+{% macro provider_fields(form) -%}
+<div class="form-grid">
+  <div class="field full"><label for="provider_kind">Bij wie staat de borg?</label>
+    <select id="provider_kind" name="provider_kind">
+      <option value="" data-guarantee="0" data-no-payment="0" data-ref-label="Referentie bij de aanbieder">Nog niet bekend</option>
+      {% for code, p in PROVIDER_KINDS.items() %}<option value="{{ code }}" {{ 'selected' if form.get('provider_kind') == code }} data-guarantee="{{ 1 if code in GUARANTEE_KINDS else 0 }}" data-no-payment="{{ 1 if code in NO_TENANT_PAYMENT else 0 }}" data-ref-label="{{ p.reference_label }}"{% for r in ('NL', 'VL', 'BRU') %}{% set w = region_warnings(r, code) %}{% if w %} data-warn-{{ r|lower }}="{{ w|join(' ') }}"{% endif %}{% endfor %}>{{ p.label }}</option>{% endfor %}
+    </select>
+    <span class="hint">Je houdt je huidige aanbieder. Depiqo houdt bij waar elke borg staat.</span></div>
+  <p class="note warn full" data-provider-warning role="status" hidden></p>
+  <div class="field"><label for="provider_name">Naam aanbieder (optioneel)</label><input id="provider_name" name="provider_name" maxlength="120" value="{{ form.get('provider_name') or '' }}"><span class="hint">Bijvoorbeeld de naam van de bank of verzekeraar.</span></div>
+  <div class="field"><label for="provider_reference" data-ref-label-target>{{ (PROVIDER_KINDS[form.get('provider_kind')].reference_label if form.get('provider_kind') in PROVIDER_KINDS else 'Referentie bij de aanbieder') }} (optioneel)</label><input id="provider_reference" name="provider_reference" maxlength="60" value="{{ form.get('provider_reference') or '' }}"><span class="hint">Rekeningnummer, dossiernummer of certificaatnummer bij de aanbieder.</span></div>
+  <div class="field" data-expiry-field><label for="guarantee_expires_on">Garantie geldig tot (optioneel)</label><input id="guarantee_expires_on" name="guarantee_expires_on" type="date" value="{{ form.get('guarantee_expires_on') or '' }}"><span class="hint">Depiqo waarschuwt 60 dagen voor het einde.</span></div>
+  <div class="field" data-iban-field><label for="external_iban">IBAN waarop de huurder stort</label><input id="external_iban" name="external_iban" value="{{ form.get('external_iban') or '' }}" placeholder="NL00 BANK 0123 4567 89"><span class="hint">Verplicht bij een rekening van de verhuurder. Bij een garantie of het OCMW stort de huurder niets.</span></div>
+</div>
+{%- endmacro %}

@@ -1,0 +1,81 @@
+# (e) Notifications list, profile, and switching the language to French and English (screenshots of each),
+# then back to the run language.
+appId: com.getdepiqo.app.dev
+name: "e. Meldingen, profiel, taal fr en en"
+tags: [notifications, profile, i18n]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: sanne@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- tapOn:
+    id: "tab-notifications"
+# Every login makes a "new device" notification, so there is at least one.
+- extendedWaitUntil:
+    visible:
+      id: "notification-row"
+    timeout: 30000
+- takeScreenshot: e-01-notifications-${LANG_CODE}
+- tapOn:
+    id: "tab-profile"
+- extendedWaitUntil:
+    visible:
+      id: "profile-screen"
+    timeout: 30000
+- assertVisible:
+    text: "(?s).*sanne@huurder\\.test.*"
+- takeScreenshot: e-02-profile-${LANG_CODE}
+# French
+- scrollUntilVisible:
+    element:
+      id: "language-fr"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    id: "language-fr"
+- extendedWaitUntil:
+    visible:
+      text: "${L_FR_PROFILE_LANGUAGE}"
+    timeout: 10000
+- takeScreenshot: e-03-profile-fr
+- tapOn:
+    id: "tab-deposits"
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- assertVisible:
+    text: "${L_FR_TAB_DEPOSITS}"
+- takeScreenshot: e-04-deposits-fr
+# English
+- tapOn:
+    id: "tab-profile"
+- scrollUntilVisible:
+    element:
+      id: "language-en"
+    direction: DOWN
+    timeout: 15000
+- tapOn:
+    id: "language-en"
+- extendedWaitUntil:
+    visible:
+      text: "${L_EN_PROFILE_LANGUAGE}"
+    timeout: 10000
+- takeScreenshot: e-05-profile-en
+- tapOn:
+    id: "tab-deposits"
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- assertVisible:
+    text: "${L_EN_TAB_DEPOSITS}"
+- takeScreenshot: e-06-deposits-en
+# Back to the run language
+- runFlow: ../subflows/set-language.yaml

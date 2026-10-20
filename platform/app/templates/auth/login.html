@@ -1,0 +1,17 @@
+{% extends "layout_auth.html" %}
+{% from "macros.html" import csrf, mark, status, holding, steps, deadline_box, flashes %}
+{% block title %}Inloggen{% endblock %}
+{% block content %}
+<h1>Elke borg. Eén helder proces.</h1>
+<form class="card" method="post" novalidate>
+  {{ csrf() }}
+  {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+  <div class="field"><label for="email">E-mailadres</label><input id="email" name="email" type="email" autocomplete="username" value="{{ email }}" required></div>
+  <div class="field"><label for="password">Wachtwoord</label><input id="password" name="password" type="password" autocomplete="current-password" required></div>
+  <button class="btn btn-primary" type="submit">Inloggen</button>
+  <a class="small" href="{{ url_for('auth.forgot') }}">Wachtwoord vergeten?</a>
+</form>
+{% if config.ENV_NAME != 'production' %}
+<div class="demo">Demo-omgeving. Beheerder: <code>beheer@voorbeeldvastgoed.test</code>, huurder: <code>sanne@huurder.test</code>, Depiqo-medewerker: <code>staff@depiqo.test</code>. Wachtwoord voor alle accounts: <code>Depiqo-demo-2026</code>. Uitnodigingsmails lees je als Depiqo-medewerker onder Beheer → Mail.</div>
+{% endif %}
+{% endblock %}

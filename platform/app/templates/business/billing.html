@@ -1,0 +1,98 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Facturatie
+<section class="panel mt">
+  <div class="panel-h"><h2>Plangeschiedenis</h2><span class="small muted">Elke wijziging met ingangsdatum</span></div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Geldig vanaf</th><th>Plan</th><th>Gewijzigd door</th><th>Vastgelegd op</th></tr></thead>
+    <tbody>{% for h in history %}<tr><td>{{ h.valid_from|date_nl }}</td><td>{{ B.PLANS[h.plan].label }}</td><td>{{ h.user_name or 'Depiqo' }}</td><td class="small">{{ h.created_at|datetime_nl }}</td></tr>
+    {% else %}<tr><td colspan="4" class="empty">Geen wijzigingen.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}
+{% macro estimate_table(e) %}
+<div class="table-wrap"><table class="t">
+  <thead><tr><th>Omschrijving</th><th class="num">Aantal</th><th class="num">Prijs</th><th class="num">Bedrag</th></tr></thead>
+  <tbody>
+  {% for l in e.lines %}<tr class="{{ 'quiet' if l.kind != 'pilot' and not l.total_cents and l.kind != 'included' }}"><td>{{ l.description }}</td><td class="num">{{ l.quantity }}</td><td class="num">{% if l.kind == 'included' %}<span class="muted">inbegrepen</span>{% else %}{{ l.unit_cents|eur }}{% endif %}</td><td class="num">{{ l.total_cents|eur }}</td></tr>{% endfor %}
+  <tr><td colspan="3">Subtotaal</td><td class="num">{{ e.subtotal|eur }}</td></tr>
+  <tr><td colspan="3">Btw</td><td class="num">{{ e.vat|eur }}</td></tr>
+  <tr><td colspan="3"><b>Totaal</b></td><td class="num"><b>{{ e.total|eur }}</b></td></tr>
+  </tbody></table></div>
+{% endmacro %}
+{% macro plan_facts(p) %}
+<ul class="plan-list">
+  <li>{{ p.included }} actieve dossiers inbegrepen</li>
+  <li>Extra actief dossier: {{ p.extra_external_cents|eur }} als de borg elders staat, {{ p.extra_depiqo_cents|eur }} op een Depiqo-borgrekening</li>
+  <li>Per nieuw dossier: {{ p.new_dossier_cents|eur }}</li>
+</ul>
+{% endmacro %}
+{% block content %}
+<div class="topbar">
+  <div><p class="crumb">{{ g.org.name }}</p><h1>Facturatie</h1></div>
+  <div class="row"><span class="small muted">Plan deze maand</span><span class="badge t-ok">{{ plan.label }}</span>{% if upcoming %}<span class="badge t-info">Vanaf {{ next_month|date_nl }}: {{ upcoming.label }}</span>{% endif %}{% if current.pilot %}<span class="badge t-info">Pilot tot {{ g.org.pilot_until|date_nl }}</span>{% endif %}</div>
+</div>
+<div class="note">Je betaalt een vaste prijs per maand met een aantal actieve dossiers inbegrepen. Daarboven betaal je per actief dossier, en een vast bedrag per nieuw dossier. De inbegrepen dossiers tellen eerst voor borgen die elders staan, want die zijn duurder. Concepten en geannuleerde dossiers tellen niet mee. Huurders betalen niets. Alle bedragen zijn zonder btw. Een factuur rekent altijd met het plan dat gold op de eerste dag van die maand. Een planwijziging geldt vanaf de volgende maand.{% if current.pilot %} <b>Tijdens de pilot krijg je 100% korting.</b>{% endif %}</div>
+
+<section class="mt" aria-labelledby="plans-h">
+  <h2 id="plans-h" class="sr">Plannen</h2>
+  <div class="grid g-3">
+    {% for code in ('essential', 'professional') %}{% set p = B.PLANS[code] %}
+    <div class="panel plan {{ 'on' if plan.code == code }}">
+      <div class="spread plan-head"><h3>{{ p.label }}</h3>{% if plan.code == code %}<span class="badge t-ok">Huidig plan</span>{% elif upcoming and upcoming.code == code %}<span class="badge t-info">Vanaf {{ next_month|date_nl }}</span>{% endif %}</div>
+      <p class="plan-price"><b>{{ p.base_cents|eur(False) }}</b> <span>per maand</span></p>
+      {{ plan_facts(p) }}
+      <div class="plan-foot">
+      {% if chosen.code != code and chosen.code in B.SELF_SERVICE and can('billing.issue') %}
+        <form method="post" action="{{ url_for('business.change_plan') }}" data-confirm="Overstappen naar {{ p.label }}? Het nieuwe plan geldt vanaf {{ next_month|date_nl }}.">{{ csrf() }}<input type="hidden" name="plan" value="{{ code }}"><button class="btn btn-line btn-sm">Overstappen naar {{ p.label }}</button></form>
+      {% elif chosen.code != code and chosen.code in B.SELF_SERVICE %}
+        <p class="small muted">Een beheerder kan het plan wijzigen.</p>
+      {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+    <div class="panel plan {{ 'on' if plan.code == 'enterprise' }}">
+      <div class="spread plan-head"><h3>Enterprise</h3>{% if plan.code == 'enterprise' %}<span class="badge t-ok">Huidig plan</span>{% endif %}</div>
+      {% if plan.code == 'enterprise' %}
+        <p class="plan-price"><b>{{ plan.base_cents|eur(False) }}</b> <span>per maand, volgens afspraak</span></p>
+        {{ plan_facts(plan) }}
+        <p class="small muted plan-foot">Wil je iets wijzigen? Neem contact op met Depiqo.</p>
+      {% else %}
+        <p class="plan-price"><b>Op aanvraag</b></p>
+        <ul class="plan-list"><li>Basisprijs, inbegrepen dossiers en tarieven op maat</li><li>Voor grote portefeuilles</li></ul>
+        <p class="small muted plan-foot">Neem contact op met Depiqo.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div class="grid g-2 mt">
+  <section class="panel">
+    <div class="panel-h"><h2>Deze maand, tot nu toe ({{ current.period }})</h2><span class="small muted">{{ current.counts.external }} elders · {{ current.counts.depiqo }} op Depiqo-borgrekening · {{ current.new }} nieuw</span></div>
+    {{ estimate_table(current) }}
+  </section>
+  <section class="panel">
+    <div class="panel-h"><h2>Vorige maand ({{ previous.period }})</h2>
+      {% if can('billing.issue') and not issued_prev %}<form method="post">{{ csrf() }}<input type="hidden" name="period" value="{{ last_month }}"><button class="btn btn-primary btn-sm">Factuur aanmaken</button></form>{% endif %}</div>
+    {{ estimate_table(previous) }}
+    <p class="panel-b small muted">Plan voor {{ previous.period }}: {{ previous.plan.label }} (geldig op de eerste dag van de maand).</p>
+  </section>
+</div>
+<section class="panel mt">
+  <div class="panel-h"><h2>Facturen</h2></div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Nummer</th><th>Soort</th><th>Periode</th><th>Datum</th><th>Te betalen voor</th><th>Status</th><th class="num">Totaal</th><th></th></tr></thead>
+    <tbody>{% for i in invoices %}{% set code, label, tone = B.payment_state(i) %}<tr><td class="mono">{{ i.number }}</td><td>{{ 'Creditnota' if i.kind == 'credit' else 'Factuur' }}</td><td>{{ i.period }}</td><td>{{ i.issued_at|date_nl }}</td><td>{{ i.due_at|date_nl if i.due_at and i.kind == 'invoice' else '—' }}</td><td><span class="badge t-{{ tone }}">{{ label }}</span></td><td class="num">{{ i.total_cents|eur }}</td><td><a href="{{ url_for('business.invoice_pdf', number=i.number) }}">PDF</a></td></tr>
+    {% else %}<tr><td colspan="8" class="empty">Nog geen facturen.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+
+<section class="panel mt">
+  <div class="panel-h"><h2>Plangeschiedenis</h2><span class="small muted">Elke wijziging met ingangsdatum</span></div>
+  <div class="table-wrap"><table class="t">
+    <thead><tr><th>Geldig vanaf</th><th>Plan</th><th>Gewijzigd door</th><th>Vastgelegd op</th></tr></thead>
+    <tbody>{% for h in history %}<tr><td>{{ h.valid_from|date_nl }}</td><td>{{ B.PLANS[h.plan].label }}</td><td>{{ h.user_name or 'Depiqo' }}</td><td class="small">{{ h.created_at|datetime_nl }}</td></tr>
+    {% else %}<tr><td colspan="4" class="empty">Geen wijzigingen.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endblock %}

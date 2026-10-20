@@ -1,0 +1,6 @@
+# Test-only extras (CI installs both files). Without them the OpenAPI response checks in test_v060 are skipped
+# and tests/e2e_browser.py cannot run.
+-r requirements.txt
+PyYAML==6.0.2
+jsonschema==4.23.0
+playwright==1.49.1

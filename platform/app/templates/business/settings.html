@@ -1,0 +1,25 @@
+{% extends "layout_app.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Instellingen{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">{{ g.org.name }}</p><h1>Instellingen</h1></div></div>
+<div class="grid g-main">
+  <form class="panel" method="post">{{ csrf() }}
+    <div class="panel-h"><h2>Organisatie</h2></div>
+    <div class="panel-b stack">
+      {% if error %}<div class="flash error" role="alert">{{ error }}</div>{% endif %}
+      <div class="field"><label for="name">Naam</label><input id="name" name="name" value="{{ g.org.name }}" {{ 'disabled' if not can('settings.edit') }}></div>
+      <div class="field"><label for="registration_number">KvK- of ondernemingsnummer</label><input id="registration_number" name="registration_number" value="{{ g.org.registration_number or '' }}" {{ 'disabled' if not can('settings.edit') }}></div>
+      <div class="field"><label for="billing_email">E-mailadres voor facturen</label><input id="billing_email" name="billing_email" type="email" value="{{ g.org.billing_email or '' }}" {{ 'disabled' if not can('settings.edit') }}></div>
+      {% if can('settings.edit') %}<button class="btn btn-primary">Opslaan</button>{% endif %}
+    </div>
+  </form>
+  <div class="stack">
+    {% if orgs|length > 1 %}<section class="panel"><div class="panel-h"><h2>Andere organisaties</h2></div><div class="panel-b stack">
+      {% for o in orgs if o.id != g.org.id %}<form method="post" action="{{ url_for('auth.switch_org', org_id=o.id) }}">{{ csrf() }}<button class="btn btn-line">Wissel naar {{ o.name }}</button></form>{% endfor %}</div></section>{% endif %}
+    <section class="panel"><div class="panel-h"><h2>Regels per regio</h2></div><div class="panel-b stack small">
+      {% for code, r in REGIONS.items() %}<div><b>{{ r.name }}</b>: maximaal {{ r.max_months }} maanden {{ r.rent_basis }}. {{ r.release_note }} <span class="muted">Gecontroleerd {{ r.checked_on|date_nl }}.</span></div>{% endfor %}
+      <p class="muted">Deze regels ondersteunen het proces en zijn geen juridisch advies.</p></div></section>
+  </div>
+</div>
+{% endblock %}

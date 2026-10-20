@@ -1,0 +1,32 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Uitslag van de toets{% endblock %}
+{% block hero %}<div class="w-amount"><small>Uitslag van de toets · {{ appr.created_at|datetime_nl }}</small><h1 class="w-title">{{ 'Beleggen past bij je' if appr.result == 'passend' else 'Beleggen past mogelijk niet bij je' }}</h1></div>{% endblock %}
+{% block content %}
+{% if appr.result == 'passend' %}
+<section class="w-card">
+  <p class="note ok-note">Op basis van je antwoorden heb je genoeg kennis en ervaring om zelf te beleggen in deze portefeuilles. Dit is geen advies over wat je moet kiezen.</p>
+  <a class="btn btn-primary" href="{{ url_for('invest.choose') }}">Kies een portefeuille</a>
+</section>
+{% else %}
+<section class="w-card warn-card" aria-labelledby="w-h">
+  <h2 id="w-h">Waarschuwing</h2>
+  <p>Op basis van je antwoorden past beleggen mogelijk niet bij je. Dit is waarom:</p>
+  <ul class="reasons">{% for r in reasons %}<li>{{ r }}</li>{% endfor %}</ul>
+  <p class="small">{{ INVEST_RISK }}</p>
+  {% if appr.warning_confirmed_at %}
+    <p class="small muted">Je hebt op {{ appr.warning_confirmed_at|datetime_nl }} bevestigd dat je toch verder wilt.</p>
+    <a class="btn btn-primary" href="{{ url_for('invest.choose') }}">Verder</a>
+  {% else %}
+  <form class="stack" method="post">{{ csrf() }}
+    <label class="check"><input type="checkbox" name="confirm" value="1" required>Ik heb deze waarschuwing gelezen. Ik begrijp dat beleggen mogelijk niet bij mij past en dat ik geld kan verliezen. Ik wil toch zelf verder.</label>
+    <button class="btn btn-line">Toch verder</button>
+  </form>
+  {% endif %}
+</section>
+<section class="w-card">
+  <p class="small muted">Liever niet? Dat is een goede keuze als je twijfelt. Er gebeurt niets met je borg.</p>
+  <div class="row"><a class="btn btn-line btn-sm" href="{{ url_for('wallet.home') }}">Stoppen</a><a class="btn btn-line btn-sm" href="{{ url_for('invest.questionnaire') }}">Toets opnieuw doen</a></div>
+</section>
+{% endif %}
+{% endblock %}

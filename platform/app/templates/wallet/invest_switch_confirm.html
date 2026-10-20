@@ -1,0 +1,24 @@
+{% extends "wallet/invest_layout.html" %}
+{% from "macros.html" import csrf %}
+{% block title %}Wisselen controleren{% endblock %}
+{% block hero %}<div class="w-amount"><small>{{ PORTFOLIOS[acct.portfolio].label }} naar {{ PORTFOLIOS[target].label }}</small><h1 class="w-title">Portefeuille wisselen</h1></div>{% endblock %}
+{% block content %}
+<form class="w-card stack" method="post" action="{{ url_for('invest.action', action='wisselen') }}">{{ csrf() }}
+  <input type="hidden" name="portfolio" value="{{ target }}">
+  <p class="note warn"><b>Je kunt geld verliezen.</b> {{ INVEST_RISK }}</p>
+  <p class="small">{{ PORTFOLIOS[target].label }}, risico {{ PORTFOLIOS[target].risk }}/7: {{ PORTFOLIOS[target].summary }} De partner verkoopt eerst al je fondsen tegen de volgende koers en koopt daarna {{ PORTFOLIOS[target].label }} met de opbrengst. Tussen verkoop en aankoop kan de koers veranderen.</p>
+  <h2>Kosten op {{ base|eur }}</h2>
+  <table class="t mini"><thead><tr><th>Kosten</th><th class="num">1 jaar</th><th class="num">3 jaar</th></tr></thead><tbody>
+    <tr><td>Servicekosten Depiqo ({{ costs.fee_bps|bps }} per jaar)</td><td class="num">{{ costs.service_1y|eur }}</td><td class="num">{{ costs.service_3y|eur }}</td></tr>
+    <tr><td>Lopende kosten fondsen ({{ costs.ocf_bps|bps }} per jaar)</td><td class="num">{{ costs.fund_1y|eur }}</td><td class="num">{{ costs.fund_3y|eur }}</td></tr>
+    <tr><td>Transactiekosten</td><td class="num">{{ costs.tx|eur }}</td><td class="num">{{ costs.tx|eur }}</td></tr>
+    <tr class="total"><td>Totaal</td><td class="num">{{ costs.total_1y|eur }}</td><td class="num">{{ costs.total_3y|eur }}</td></tr>
+  </tbody></table>
+  <h3 class="h3">Scenario's, geen voorspelling</h3>
+  <table class="t mini"><thead><tr><th>Scenario</th><th class="num">Na 1 jaar</th><th class="num">Na 3 jaar</th></tr></thead><tbody>
+    {% for sc in scenarios %}<tr class="sc-{{ sc.key }}"><td>{{ sc.label }}</td><td class="num">{{ sc.y1|eur }}</td><td class="num">{{ sc.y3|eur }}</td></tr>{% endfor %}
+  </tbody></table>
+  <label class="check"><input type="checkbox" name="confirm" value="1" required>Ik begrijp dat alles wordt verkocht en daarna opnieuw gekocht, en ik heb de kosten en het risico gelezen.</label>
+  <div class="row"><button class="btn btn-primary">Wissel van portefeuille</button><a class="btn btn-line" href="{{ url_for('invest.index') }}">Terug</a></div>
+</form>
+{% endblock %}

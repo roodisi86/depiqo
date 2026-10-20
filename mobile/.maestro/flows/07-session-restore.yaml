@@ -1,0 +1,27 @@
+# (g) Session restore: kill the app and start it again -> still logged in (biometric lock is off by default).
+appId: com.getdepiqo.app.dev
+name: "g. Sessie blijft na herstart"
+tags: [auth, session]
+---
+- runFlow: ../subflows/launch-clean.yaml
+- runFlow:
+    file: ../subflows/login.yaml
+    env:
+      EMAIL: ella@huurder.test
+- runFlow: ../subflows/set-language.yaml
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 30000
+- stopApp
+- launchApp:
+    clearState: false
+- extendedWaitUntil:
+    visible:
+      id: "deposit-card"
+    timeout: 45000
+- assertNotVisible:
+    id: "login-email"
+- assertVisible:
+    text: "(?s).*Meir 38 bus 3.*"
+- takeScreenshot: g-01-restored-${LANG_CODE}

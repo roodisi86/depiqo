@@ -1,0 +1,14 @@
+{% extends "layout_admin.html" %}
+{% from "macros.html" import csrf, partner_banner %}
+{% block title %}Afstemming{% endblock %}
+{% block content %}
+<div class="topbar"><div><p class="crumb">Depiqo-beheer</p><h1>Afstemming</h1></div>
+  <div class="row">
+    <a class="btn btn-sm {{ 'btn-dark' if only else 'btn-line' }}" href="{{ url_for('admin.reconciliation') }}">Alleen afwijkingen</a>
+    <a class="btn btn-sm {{ 'btn-line' if only else 'btn-dark' }}" href="{{ url_for('admin.reconciliation', alles='1') }}">Alle lopende dossiers</a>
+    <form method="post" action="{{ url_for('admin.dispatch') }}">{{ csrf() }}<input type="hidden" name="back" value="/admin/afstemming"><button class="btn btn-sm btn-primary">Opdrachten versturen</button></form>
+  </div></div>
+{{ partner_banner(partner) }}
+<p class="note">Vergelijkt per dossier de vereiste borg, het saldo volgens de bank, de opdrachten aan de bank en het bewijs. Afwijkingen: saldo lager dan de borg terwijl de zekerheid geregistreerd staat, een vrijgave die na {{ config.RELEASE_CONFIRM_DAYS }} dagen niet bevestigd is, mislukte opdrachten, bankberichten met fouten en borgen elders die al meer dan {{ config.DECLARED_MAX_DAYS }} dagen alleen verklaard zijn.</p>
+{% with show_org=True, detail_endpoint='admin.deposit' %}{% include "partials/reconciliation_table.html" %}{% endwith %}
+{% endblock %}

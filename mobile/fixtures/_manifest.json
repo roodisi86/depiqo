@@ -1,0 +1,405 @@
+{
+  "base": "<dev server>",
+  "captured_at": "2026-10-20T12:22:32.739Z",
+  "items": [
+    {
+      "file": "config.json",
+      "method": "GET",
+      "path": "/config",
+      "status": 200,
+      "as": null
+    },
+    {
+      "file": "error-token-invalid.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 401,
+      "as": null
+    },
+    {
+      "file": "error-token-missing.json",
+      "method": "GET",
+      "path": "/me",
+      "status": 401,
+      "as": null
+    },
+    {
+      "file": "error-token-invalid-fr.json",
+      "method": "GET",
+      "path": "/me",
+      "status": 401,
+      "as": null
+    },
+    {
+      "file": "error-refresh-invalid.json",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 401,
+      "as": null
+    },
+    {
+      "file": "error-login-validation.json",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 422,
+      "as": null
+    },
+    {
+      "file": "error-invite-expired.json",
+      "method": "GET",
+      "path": "/invites/<expired>",
+      "status": 410,
+      "as": null
+    },
+    {
+      "file": "invite.json",
+      "method": "GET",
+      "path": "/invites/<token>",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "login-session.json",
+      "method": "POST",
+      "path": "/auth/login",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "refresh-token-pair.json",
+      "method": "POST",
+      "path": "/auth/refresh",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "me-daan.json",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "deposits-daan.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "deposit-daan-0.json",
+      "method": "GET",
+      "path": "/deposits/9xeunnxp8zx2",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "deposit-events-daan.json",
+      "method": "GET",
+      "path": "/deposits/9xeunnxp8zx2/events?limit=5",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "documents-daan.json",
+      "method": "GET",
+      "path": "/deposits/9xeunnxp8zx2/documents",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "settlement-null.json",
+      "method": "GET",
+      "path": "/deposits/9xeunnxp8zx2/settlement",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "error-not-found.json",
+      "method": "GET",
+      "path": "/deposits/does-not-exist",
+      "status": 404,
+      "as": "daan"
+    },
+    {
+      "file": "invest-overview-active.json",
+      "method": "GET",
+      "path": "/invest",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-portfolios.json",
+      "method": "GET",
+      "path": "/invest/portfolios?amount_cents=100000",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-appropriateness-daan.json",
+      "method": "GET",
+      "path": "/invest/appropriateness",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-terms-daan.json",
+      "method": "GET",
+      "path": "/invest/terms",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-deposit-instructions.json",
+      "method": "GET",
+      "path": "/invest/deposit-instructions",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-orders.json",
+      "method": "GET",
+      "path": "/invest/orders?limit=5",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-withdrawals.json",
+      "method": "GET",
+      "path": "/invest/withdrawals?limit=5",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-transactions.json",
+      "method": "GET",
+      "path": "/invest/transactions?limit=5",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-statements.json",
+      "method": "GET",
+      "path": "/invest/statements",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-fee-change.json",
+      "method": "GET",
+      "path": "/invest/fee-change",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "invest-quote-buy.json",
+      "method": "POST",
+      "path": "/invest/orders/quote",
+      "status": 201,
+      "as": "daan"
+    },
+    {
+      "file": "invest-quote-sell.json",
+      "method": "POST",
+      "path": "/invest/orders/quote",
+      "status": 201,
+      "as": "daan"
+    },
+    {
+      "file": "activity-daan.json",
+      "method": "GET",
+      "path": "/activity?limit=10",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "notifications-daan.json",
+      "method": "GET",
+      "path": "/notifications?limit=10",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "notifications-daan-en.json",
+      "method": "GET",
+      "path": "/notifications?limit=3",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "support-daan.json",
+      "method": "GET",
+      "path": "/support",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "devices-daan.json",
+      "method": "GET",
+      "path": "/auth/devices",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "delete-request-daan.json",
+      "method": "GET",
+      "path": "/me/delete-request",
+      "status": 200,
+      "as": "daan"
+    },
+    {
+      "file": "me-sanne.json",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "deposits-sanne.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "deposit-settlement-proposed.json",
+      "method": "GET",
+      "path": "/deposits/e9x3dqzu3wqe",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "settlement-proposed.json",
+      "method": "GET",
+      "path": "/deposits/e9x3dqzu3wqe/settlement",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "documents-sanne.json",
+      "method": "GET",
+      "path": "/deposits/e9x3dqzu3wqe/documents",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "invest-overview-onboarding.json",
+      "method": "GET",
+      "path": "/invest",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "invest-appropriateness-sanne.json",
+      "method": "GET",
+      "path": "/invest/appropriateness",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "invest-terms-sanne.json",
+      "method": "GET",
+      "path": "/invest/terms",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "delete-request-sanne.json",
+      "method": "GET",
+      "path": "/me/delete-request",
+      "status": 200,
+      "as": "sanne"
+    },
+    {
+      "file": "me-mila.json",
+      "method": "GET",
+      "path": "/me",
+      "status": 200,
+      "as": "mila"
+    },
+    {
+      "file": "deposits-mila.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 200,
+      "as": "mila"
+    },
+    {
+      "file": "deposit-guarantee.json",
+      "method": "GET",
+      "path": "/deposits/6h29m8x7jcbe",
+      "status": 200,
+      "as": "mila"
+    },
+    {
+      "file": "invest-mila.json",
+      "method": "GET",
+      "path": "/invest",
+      "status": 200,
+      "as": "mila"
+    },
+    {
+      "file": "deposits-sofie.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 200,
+      "as": "sofie"
+    },
+    {
+      "file": "deposit-external-release.json",
+      "method": "GET",
+      "path": "/deposits/rzkua58zaeuw",
+      "status": 200,
+      "as": "sofie"
+    },
+    {
+      "file": "settlement-agreed.json",
+      "method": "GET",
+      "path": "/deposits/rzkua58zaeuw/settlement",
+      "status": 200,
+      "as": "sofie"
+    },
+    {
+      "file": "deposits-mohamed.json",
+      "method": "GET",
+      "path": "/deposits",
+      "status": 200,
+      "as": "mohamed"
+    },
+    {
+      "file": "payout-choice.json",
+      "method": "GET",
+      "path": "/deposits/c7am7zs2bh4t/payout-choice",
+      "status": 200,
+      "as": "mohamed"
+    },
+    {
+      "file": "deposit-mohamed.json",
+      "method": "GET",
+      "path": "/deposits/c7am7zs2bh4t",
+      "status": 200,
+      "as": "mohamed"
+    },
+    {
+      "file": "activity-mohamed.json",
+      "method": "GET",
+      "path": "/activity?limit=10",
+      "status": 200,
+      "as": "mohamed"
+    },
+    {
+      "file": "invest-appropriateness-iris.json",
+      "method": "GET",
+      "path": "/invest/appropriateness",
+      "status": 200,
+      "as": "iris"
+    },
+    {
+      "file": "invest-overview-iris.json",
+      "method": "GET",
+      "path": "/invest",
+      "status": 200,
+      "as": "iris"
+    }
+  ]
+}
