@@ -7,6 +7,7 @@
 set -u
 label="$1"; src="$2"
 if [ ! -d "$src" ]; then echo "publish_results: $src does not exist, nothing to publish"; exit 0; fi
+src="$(cd "$src" && pwd)"
 run="${GITHUB_RUN_ID:-local}-${GITHUB_RUN_ATTEMPT:-1}"
 repo_url="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
 work="$(mktemp -d)"
