@@ -23,7 +23,7 @@ on:
         default: false
 
 permissions:
-  contents: read
+  contents: write  # only to publish results to the ci-results branch
 
 concurrency:
   group: mobile-checks-${{ github.ref }}
@@ -127,6 +127,17 @@ jobs:
       - name: Jest (jest-expo preset)
         if: always() && steps.install.outputs.installed == 'true'
         run: npx jest --ci --json --outputFile="$OUT/jest-results.json" 2>&1 | tee "$OUT/jest.txt"
+
+      - name: Copy package.json and package-lock.json into the results
+        if: always() && steps.install.outputs.installed == 'true'
+        run: cp package.json package-lock.json "$OUT/" 2>/dev/null || true
+
+      - name: Publish results to the ci-results branch
+        if: always()
+        working-directory: ${{ github.workspace }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/publish_results.sh "mobile-checks" "ci-out/mobile"
 
       - uses: actions/upload-artifact@v4
         if: always()

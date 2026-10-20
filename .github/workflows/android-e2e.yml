@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # only to publish results to the ci-results branch
 
 concurrency:
   group: android-e2e-${{ github.ref }}
@@ -120,6 +120,13 @@ jobs:
           path: ci-out/android-build/depiqo-dev-ci-10.0.2.2.apk
           if-no-files-found: error
           retention-days: 14
+
+      - name: Publish results to the ci-results branch
+        if: always()
+        working-directory: ${{ github.workspace }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/publish_results.sh "android-build" "ci-out/android-build"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -273,6 +280,13 @@ jobs:
           mkdir -p "$RESULTS/backend"
           if [ -d "$E2E_WORK/logs" ]; then cp -r "$E2E_WORK/logs/." "$RESULTS/backend/"; fi
           if [ -f "$E2E_WORK/backend.pid" ]; then kill "$(cat "$E2E_WORK/backend.pid")" 2>/dev/null || echo "backend already stopped"; fi
+
+      - name: Publish results to the ci-results branch
+        if: always()
+        working-directory: ${{ github.workspace }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/publish_results.sh "android-e2e-${{ matrix.variant }}" "ci-out/android-e2e/${{ matrix.variant }}"
 
       - uses: actions/upload-artifact@v4
         if: always()

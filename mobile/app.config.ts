@@ -95,7 +95,7 @@ const CAMERA_TEXT = 'Depiqo gebruikt de camera alleen als jij een foto wilt toev
 const PHOTOS_TEXT = 'Depiqo opent je foto’s alleen als jij een foto wilt kiezen voor je borgdossier.';
 const FACE_ID_TEXT = 'Met Face ID ontgrendel je Depiqo snel en veilig. Je kunt dit altijd uitzetten in je profiel.';
 
-export default ({ config }: ConfigContext): ExpoConfig => ({
+const buildConfig = ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
   name: env.name,
   slug: 'depiqo-wallet',
@@ -161,7 +161,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['expo-local-authentication', { faceIDPermission: FACE_ID_TEXT }],
     ['expo-image-picker', { cameraPermission: CAMERA_TEXT, photosPermission: PHOTOS_TEXT, microphonePermission: false }],
     ['expo-notifications', { icon: './assets/notification-icon.png', color: TEAL, defaultChannel: 'default' }],
-    ...(APP_ENV === 'development' ? [withDevelopmentCleartext] : []),
   ],
   experiments: { typedRoutes: true },
   extra: {
@@ -172,3 +171,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     eas: EAS_PROJECT_ID ? { projectId: EAS_PROJECT_ID } : {},
   },
 });
+
+// Function plugins are not allowed in the typed `plugins` array, so the development-only plugin is applied here.
+export default (ctx: ConfigContext): ExpoConfig => {
+  const cfg = buildConfig(ctx);
+  return APP_ENV === 'development' ? withDevelopmentCleartext(cfg) : cfg;
+};

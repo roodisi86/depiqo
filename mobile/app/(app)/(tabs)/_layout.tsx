@@ -13,7 +13,9 @@ import { fonts, useTheme } from '../../../src/ui/theme';
 type IconName = React.ComponentProps<typeof Ionicons>['name'];
 
 function icon(name: IconName) {
-  return ({ color, size }: { color: string; size: number }) => <Ionicons name={name} color={color} size={size} />;
+  const TabIcon = ({ color, size }: { color: string; size: number }) => <Ionicons name={name} color={color} size={size} />;
+  TabIcon.displayName = `TabIcon(${name})`;
+  return TabIcon;
 }
 
 export default function TabsLayout() {
