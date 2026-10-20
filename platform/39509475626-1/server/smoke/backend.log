@@ -1,0 +1,24 @@
+[2026-10-20 22:46:50 +0000] [2613] [INFO] Starting gunicorn 26.2.0
+[2026-10-20 22:46:50 +0000] [2613] [INFO] Listening at: http://127.0.0.1:5000 (2613)
+[2026-10-20 22:46:50 +0000] [2613] [INFO] Using worker: gthread
+[2026-10-20 22:46:50 +0000] [2618] [INFO] Booting worker with pid: 2618
+[2026-10-20 22:46:51 +0000] [2613] [INFO] Control socket listening at /run/user/1001/gunicorn.ctl
+[20/Oct/2026:22:46:51 +0000] GET /api/v1/config 200 0.002663s
+[20/Oct/2026:22:46:51 +0000] GET /api/v1/config 200 0.000721s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/auth/login 200 0.094047s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/me 200 0.002033s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/deposits 200 0.002182s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/deposits/kfdunc967fck 200 0.002530s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/invest 200 0.010214s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/invest/sandbox/deposit 201 0.005286s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/invest/orders/quote 201 0.003390s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/invest/orders 201 0.007181s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/invest/orders 201 0.001770s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/notifications 200 0.001964s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/notifications/63/read 200 0.002819s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/deposits/bestaat-niet 404 0.001653s
+[20/Oct/2026:22:46:52 +0000] POST /api/v1/auth/logout 204 0.002992s
+[20/Oct/2026:22:46:52 +0000] GET /api/v1/me 401 0.001461s
+[2026-10-20 22:46:52 +0000] [2613] [INFO] Handling signal: term
+[2026-10-20 22:46:52 +0000] [2618] [INFO] Worker exiting (pid: 2618)
+[2026-10-20 22:46:52 +0000] [2613] [INFO] Shutting down: Master
