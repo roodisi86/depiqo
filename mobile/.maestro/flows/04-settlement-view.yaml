@@ -54,6 +54,10 @@ tags: [wallet, settlement]
       id: "settlement-agree"
     direction: DOWN
     timeout: 20000
-- assertVisible:
-    id: "settlement-dispute"
+# With large system text the dispute button sits below the agree button, off screen: scroll to it.
+- scrollUntilVisible:
+    element:
+      id: "settlement-dispute"
+    direction: DOWN
+    timeout: 20000
 - takeScreenshot: d-02-settlement-buttons-${LANG_CODE}

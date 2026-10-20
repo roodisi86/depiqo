@@ -19,7 +19,12 @@ tags: [auth, 2fa]
 - tapOn:
     id: "mfa-code"
 - inputText: ${MFA_CODE}
-- hideKeyboard
+# The iOS number pad has no dismiss key; the submit button stays visible above it, so only Android hides it.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - hideKeyboard
 - scrollUntilVisible:
     element:
       id: "mfa-submit"

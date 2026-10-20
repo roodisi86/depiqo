@@ -87,7 +87,7 @@ jobs:
         working-directory: mobile/ios
         run: pod install --repo-update 2>&1 | tee "$OUT/pod-install.txt"
 
-      - name: xcodebuild (Release, iphonesimulator, no signing)
+      - name: xcodebuild (Release, iphonesimulator, ad-hoc signed so the keychain works)
         working-directory: mobile/ios
         run: |
           ws=$(ls -d *.xcworkspace | head -1)
@@ -101,7 +101,7 @@ jobs:
           echo "workspace $ws, scheme $scheme"
           if ! xcodebuild -workspace "$ws" -scheme "$scheme" -configuration Release -sdk iphonesimulator \
               -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
-              CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build > "$OUT/xcodebuild.txt" 2>&1; then
+              CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=YES DEVELOPMENT_TEAM= COMPILER_INDEX_STORE_ENABLE=NO build > "$OUT/xcodebuild.txt" 2>&1; then
             echo "::error::xcodebuild failed; full log in the ios-build-logs artifact (xcodebuild.txt)"
             tail -80 "$OUT/xcodebuild.txt"
             grep -E 'error:' "$OUT/xcodebuild.txt" | head -60
