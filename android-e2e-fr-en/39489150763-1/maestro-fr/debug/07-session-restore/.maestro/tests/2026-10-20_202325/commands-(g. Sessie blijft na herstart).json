@@ -1,0 +1,798 @@
+[ {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "idRegex" : "profile-screen",
+          "optional" : false
+        }
+      },
+      "timeout" : "30000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527833277,
+    "duration" : 136,
+    "sequenceNumber" : 21
+  }
+}, {
+  "command" : {
+    "hideKeyboardCommand" : {
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527825474,
+    "duration" : 1302,
+    "sequenceNumber" : 14
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "idRegex" : "login-email",
+          "optional" : false
+        }
+      },
+      "timeout" : "45000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527810685,
+    "duration" : 1997,
+    "sequenceNumber" : 9
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527830836,
+    "duration" : 0,
+    "sequenceNumber" : 18
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "${T_PROFILE_LANGUAGE}",
+          "optional" : false
+        }
+      },
+      "timeout" : "10000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527836256,
+    "duration" : 102,
+    "sequenceNumber" : 24
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "defineVariablesCommand" : {
+          "env" : {
+            "EMAIL" : "ella@huurder.test"
+          },
+          "optional" : false
+        }
+      }, {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.getdepiqo.app.dev"
+          },
+          "optional" : false
+        }
+      }, {
+        "assertConditionCommand" : {
+          "condition" : {
+            "visible" : {
+              "idRegex" : "login-email",
+              "optional" : false
+            }
+          },
+          "timeout" : "45000",
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "login-email",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "inputTextCommand" : {
+          "text" : "${EMAIL}",
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "login-password",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "inputTextCommand" : {
+          "text" : "${PASSWORD}",
+          "optional" : false
+        }
+      }, {
+        "hideKeyboardCommand" : {
+          "optional" : false
+        }
+      }, {
+        "scrollUntilVisible" : {
+          "selector" : {
+            "idRegex" : "login-submit",
+            "optional" : false
+          },
+          "direction" : "DOWN",
+          "scrollDuration" : "40",
+          "visibilityPercentage" : 100,
+          "timeout" : "15000",
+          "centerElement" : false,
+          "originalSpeedValue" : "40",
+          "optional" : false,
+          "visibilityPercentageNormalized" : 1.0
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "login-submit",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "../subflows/login.yaml",
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527810679,
+    "duration" : 20156,
+    "sequenceNumber" : 6
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.getdepiqo.app.dev"
+          },
+          "optional" : false
+        }
+      }, {
+        "assertConditionCommand" : {
+          "condition" : {
+            "visible" : {
+              "idRegex" : "tab-profile",
+              "optional" : false
+            }
+          },
+          "timeout" : "45000",
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "tab-profile",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "assertConditionCommand" : {
+          "condition" : {
+            "visible" : {
+              "idRegex" : "profile-screen",
+              "optional" : false
+            }
+          },
+          "timeout" : "30000",
+          "optional" : false
+        }
+      }, {
+        "scrollUntilVisible" : {
+          "selector" : {
+            "idRegex" : "language-${LANG_CODE}",
+            "optional" : false
+          },
+          "direction" : "DOWN",
+          "scrollDuration" : "40",
+          "visibilityPercentage" : 100,
+          "timeout" : "15000",
+          "centerElement" : false,
+          "originalSpeedValue" : "40",
+          "optional" : false,
+          "visibilityPercentageNormalized" : 1.0
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "language-${LANG_CODE}",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      }, {
+        "assertConditionCommand" : {
+          "condition" : {
+            "visible" : {
+              "textRegex" : "${T_PROFILE_LANGUAGE}",
+              "optional" : false
+            }
+          },
+          "timeout" : "10000",
+          "optional" : false
+        }
+      }, {
+        "tapOnElement" : {
+          "selector" : {
+            "idRegex" : "tab-deposits",
+            "optional" : false
+          },
+          "retryIfNoChange" : false,
+          "waitUntilVisible" : false,
+          "longPress" : false,
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "../subflows/set-language.yaml",
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527830836,
+    "duration" : 7920,
+    "sequenceNumber" : 17
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "language-${LANG_CODE}",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527833550,
+    "duration" : 2705,
+    "sequenceNumber" : 23
+  }
+}, {
+  "command" : {
+    "scrollUntilVisible" : {
+      "selector" : {
+        "idRegex" : "login-submit",
+        "optional" : false
+      },
+      "direction" : "DOWN",
+      "scrollDuration" : "40",
+      "visibilityPercentage" : 100,
+      "timeout" : "15000",
+      "centerElement" : false,
+      "originalSpeedValue" : "40",
+      "optional" : false,
+      "visibilityPercentageNormalized" : 1.0
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527826776,
+    "duration" : 132,
+    "sequenceNumber" : 15
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "login-password",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527819877,
+    "duration" : 2832,
+    "sequenceNumber" : 12
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "${PASSWORD}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527822709,
+    "duration" : 2765,
+    "sequenceNumber" : 13
+  }
+}, {
+  "command" : {
+    "launchAppCommand" : {
+      "appId" : "com.getdepiqo.app.dev",
+      "clearState" : true,
+      "stopApp" : true,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527809545,
+    "duration" : 1133,
+    "sequenceNumber" : 5
+  }
+}, {
+  "command" : {
+    "scrollUntilVisible" : {
+      "selector" : {
+        "idRegex" : "language-${LANG_CODE}",
+        "optional" : false
+      },
+      "direction" : "DOWN",
+      "scrollDuration" : "40",
+      "visibilityPercentage" : 100,
+      "timeout" : "15000",
+      "centerElement" : false,
+      "originalSpeedValue" : "40",
+      "optional" : false,
+      "visibilityPercentageNormalized" : 1.0
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527833413,
+    "duration" : 137,
+    "sequenceNumber" : 22
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527809544,
+    "duration" : 0,
+    "sequenceNumber" : 3
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "idRegex" : "deposit-card",
+          "optional" : false
+        }
+      },
+      "timeout" : "30000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527838756,
+    "duration" : 85,
+    "sequenceNumber" : 26
+  }
+}, {
+  "command" : {
+    "launchAppCommand" : {
+      "appId" : "com.getdepiqo.app.dev",
+      "clearState" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527838927,
+    "duration" : 1456,
+    "sequenceNumber" : 28
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "notVisible" : {
+          "idRegex" : "login-email",
+          "optional" : false
+        }
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527842547,
+    "duration" : 970,
+    "sequenceNumber" : 30
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "login-submit",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527826909,
+    "duration" : 3926,
+    "sequenceNumber" : 16
+  }
+}, {
+  "command" : {
+    "stopAppCommand" : {
+      "appId" : "com.getdepiqo.app.dev",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527838841,
+    "duration" : 84,
+    "sequenceNumber" : 27
+  }
+}, {
+  "command" : {
+    "defineVariablesCommand" : {
+      "env" : {
+        "PASSWORD" : "Depiqo-demo-2026",
+        "PLATFORM" : "android",
+        "LANG_CODE" : "fr",
+        "T_ERR_INVALID_CREDENTIALS" : "Cette adresse e-mail et ce mot de passe ne correspondent pas\\.",
+        "T_AMOUNT_OBLIGATION" : "Garantie exigée",
+        "T_AMOUNT_RECEIVED" : "Reçu",
+        "T_AMOUNT_LOCKED" : "Bloqué confirmé",
+        "T_AMOUNT_INTEREST" : "Intérêts",
+        "T_AMOUNT_UNKNOWN" : "pas encore connu",
+        "T_PROFILE_LOGOUT" : "Se déconnecter",
+        "T_PROFILE_LANGUAGE" : "Langue",
+        "T_SETTLEMENT_LINES" : "Retenues",
+        "T_SETTLEMENT_AGREE" : "Accepter",
+        "T_SETTLEMENT_DISPUTE" : "Contester",
+        "T_MFA_TITLE" : "Vérification en deux étapes",
+        "T_ENV_SANDBOX" : "SANDBOX · environnement de test, pas d'argent réel",
+        "T_DEPOSITS_INTRO" : "Voici votre garantie et ce qu'il reste à faire\\.",
+        "T_TAB_DEPOSITS" : "Ma garantie",
+        "L_NL_PROFILE_LANGUAGE" : "Taal",
+        "L_NL_TAB_DEPOSITS" : "Mijn borg",
+        "L_NL_AMOUNT_RECEIVED" : "Ontvangen",
+        "L_FR_PROFILE_LANGUAGE" : "Langue",
+        "L_FR_TAB_DEPOSITS" : "Ma garantie",
+        "L_FR_AMOUNT_RECEIVED" : "Reçu",
+        "L_EN_PROFILE_LANGUAGE" : "Language",
+        "L_EN_TAB_DEPOSITS" : "My deposit",
+        "L_EN_AMOUNT_RECEIVED" : "Received",
+        "MAESTRO_VERSION" : "2.6.0",
+        "MAESTRO_FILENAME" : "07-session-restore",
+        "MAESTRO_DEVICE_UDID" : "emulator-5554",
+        "MAESTRO_SHARD_ID" : "1",
+        "MAESTRO_SHARD_INDEX" : "0"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527809540,
+    "duration" : 2,
+    "sequenceNumber" : 0
+  }
+}, {
+  "command" : {
+    "inputTextCommand" : {
+      "text" : "${EMAIL}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527815984,
+    "duration" : 3893,
+    "sequenceNumber" : 11
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "tab-deposits",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527836358,
+    "duration" : 2397,
+    "sequenceNumber" : 25
+  }
+}, {
+  "command" : {
+    "defineVariablesCommand" : {
+      "env" : {
+        "EMAIL" : "ella@huurder.test"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527810683,
+    "duration" : 0,
+    "sequenceNumber" : 7
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "idRegex" : "deposit-card",
+          "optional" : false
+        }
+      },
+      "timeout" : "45000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527840383,
+    "duration" : 2164,
+    "sequenceNumber" : 29
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "textRegex" : "(?s).*Meir 38 bus 3.*",
+          "optional" : false
+        }
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527843517,
+    "duration" : 54,
+    "sequenceNumber" : 31
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "tab-profile",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527830928,
+    "duration" : 2349,
+    "sequenceNumber" : 20
+  }
+}, {
+  "command" : {
+    "takeScreenshotCommand" : {
+      "path" : "g-01-restored-${LANG_CODE}",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527843572,
+    "duration" : 225,
+    "sequenceNumber" : 32
+  }
+}, {
+  "command" : {
+    "assertConditionCommand" : {
+      "condition" : {
+        "visible" : {
+          "idRegex" : "tab-profile",
+          "optional" : false
+        }
+      },
+      "timeout" : "45000",
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527830836,
+    "duration" : 92,
+    "sequenceNumber" : 19
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "applyConfigurationCommand" : {
+          "config" : {
+            "appId" : "com.getdepiqo.app.dev"
+          },
+          "optional" : false
+        }
+      }, {
+        "runFlowCommand" : {
+          "commands" : [ {
+            "clearKeychainCommand" : {
+              "optional" : false
+            }
+          } ],
+          "condition" : {
+            "platform" : "IOS"
+          },
+          "optional" : false
+        }
+      }, {
+        "launchAppCommand" : {
+          "appId" : "com.getdepiqo.app.dev",
+          "clearState" : true,
+          "stopApp" : true,
+          "optional" : false
+        }
+      } ],
+      "sourceDescription" : "../subflows/launch-clean.yaml",
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527809543,
+    "duration" : 1136,
+    "sequenceNumber" : 2
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev",
+        "name" : "g. Sessie blijft na herstart",
+        "tags" : [ "auth", "session" ]
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527809542,
+    "duration" : 1,
+    "sequenceNumber" : 1
+  }
+}, {
+  "command" : {
+    "runFlowCommand" : {
+      "commands" : [ {
+        "clearKeychainCommand" : {
+          "optional" : false
+        }
+      } ],
+      "condition" : {
+        "platform" : "IOS"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "SKIPPED",
+    "timestamp" : 1792527809544,
+    "sequenceNumber" : 4
+  }
+}, {
+  "command" : {
+    "applyConfigurationCommand" : {
+      "config" : {
+        "appId" : "com.getdepiqo.app.dev"
+      },
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527810683,
+    "duration" : 1,
+    "sequenceNumber" : 8
+  }
+}, {
+  "command" : {
+    "tapOnElement" : {
+      "selector" : {
+        "idRegex" : "login-email",
+        "optional" : false
+      },
+      "retryIfNoChange" : false,
+      "waitUntilVisible" : false,
+      "longPress" : false,
+      "optional" : false
+    }
+  },
+  "metadata" : {
+    "status" : "COMPLETED",
+    "timestamp" : 1792527812682,
+    "duration" : 3301,
+    "sequenceNumber" : 10
+  }
+} ]
