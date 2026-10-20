@@ -33,6 +33,7 @@ tags: [auth, 2fa]
     timeout: 10000
 - tapOn:
     id: "mfa-submit"
+- runFlow: ../subflows/dismiss-ios-save-password.yaml
 - runFlow: ../subflows/set-language.yaml
 - extendedWaitUntil:
     visible:
