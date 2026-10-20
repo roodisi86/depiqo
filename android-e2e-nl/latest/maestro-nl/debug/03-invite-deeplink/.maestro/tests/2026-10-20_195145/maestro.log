@@ -1,0 +1,30 @@
+19:51:45.778 [ INFO] maestro.cli.report.TestDebugReporter.logSystemInfo: Debug output path: /home/runner/work/depiqo/depiqo/ci-out/android-e2e/nl/maestro-nl/debug/03-invite-deeplink/.maestro/tests/2026-10-20_195145
+19:51:45.781 [ INFO] MAESTRO.logSystemInfo: ---- System Info ----
+19:51:45.781 [ INFO] MAESTRO.logSystemInfo: Maestro Version: 2.6.0
+19:51:45.782 [ INFO] MAESTRO.logSystemInfo: CI: github
+19:51:45.782 [ INFO] MAESTRO.logSystemInfo: OS Name: Linux
+19:51:45.782 [ INFO] MAESTRO.logSystemInfo: OS Version: 7.0.0-1017-azure
+19:51:45.783 [ INFO] MAESTRO.logSystemInfo: Architecture: amd64
+19:51:45.785 [ INFO] MAESTRO.logSystemInfo: Java Version: 17
+19:51:45.788 [ INFO] MAESTRO.logSystemInfo: Xcode Version: null
+19:51:45.791 [ INFO] MAESTRO.logSystemInfo: Flutter Version: Undefined
+19:51:45.793 [ INFO] MAESTRO.logSystemInfo: Flutter Channel: Undefined
+19:51:45.793 [ INFO] MAESTRO.logSystemInfo: ---------------------
+19:51:46.432 [DEBUG] io.micrometer.common.util.internal.logging.InternalLoggerFactory.newDefaultFactory: Using SLF4J as the default logging framework
+19:51:49.004 [ INFO] maestro.cli.command.TestCommand.runShardSuite: [shard 1] Selected device emulator-5554 using port 37159 with execution plan ExecutionPlan(flowsToRun=[/home/runner/work/depiqo/depiqo/mobile/.maestro/flows/03-invite-deeplink.yaml], sequence=FlowSequence(flows=[], continueOnFailure=true), workspaceConfig=WorkspaceConfig(flows=null, includeTags=null, excludeTags=null, executionOrder=null, baselineBranch=null, notifications=null, disableRetries=false, platform=PlatformConfiguration(android=AndroidConfiguration(disableAnimations=false), ios=IOSConfiguration(disableAnimations=false, snapshotKeyHonorModalViews=null)), testOutputDir=null))
+19:51:51.145 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow:  Running flow c. Uitnodiging via deep link: verhuurder, adres, bedrag
+19:51:51.151 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Getting device info
+19:51:51.263 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Got device info: DeviceInfo(platform=ANDROID, widthPixels=1080, heightPixels=2400, widthGrid=1080, heightGrid=2400)
+19:51:51.308 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Define variables RUNNING
+19:51:51.310 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Define variables COMPLETED
+19:51:51.311 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+19:51:51.311 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+19:51:51.312 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS and "Open" is visible RUNNING
+19:51:51.312 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandSkipped: null
+19:51:51.312 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$13: Run flow when Platform is IOS and "Open" is visible SKIPPED
+19:51:51.313 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: invite-screen is visible RUNNING
+19:52:36.363 [ERROR] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandFailed: Assertion is false: id: invite-screen is visible
+19:52:36.364 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$9: Assert that id: invite-screen is visible FAILED
+19:52:36.367 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+19:52:36.369 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+19:52:36.944 [ INFO] maestro.cli.report.TestDebugReporter.deleteOldFiles: Performing purge of logs older than 14 days from /home/runner/work/depiqo/depiqo/ci-out/android-e2e/nl/maestro-nl/debug/03-invite-deeplink/.maestro/tests
