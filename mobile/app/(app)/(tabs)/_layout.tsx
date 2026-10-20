@@ -36,6 +36,9 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
         tabBarLabelStyle: { fontFamily: loaded ? fonts.semibold : undefined, fontSize: 12 },
+        // Tab labels keep their size with large system text, like the native iOS and Android tab bars; at 1.3x they
+        // were cut off ("Geschie…"). Screen content still scales, and each tab keeps its accessibility label.
+        tabBarAllowFontScaling: false,
         sceneStyle: { backgroundColor: colors.bg },
       }}
     >
