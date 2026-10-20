@@ -129,7 +129,7 @@ jobs:
         env:
           APP_ENV: development
           EXPO_PUBLIC_API_URL: http://10.0.2.2:5000
-        run: npx expo export --platform android --platform ios --output-dir "$RUNNER_TEMP/export" 2>&1 | tee "$OUT/expo-export.txt"
+        run: npx expo export --platform android --platform ios --output-dir dist-ci 2>&1 | tee "$OUT/expo-export.txt"
 
       - name: Jest (jest-expo preset)
         if: always() && steps.install.outputs.installed == 'true'
