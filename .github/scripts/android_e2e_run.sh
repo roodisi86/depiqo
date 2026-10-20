@@ -20,6 +20,16 @@ out=$(cd "$out" && pwd)
 status=0
 
 adb wait-for-device
+# Let the emulator settle, and keep system "isn't responding" dialogs (a slow CI emulator's launcher) from covering
+# the app: one such dialog made a whole run fail at the first screen.
+for i in $(seq 1 60); do [ "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1" ] && break; sleep 2; done
+adb shell settings put global hide_error_dialogs 1 || true
+adb shell settings put global window_animation_scale 0 || true
+adb shell settings put global transition_animation_scale 0 || true
+adb shell settings put global animator_duration_scale 0 || true
+adb shell input keyevent 82 || true
+adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+sleep 15
 adb shell getprop ro.build.version.release | sed 's/^/Android /'
 adb install -r -g "$apk"
 adb shell pm list packages | grep -q "package:$APP_ID" || { echo "APK did not install as $APP_ID" >&2; exit 1; }
