@@ -1,13 +1,3 @@
-
-Welcome to Gradle 8.13!
-
-Here are the highlights of this release:
- - Daemon JVM auto-provisioning
- - Enhancements for Scala plugin and JUnit testing
- - Improvements for build authors and plugin developers
-
-For more details see https://docs.gradle.org/8.13/release-notes.html
-
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 > Task :gradle-plugin:settings-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
@@ -28,23 +18,23 @@ Daemon will be stopped at the end of the build
 > Task :gradle-plugin:settings-plugin:compileJava NO-SOURCE
 > Task :gradle-plugin:settings-plugin:pluginDescriptors UP-TO-DATE
 > Task :gradle-plugin:settings-plugin:processResources UP-TO-DATE
+> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileKotlin UP-TO-DATE
 > Task :gradle-plugin:settings-plugin:classes UP-TO-DATE
 > Task :gradle-plugin:settings-plugin:jar UP-TO-DATE
-> Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileKotlin UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:compileJava NO-SOURCE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:processResources UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:classes UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-settings-plugin:jar UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:checkKotlinGradlePluginConfigurationErrors
-> Task :expo-dev-launcher-gradle-plugin:checkKotlinGradlePluginConfigurationErrors
-> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
 > Task :expo-module-gradle-plugin:checkKotlinGradlePluginConfigurationErrors
-> Task :expo-dev-launcher-gradle-plugin:pluginDescriptors UP-TO-DATE
+> Task :gradle-plugin:react-native-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-dev-launcher-gradle-plugin:checkKotlinGradlePluginConfigurationErrors
 > Task :expo-module-gradle-plugin:pluginDescriptors UP-TO-DATE
-> Task :expo-dev-launcher-gradle-plugin:processResources UP-TO-DATE
+> Task :expo-dev-launcher-gradle-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-module-gradle-plugin:processResources UP-TO-DATE
 > Task :expo-updates-gradle-plugin:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :expo-dev-launcher-gradle-plugin:processResources UP-TO-DATE
 > Task :expo-updates-gradle-plugin:pluginDescriptors UP-TO-DATE
 > Task :expo-updates-gradle-plugin:processResources UP-TO-DATE
 > Task :expo-gradle-plugin:expo-autolinking-plugin:compileKotlin UP-TO-DATE
@@ -60,17 +50,17 @@ Daemon will be stopped at the end of the build
 > Task :gradle-plugin:react-native-gradle-plugin:classes UP-TO-DATE
 > Task :gradle-plugin:react-native-gradle-plugin:jar UP-TO-DATE
 > Task :expo-module-gradle-plugin:compileKotlin UP-TO-DATE
-> Task :expo-dev-launcher-gradle-plugin:compileKotlin UP-TO-DATE
-> Task :expo-dev-launcher-gradle-plugin:compileJava NO-SOURCE
 > Task :expo-module-gradle-plugin:compileJava NO-SOURCE
-> Task :expo-dev-launcher-gradle-plugin:classes UP-TO-DATE
 > Task :expo-module-gradle-plugin:classes UP-TO-DATE
-> Task :expo-module-gradle-plugin:jar UP-TO-DATE
-> Task :expo-dev-launcher-gradle-plugin:jar UP-TO-DATE
 > Task :expo-updates-gradle-plugin:compileKotlin UP-TO-DATE
+> Task :expo-dev-launcher-gradle-plugin:compileKotlin UP-TO-DATE
 > Task :expo-updates-gradle-plugin:compileJava NO-SOURCE
 > Task :expo-updates-gradle-plugin:classes UP-TO-DATE
+> Task :expo-dev-launcher-gradle-plugin:compileJava NO-SOURCE
+> Task :expo-dev-launcher-gradle-plugin:classes UP-TO-DATE
+> Task :expo-module-gradle-plugin:jar UP-TO-DATE
 > Task :expo-updates-gradle-plugin:jar UP-TO-DATE
+> Task :expo-dev-launcher-gradle-plugin:jar UP-TO-DATE
 
 > Configure project :
 [32m[ExpoRootProject][0m Using the following versions:
@@ -142,19 +132,19 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 > Task :expo-dev-client:preBuild UP-TO-DATE
 > Task :expo-dev-client:preReleaseBuild UP-TO-DATE
 > Task :expo-constants:writeReleaseAarMetadata
+> Task :expo-dev-client:writeReleaseAarMetadata
 > Task :expo-dev-launcher:preBuild UP-TO-DATE
 > Task :expo-dev-launcher:preReleaseBuild UP-TO-DATE
-> Task :expo-dev-client:writeReleaseAarMetadata
 > Task :expo-dev-launcher:writeReleaseAarMetadata
 > Task :expo-dev-menu:clenupAssets UP-TO-DATE
 > Task :expo-dev-menu:copyAssets
 > Task :expo-dev-menu:preBuild
 > Task :expo-dev-menu:preReleaseBuild
 > Task :expo-dev-menu-interface:preBuild UP-TO-DATE
-> Task :expo-dev-menu-interface:preReleaseBuild UP-TO-DATE
 > Task :expo-dev-menu:writeReleaseAarMetadata
-> Task :expo-dev-menu-interface:writeReleaseAarMetadata
+> Task :expo-dev-menu-interface:preReleaseBuild UP-TO-DATE
 > Task :expo-eas-client:preBuild UP-TO-DATE
+> Task :expo-dev-menu-interface:writeReleaseAarMetadata
 > Task :expo-eas-client:preReleaseBuild UP-TO-DATE
 > Task :expo-image-loader:preBuild UP-TO-DATE
 > Task :expo-image-loader:preReleaseBuild UP-TO-DATE
@@ -169,11 +159,11 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 > Task :expo-modules-core:preReleaseBuild UP-TO-DATE
 > Task :expo-manifests:writeReleaseAarMetadata
 > Task :expo-structured-headers:preBuild UP-TO-DATE
-> Task :expo-modules-core:writeReleaseAarMetadata
 > Task :expo-structured-headers:preReleaseBuild UP-TO-DATE
+> Task :expo-modules-core:writeReleaseAarMetadata
 > Task :expo-updates:preBuild UP-TO-DATE
-> Task :expo-updates:preReleaseBuild UP-TO-DATE
 > Task :expo-structured-headers:writeReleaseAarMetadata
+> Task :expo-updates:preReleaseBuild UP-TO-DATE
 > Task :expo-updates-interface:preBuild UP-TO-DATE
 > Task :expo-updates-interface:preReleaseBuild UP-TO-DATE
 > Task :expo-updates:writeReleaseAarMetadata
@@ -196,43 +186,37 @@ The NODE_ENV environment variable is required but was not specified. Ensure the 
 
 > Task :app:createBundleReleaseJsAndAssets
 Starting Metro Bundler
-Android node_modules/expo-router/entry.js ▓▓▓░░░░░░░░░░░░░ 22.1% (146/317)
-Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓░░░░░░░░ 53.7% (556/759)
-Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓░░░░ 78.9% ( 984/1108)
-Android Bundling failed 12414ms node_modules/expo-router/entry.js (1441 modules)
-Error: Unable to resolve module query-string from /home/runner/work/depiqo/depiqo/mobile/node_modules/expo-router/build/fork/getPathFromState-forks.js: query-string could not be found within the project or in these directories:
-  node_modules/expo-router/node_modules
+Android node_modules/expo-router/entry.js ▓▓▓▓░░░░░░░░░░░░ 28.0% (236/462)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓░░░░░░░ 60.2% (746/967)
+Android node_modules/expo-router/entry.js ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░ 96.0% (1354/1382)
+Android Bundling failed 10165ms node_modules/expo-router/entry.js (1437 modules)
+Error: Unable to resolve module expo-asset from /home/runner/work/depiqo/depiqo/mobile/node_modules/expo-font/build/FontLoader.js: expo-asset could not be found within the project or in these directories:
   node_modules
-[0m [90m 42 |[39m exports[33m.[39misDynamicPart [33m=[39m isDynamicPart[33m;[39m
- [90m 43 |[39m [36mconst[39m native_1 [33m=[39m require([32m"@react-navigation/native"[39m)[33m;[39m
-[31m[1m>[22m[39m[90m 44 |[39m [36mconst[39m queryString [33m=[39m __importStar(require([32m"query-string"[39m))[33m;[39m
- [90m    |[39m                                           [31m[1m^[22m[39m
- [90m 45 |[39m [36mconst[39m matchers_1 [33m=[39m require([32m"../matchers"[39m)[33m;[39m
- [90m 46 |[39m [36mfunction[39m validatePathConfig({ preserveDynamicRoutes[33m,[39m preserveGroups[33m,[39m shouldEncodeURISegment[33m,[39m [33m...[39moptions }) {
- [90m 47 |[39m     ([35m0[39m[33m,[39m native_1[33m.[39mvalidatePathConfig)(options)[33m;[39m[0m
-Error: Unable to resolve module query-string from /home/runner/work/depiqo/depiqo/mobile/node_modules/expo-router/build/fork/getPathFromState-forks.js: query-string could not be found within the project or in these directories:
-  node_modules/expo-router/node_modules
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mAsset[39m } [36mfrom[39m [32m'expo-asset'[39m[33m;[39m
+ [90m   |[39m                        [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mCodedError[39m } [36mfrom[39m [32m'expo-modules-core'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mExpoFontLoader[39m [36mfrom[39m [32m'./ExpoFontLoader'[39m[33m;[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m getAssetForSource(source) {[0m
+Error: Unable to resolve module expo-asset from /home/runner/work/depiqo/depiqo/mobile/node_modules/expo-font/build/FontLoader.js: expo-asset could not be found within the project or in these directories:
   node_modules
-[0m [90m 42 |[39m exports[33m.[39misDynamicPart [33m=[39m isDynamicPart[33m;[39m
- [90m 43 |[39m [36mconst[39m native_1 [33m=[39m require([32m"@react-navigation/native"[39m)[33m;[39m
-[31m[1m>[22m[39m[90m 44 |[39m [36mconst[39m queryString [33m=[39m __importStar(require([32m"query-string"[39m))[33m;[39m
- [90m    |[39m                                           [31m[1m^[22m[39m
- [90m 45 |[39m [36mconst[39m matchers_1 [33m=[39m require([32m"../matchers"[39m)[33m;[39m
- [90m 46 |[39m [36mfunction[39m validatePathConfig({ preserveDynamicRoutes[33m,[39m preserveGroups[33m,[39m shouldEncodeURISegment[33m,[39m [33m...[39moptions }) {
- [90m 47 |[39m     ([35m0[39m[33m,[39m native_1[33m.[39mvalidatePathConfig)(options)[33m;[39m[0m
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { [33mAsset[39m } [36mfrom[39m [32m'expo-asset'[39m[33m;[39m
+ [90m   |[39m                        [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { [33mCodedError[39m } [36mfrom[39m [32m'expo-modules-core'[39m[33m;[39m
+ [90m 3 |[39m [36mimport[39m [33mExpoFontLoader[39m [36mfrom[39m [32m'./ExpoFontLoader'[39m[33m;[39m
+ [90m 4 |[39m [36mexport[39m [36mfunction[39m getAssetForSource(source) {[0m
     at ModuleResolver.resolveDependency (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/node-haste/DependencyGraph/ModuleResolution.js:150:15)
     at DependencyGraph.resolveDependency (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/node-haste/DependencyGraph.js:239:43)
     at /home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/lib/transformHelpers.js:161:21
     at resolveDependencies (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/DeltaBundler/buildSubgraph.js:43:25)
     at visit (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/DeltaBundler/buildSubgraph.js:81:30)
     at processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async Promise.all (index 2)
+    at async Promise.all (index 5)
     at visit (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
-    at async Promise.all (index 9)
+    at async Promise.all (index 0)
     at visit (/home/runner/work/depiqo/depiqo/mobile/node_modules/metro/src/DeltaBundler/buildSubgraph.js:90:5)
 
 > Task :app:createBundleReleaseJsAndAssets FAILED
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1792524379470.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_4-1792524834381.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/depiqo/depiqo/mobile/android/build/reports/problems/problems-report.html
 
@@ -417,5 +401,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.13/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD FAILED in 1m 22s
+BUILD FAILED in 28s
 69 actionable tasks: 36 executed, 33 up-to-date
