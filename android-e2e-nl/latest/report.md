@@ -1,32 +1,32 @@
 ## Android e2e (nl)
 
-**1 van 10 flows geslaagd.**
+**10 van 10 flows geslaagd.**
 ### maestro-nl
 
 | Flow | Resultaat | Tijd (s) | Melding |
 |---|---|---|---|
-| a. Login (mila), borgen, vier bedragen, — bij onbekend | FAILED | 48.0 | Assertion is false: id: login-email is visible |
-| b. Login met 2FA (lars) | FAILED | 48.0 | Assertion is false: id: login-email is visible |
-| reset-app | ok | 1.0 |  |
-| c. Uitnodiging via deep link: verhuurder, adres, bedrag | FAILED | 45.0 | Assertion is false: id: invite-screen is visible |
-| d. Eindafrekening bekijken (sanne), niet reageren | FAILED | 47.0 | Assertion is false: id: login-email is visible |
-| e. Meldingen, profiel, taal fr en en | FAILED | 47.0 | Assertion is false: id: login-email is visible |
-| f. Uitloggen, beschermde schermen niet bereikbaar | FAILED | 47.0 | Assertion is false: id: login-email is visible |
-| g. Sessie blijft na herstart | FAILED | 47.0 | Assertion is false: id: login-email is visible |
-| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | FAILED | 47.0 | Assertion is false: id: login-email is visible |
-| Fout wachtwoord geeft vertaalde foutmelding | FAILED | 47.0 | Assertion is false: id: login-email is visible |
+| a. Login (mila), borgen, vier bedragen, — bij onbekend | ok | 58.0 |  |
+| b. Login met 2FA (lars) | ok | 47.0 |  |
+| reset-app | ok | 3.0 |  |
+| c. Uitnodiging via deep link: verhuurder, adres, bedrag | ok | 2.0 |  |
+| d. Eindafrekening bekijken (sanne), niet reageren | ok | 44.0 |  |
+| e. Meldingen, profiel, taal fr en en | ok | 64.0 |  |
+| f. Uitloggen, beschermde schermen niet bereikbaar | ok | 56.0 |  |
+| g. Sessie blijft na herstart | ok | 40.0 |  |
+| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | ok | 70.0 |  |
+| Fout wachtwoord geeft vertaalde foutmelding | ok | 65.0 |  |
 
 ```
-01-login-deposits-amounts FAILED
-02-login-2fa FAILED
-03-invite-deeplink FAILED
-04-settlement-view FAILED
-05-notifications-profile-language FAILED
-06-logout-protected FAILED
-07-session-restore FAILED
-08-invest-visibility FAILED
-09-wrong-password FAILED
+01-login-deposits-amounts ok
+02-login-2fa ok
+03-invite-deeplink ok
+04-settlement-view ok
+05-notifications-profile-language ok
+06-logout-protected ok
+07-session-restore ok
+08-invest-visibility ok
+09-wrong-password ok
 ```
 
-Schermafdrukken: 9 (in het artifact, map `maestro-nl/screenshots`)
+Schermafdrukken: 19 (in het artifact, map `maestro-nl/screenshots`)
 
