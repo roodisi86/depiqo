@@ -18,7 +18,8 @@ tags: [auth, 2fa]
 - takeScreenshot: b-01-mfa-${LANG_CODE}
 - tapOn:
     id: "mfa-code"
-- inputText: ${MFA_CODE}
+- runScript: ../scripts/totp.js
+- inputText: ${output.MFA_CODE}
 # The iOS number pad has no dismiss key; the submit button stays visible above it, so only Android hides it.
 - runFlow:
     when:

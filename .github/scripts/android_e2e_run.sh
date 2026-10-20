@@ -17,6 +17,8 @@ repo=$(cd "$(dirname "$0")/../.." && pwd)
 APP_ID=com.getdepiqo.app.dev
 mkdir -p "$out"
 out=$(cd "$out" && pwd)
+# Keep this script's own output with the results (the Actions log itself is not always reachable).
+exec > >(tee -a "$out/runner.log") 2>&1
 status=0
 
 adb wait-for-device

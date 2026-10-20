@@ -46,6 +46,11 @@ run_flow() {  # <name> <flow file> [extra maestro args...]
       --debug-output "$out/debug/$name" \
       "${envargs[@]}" ${1+"$@"} "$file" )
   local status=$?
+  if [ $status -ne 0 ]; then
+    # Save what was on screen, as the accessibility tree, to see why an element was not found.
+    mkdir -p "$out/debug/$name"
+    maestro ${device_args[@]+"${device_args[@]}"} hierarchy > "$out/debug/$name/hierarchy-on-failure.json" 2>/dev/null || true
+  fi
   echo "::endgroup::"
   return $status
 }
@@ -67,8 +72,12 @@ for file in "$here"/flows/*.yaml; do
   extra=()
   case "$name" in
     *2fa*)
-      code=$(python3 "$repo/.github/scripts/totp_now.py" "$E2E_WORK/totp_secret") || { echo "totp_now failed" >&2; exit 2; }
-      extra=(-e "MFA_CODE=$code")
+      # The flow fetches the code when it types it (scripts/totp.js), from this helper on 127.0.0.1:5055.
+      if [ -z "${totp_pid:-}" ]; then
+        python3 "$repo/.github/scripts/totp_server.py" "$E2E_WORK/totp_secret" &
+        totp_pid=$!
+        sleep 1
+      fi
       ;;
     *invite-deeplink*)
       if ! run_flow "$name-reset" "$here/subflows/reset-app.yaml"; then
@@ -90,6 +99,14 @@ done
 # Maestro writes takeScreenshot files to the working directory; collect any it put elsewhere too.
 find "$out/debug" -name '*.png' | while IFS= read -r png; do
   [ -e "$out/screenshots/$(basename "$png")" ] || cp "$png" "$out/screenshots/"
+done
+
+[ -n "${totp_pid:-}" ] && kill "$totp_pid" 2>/dev/null
+
+# Artifact uploads refuse some characters that Maestro puts in failure screenshot names (":" and others).
+find "$out" -name '*[:<>|*?"]*' -type f | while IFS= read -r f; do
+  d=$(dirname "$f"); b=$(basename "$f" | tr ':<>|*?"' '-------')
+  mv "$f" "$d/$b"
 done
 
 echo "---- $platform $lang"
