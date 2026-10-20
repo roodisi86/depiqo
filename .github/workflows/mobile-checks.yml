@@ -124,6 +124,13 @@ jobs:
         if: always() && steps.install.outputs.installed == 'true'
         run: npx eslint . 2>&1 | tee "$OUT/eslint.txt"
 
+      - name: JS bundle for Android and iOS (expo export; catches missing modules before a native build)
+        if: always() && steps.install.outputs.installed == 'true'
+        env:
+          APP_ENV: development
+          EXPO_PUBLIC_API_URL: http://10.0.2.2:5000
+        run: npx expo export --platform android --platform ios --output-dir "$RUNNER_TEMP/export" 2>&1 | tee "$OUT/expo-export.txt"
+
       - name: Jest (jest-expo preset)
         if: always() && steps.install.outputs.installed == 'true'
         run: npx jest --ci --json --outputFile="$OUT/jest-results.json" 2>&1 | tee "$OUT/jest.txt"
