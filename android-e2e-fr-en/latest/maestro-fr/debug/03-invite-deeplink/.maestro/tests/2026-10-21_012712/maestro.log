@@ -1,0 +1,48 @@
+01:27:12.716 [ INFO] maestro.cli.report.TestDebugReporter.logSystemInfo: Debug output path: /home/runner/work/depiqo/depiqo/ci-out/android-e2e/fr-en/maestro-fr/debug/03-invite-deeplink/.maestro/tests/2026-10-21_012712
+01:27:12.719 [ INFO] MAESTRO.logSystemInfo: ---- System Info ----
+01:27:12.720 [ INFO] MAESTRO.logSystemInfo: Maestro Version: 2.6.0
+01:27:12.721 [ INFO] MAESTRO.logSystemInfo: CI: github
+01:27:12.721 [ INFO] MAESTRO.logSystemInfo: OS Name: Linux
+01:27:12.722 [ INFO] MAESTRO.logSystemInfo: OS Version: 6.17.0-1022-azure
+01:27:12.722 [ INFO] MAESTRO.logSystemInfo: Architecture: amd64
+01:27:12.723 [ INFO] MAESTRO.logSystemInfo: Java Version: 17
+01:27:12.726 [ INFO] MAESTRO.logSystemInfo: Xcode Version: null
+01:27:12.728 [ INFO] MAESTRO.logSystemInfo: Flutter Version: Undefined
+01:27:12.731 [ INFO] MAESTRO.logSystemInfo: Flutter Channel: Undefined
+01:27:12.731 [ INFO] MAESTRO.logSystemInfo: ---------------------
+01:27:13.409 [DEBUG] io.micrometer.common.util.internal.logging.InternalLoggerFactory.newDefaultFactory: Using SLF4J as the default logging framework
+01:27:16.036 [ INFO] maestro.cli.command.TestCommand.runShardSuite: [shard 1] Selected device emulator-5554 using port 39839 with execution plan ExecutionPlan(flowsToRun=[/home/runner/work/depiqo/depiqo/mobile/.maestro/flows/03-invite-deeplink.yaml], sequence=FlowSequence(flows=[], continueOnFailure=true), workspaceConfig=WorkspaceConfig(flows=null, includeTags=null, excludeTags=null, executionOrder=null, baselineBranch=null, notifications=null, disableRetries=false, platform=PlatformConfiguration(android=AndroidConfiguration(disableAnimations=false), ios=IOSConfiguration(disableAnimations=false, snapshotKeyHonorModalViews=null)), testOutputDir=null))
+01:27:19.240 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow:  Running flow c. Uitnodiging via deep link: verhuurder, adres, bedrag
+01:27:19.253 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Getting device info
+01:27:19.356 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Got device info: DeviceInfo(platform=ANDROID, widthPixels=1080, heightPixels=2400, widthGrid=1080, heightGrid=2400)
+01:27:19.433 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Define variables RUNNING
+01:27:19.437 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Define variables COMPLETED
+01:27:19.439 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+01:27:19.439 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+01:27:19.440 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS and "Open" is visible RUNNING
+01:27:19.441 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandSkipped: null
+01:27:19.441 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$13: Run flow when Platform is IOS and "Open" is visible SKIPPED
+01:27:19.441 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: invite-landlord is visible RUNNING
+01:27:19.682 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: invite-landlord is visible COMPLETED
+01:27:19.683 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that "(?s).*Voorbeeld Vastgoed BV.*", id: invite-landlord is visible RUNNING
+01:27:19.847 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that "(?s).*Voorbeeld Vastgoed BV.*", id: invite-landlord is visible COMPLETED
+01:27:19.848 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that "(?s).*Biltstraat 301.*3572 AS.*Utrecht.*", id: invite-address is visible RUNNING
+01:27:20.017 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that "(?s).*Biltstraat 301.*3572 AS.*Utrecht.*", id: invite-address is visible COMPLETED
+01:27:20.018 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Scrolling DOWN until id: invite-amount is visible with speed 40, visibility percentage 100%, timeout 10000 ms, with centering disabled RUNNING
+01:27:20.211 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 1080, DeviceWidth: 2400
+01:27:20.215 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=87, y=1047, width=906, height=121)
+01:27:20.215 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+01:27:20.233 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=invite-amount, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=10000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+01:27:20.233 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+01:27:20.233 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Scrolling DOWN until id: invite-amount is visible with speed 40, visibility percentage 100%, timeout 10000 ms, with centering disabled COMPLETED
+01:27:20.233 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that "(?s).*2.750.00.*", id: invite-amount is visible RUNNING
+01:27:20.387 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that "(?s).*2.750.00.*", id: invite-amount is visible COMPLETED
+01:27:20.387 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: invite-reference is visible RUNNING
+01:27:20.519 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: invite-reference is visible COMPLETED
+01:27:20.520 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: tab-profile is not visible RUNNING
+01:27:21.263 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: tab-profile is not visible COMPLETED
+01:27:21.264 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Take screenshot c-01-invite RUNNING
+01:27:21.265 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+01:27:21.267 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+01:27:21.565 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Take screenshot c-01-invite COMPLETED
+01:27:21.941 [ INFO] maestro.cli.report.TestDebugReporter.deleteOldFiles: Performing purge of logs older than 14 days from /home/runner/work/depiqo/depiqo/ci-out/android-e2e/fr-en/maestro-fr/debug/03-invite-deeplink/.maestro/tests
