@@ -6,13 +6,13 @@
 | Flow | Resultaat | Tijd (s) | Melding |
 |---|---|---|---|
 | a. Login (mila), borgen, vier bedragen, — bij onbekend | ok | 59.0 |  |
-| b. Login met 2FA (lars) | ok | 47.0 |  |
-| reset-app | ok | 3.0 |  |
+| b. Login met 2FA (lars) | ok | 46.0 |  |
+| reset-app | ok | 2.0 |  |
 | c. Uitnodiging via deep link: verhuurder, adres, bedrag | ok | 2.0 |  |
-| d. Eindafrekening bekijken (sanne), niet reageren | ok | 43.0 |  |
+| d. Eindafrekening bekijken (sanne), niet reageren | ok | 44.0 |  |
 | e. Meldingen, profiel, taal fr en en | ok | 63.0 |  |
 | f. Uitloggen, beschermde schermen niet bereikbaar | ok | 54.0 |  |
-| g. Sessie blijft na herstart | ok | 37.0 |  |
+| g. Sessie blijft na herstart | ok | 39.0 |  |
 | h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | ok | 69.0 |  |
 | Fout wachtwoord geeft vertaalde foutmelding | ok | 65.0 |  |
 
