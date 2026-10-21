@@ -186,9 +186,9 @@ jobs:
 
       - name: Start the backend (127.0.0.1:5000, fresh seed, sandbox)
         run: |
-          pip install -r platform/requirements.txt
           mkdir -p "$RESULTS"
-          .github/scripts/start_backend.sh 127.0.0.1:5000 "$E2E_WORK"
+          for attempt in 1 2 3; do pip install -r platform/requirements.txt > "$RESULTS/pip-install.txt" 2>&1 && break; echo "pip install failed (attempt $attempt)"; tail -20 "$RESULTS/pip-install.txt"; sleep 10; done
+          .github/scripts/start_backend.sh 127.0.0.1:5000 "$E2E_WORK" 2>&1 | tee "$RESULTS/backend-start.txt"
 
       - name: Install Maestro ${{ env.MAESTRO_VERSION }}
         run: |
