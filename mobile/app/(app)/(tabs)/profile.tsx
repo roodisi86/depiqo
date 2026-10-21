@@ -145,7 +145,7 @@ export default function Profile() {
         onPress={() =>
           Alert.alert(t('profile.logoutConfirmTitle'), t('profile.logoutConfirmBody'), [
             { text: t('common.cancel'), style: 'cancel' },
-            { text: t('profile.logout'), style: 'destructive', onPress: () => void auth.signOut() },
+            { text: t('profile.logoutConfirmAction'), style: 'destructive', onPress: () => void auth.signOut() },
           ])
         }
       />

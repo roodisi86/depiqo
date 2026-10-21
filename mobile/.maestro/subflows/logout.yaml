@@ -21,33 +21,13 @@ appId: com.getdepiqo.app.dev
     commands:
       - tapOn:
           id: "android:id/button1"
-# iOS: the alert button has the same text as the profile button. If both are in the hierarchy, the alert's is the
-# second; if only the alert's is, it is the only one. Wait between the two attempts so nothing is tapped twice.
+# iOS: the alert's confirm button has its own text ("Ja, uitloggen"), different from the profile button.
 - runFlow:
     when:
       platform: iOS
     commands:
-      - runFlow:
-          when:
-            visible:
-              text: "${T_PROFILE_LOGOUT}"
-              index: 1
-          commands:
-            - tapOn:
-                text: "${T_PROFILE_LOGOUT}"
-                index: 1
-      - extendedWaitUntil:
-          visible:
-            id: "login-email"
-          timeout: 8000
-          optional: true
-      - runFlow:
-          when:
-            notVisible:
-              id: "login-email"
-          commands:
-            - tapOn:
-                text: "${T_PROFILE_LOGOUT}"
+      - tapOn:
+          text: "${T_PROFILE_LOGOUT_CONFIRM}"
 - extendedWaitUntil:
     visible:
       id: "login-email"

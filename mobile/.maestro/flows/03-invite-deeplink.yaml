@@ -13,9 +13,10 @@ tags: [invite, deeplink]
       visible: "Open"
     commands:
       - tapOn: "Open"
+# iOS reads the whole invite screen as one block, so wait for a field with its own ID instead of the screen.
 - extendedWaitUntil:
     visible:
-      id: "invite-screen"
+      id: "invite-landlord"
     timeout: 45000
 - assertVisible:
     id: "invite-landlord"

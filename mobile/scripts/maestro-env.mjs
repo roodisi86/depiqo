@@ -53,6 +53,7 @@ const RUN_KEYS = {
   T_AMOUNT_INTEREST: 'amount.interest',
   T_AMOUNT_UNKNOWN: 'amount.unknownA11y',
   T_PROFILE_LOGOUT: 'profile.logout',
+  T_PROFILE_LOGOUT_CONFIRM: 'profile.logoutConfirmAction',
   T_PROFILE_LANGUAGE: 'profile.language',
   T_SETTLEMENT_LINES: 'settlement.lines',
   T_SETTLEMENT_AGREE: 'settlement.agree',
