@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AppText } from './Text';
+import { usePullRefresh } from './usePullRefresh';
 import { radius, space, useTheme } from './theme';
 
 export type Edge = 'top' | 'bottom';
@@ -32,13 +33,14 @@ export function Screen({ children, refreshing, onRefresh, edges = ['bottom'], ke
   const { colors } = useTheme();
   // Insets come from context, so the environment banner can take over the top inset.
   const insets = useSafeAreaInsets();
+  const pull = usePullRefresh(refreshing, onRefresh);
   const pad = { paddingTop: edges.includes('top') ? insets.top : 0, paddingBottom: edges.includes('bottom') ? insets.bottom : 0 };
   const body = (
     <ScrollView
       testID={testID}
       contentContainerStyle={[styles.content, contentStyle]}
       keyboardShouldPersistTaps="handled"
-      refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={colors.primary} /> : undefined}
+      refreshControl={onRefresh ? <RefreshControl refreshing={pull.refreshing} onRefresh={pull.onRefresh} tintColor={colors.primary} /> : undefined}
     >
       {children}
     </ScrollView>

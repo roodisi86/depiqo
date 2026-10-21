@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Empty } from './feedback';
 import { space, useTheme } from './theme';
+import { usePullRefresh } from './usePullRefresh';
 
 export interface ListScreenProps<T> {
   data: T[];
@@ -37,6 +38,7 @@ export function ListScreen<T>({
 }: ListScreenProps<T>) {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const pull = usePullRefresh(refreshing, onRefresh);
   return (
     <FlatList
       style={{ backgroundColor: colors.bg }}
@@ -52,7 +54,7 @@ export function ListScreen<T>({
         if (hasMore && !loadingMore) onLoadMore?.();
       }}
       onEndReachedThreshold={0.4}
-      refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={colors.primary} /> : undefined}
+      refreshControl={onRefresh ? <RefreshControl refreshing={pull.refreshing} onRefresh={pull.onRefresh} tintColor={colors.primary} /> : undefined}
     />
   );
 }
