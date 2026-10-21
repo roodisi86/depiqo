@@ -1,32 +1,32 @@
 ## iOS e2e (nl)
 
-**3 van 10 flows geslaagd.**
+**7 van 10 flows geslaagd.**
 ### maestro-nl
 
 | Flow | Resultaat | Tijd (s) | Melding |
 |---|---|---|---|
-| a. Login (mila), borgen, vier bedragen, — bij onbekend | FAILED | 86.0 | Element not found: Id matching regex: tab-profile |
-| b. Login met 2FA (lars) | ok | 59.0 |  |
-| reset-app | ok | 19.0 |  |
-| c. Uitnodiging via deep link: verhuurder, adres, bedrag | ok | 40.0 |  |
-| d. Eindafrekening bekijken (sanne), niet reageren | FAILED | 92.0 | Assertion is false: id: tab-profile is visible |
-| e. Meldingen, profiel, taal fr en en | FAILED | 85.0 | Assertion is false: id: tab-profile is visible |
-| f. Uitloggen, beschermde schermen niet bereikbaar | FAILED | 85.0 | Assertion is false: id: tab-profile is visible |
-| g. Sessie blijft na herstart | FAILED | 88.0 | Assertion is false: id: tab-profile is visible |
-| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | FAILED | 84.0 | Assertion is false: id: tab-profile is visible |
-| Fout wachtwoord geeft vertaalde foutmelding | FAILED | 83.0 | Assertion is false: id: tab-profile is visible |
+| a. Login (mila), borgen, vier bedragen, — bij onbekend | ok | 85.0 |  |
+| b. Login met 2FA (lars) | ok | 94.0 |  |
+| reset-app | ok | 15.0 |  |
+| c. Uitnodiging via deep link: verhuurder, adres, bedrag | FAILED | 55.0 | Assertion is false: id: invite-screen is visible |
+| d. Eindafrekening bekijken (sanne), niet reageren | ok | 65.0 |  |
+| e. Meldingen, profiel, taal fr en en | ok | 70.0 |  |
+| f. Uitloggen, beschermde schermen niet bereikbaar | FAILED | 144.0 | Assertion is false: id: login-email is visible |
+| g. Sessie blijft na herstart | ok | 56.0 |  |
+| h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) | ok | 90.0 |  |
+| Fout wachtwoord geeft vertaalde foutmelding | FAILED | 90.0 | Assertion is false: id: login-email is visible |
 
 ```
-01-login-deposits-amounts FAILED
+01-login-deposits-amounts ok
 02-login-2fa ok
-03-invite-deeplink ok
-04-settlement-view FAILED
-05-notifications-profile-language FAILED
+03-invite-deeplink FAILED
+04-settlement-view ok
+05-notifications-profile-language ok
 06-logout-protected FAILED
-07-session-restore FAILED
-08-invest-visibility FAILED
+07-session-restore ok
+08-invest-visibility ok
 09-wrong-password FAILED
 ```
 
-Schermafdrukken: 10 (in het artifact, map `maestro-nl/screenshots`)
+Schermafdrukken: 18 (in het artifact, map `maestro-nl/screenshots`)
 
