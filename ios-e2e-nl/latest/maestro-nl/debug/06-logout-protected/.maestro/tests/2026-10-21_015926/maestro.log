@@ -1,0 +1,359 @@
+01:59:26.502 [ INFO] maestro.cli.report.TestDebugReporter.logSystemInfo: Debug output path: /Users/runner/work/depiqo/depiqo/ci-out/ios-e2e/nl/maestro-nl/debug/06-logout-protected/.maestro/tests/2026-10-21_015926
+01:59:26.504 [ INFO] MAESTRO.logSystemInfo: ---- System Info ----
+01:59:26.504 [ INFO] MAESTRO.logSystemInfo: Maestro Version: 2.6.0
+01:59:26.505 [ INFO] MAESTRO.logSystemInfo: CI: github
+01:59:26.505 [ INFO] MAESTRO.logSystemInfo: OS Name: Mac OS X
+01:59:26.505 [ INFO] MAESTRO.logSystemInfo: OS Version: 15.7.9
+01:59:26.505 [ INFO] MAESTRO.logSystemInfo: Architecture: aarch64
+01:59:26.506 [ INFO] MAESTRO.logSystemInfo: Java Version: 17
+01:59:26.629 [ INFO] MAESTRO.logSystemInfo: Xcode Version: 16.4
+01:59:26.675 [ INFO] MAESTRO.logSystemInfo: Flutter Version: Undefined
+01:59:26.712 [ INFO] MAESTRO.logSystemInfo: Flutter Channel: Undefined
+01:59:26.713 [ INFO] MAESTRO.logSystemInfo: ---------------------
+01:59:27.331 [DEBUG] io.micrometer.common.util.internal.logging.InternalLoggerFactory.newDefaultFactory: Using SLF4J as the default logging framework
+01:59:33.116 [ INFO] maestro.cli.command.TestCommand.runShardSuite: [shard 1] Selected device 291E4B86-C951-41A7-8327-84BF0304D0A9 using port 57973 with execution plan ExecutionPlan(flowsToRun=[/Users/runner/work/depiqo/depiqo/mobile/.maestro/flows/06-logout-protected.yaml], sequence=FlowSequence(flows=[], continueOnFailure=true), workspaceConfig=WorkspaceConfig(flows=null, includeTags=null, excludeTags=null, executionOrder=null, baselineBranch=null, notifications=null, disableRetries=false, platform=PlatformConfiguration(android=AndroidConfiguration(disableAnimations=false), ios=IOSConfiguration(disableAnimations=false, snapshotKeyHonorModalViews=null)), testOutputDir=null))
+01:59:35.361 [TRACE] ios.xctest.XCTestIOSDevice.open: Opening a connection
+01:59:35.361 [TRACE] xcuitest.XCTestDriverClient.restartXCTestRunner: Restarting XCTest Runner (uninstalling, installing and starting)
+01:59:35.362 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:35.364 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:35.365 [TRACE] xcuitest.XCTestDriverClient.restartXCTestRunner: XCTest Runner uninstalled, will install and start it
+01:59:35.365 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: start()
+01:59:35.365 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: [Start] Install XCUITest runner on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:35.365 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:35.366 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:35.366 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing build products
+01:59:35.442 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing build products
+01:59:35.442 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing maestro-driver-iosUITests-Runner app
+01:59:35.779 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing maestro-driver-iosUITests-Runner app
+01:59:35.780 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Start] Writing maestro-driver-ios app
+01:59:35.791 [ INFO] xcuitest.installer.IOSBuildProductsExtractor.extract: [Done] Writing maestro-driver-ios app
+01:59:35.794 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: Installing driver with xcodebuild
+01:59:35.802 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: [Start] Running XcUITest with `xcodebuild test-without-building` with 57973 and config: IOSDriverConfig(prebuiltRunner=false, sourceDirectory=driver-iPhoneSimulator, context=CLI, snapshotKeyHonorModalViews=null)
+01:59:35.804 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcodebuild, test-without-building, -xctestrun, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/291E4B86-C951-41A7-8327-84BF0304D0A914921987604308426526/maestro-driver-ios-config.xctestrun, -destination, id=291E4B86-C951-41A7-8327-84BF0304D0A9, -derivedDataPath, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/maestro_xctestrunner_xcodebuild_output13827970199962290398] with {TEST_RUNNER_PORT=57973}
+01:59:35.856 [ INFO] xcuitest.installer.LocalXCTestInstaller.startXCTestRunner: [Done] Running XcUITest with `xcodebuild test-without-building`
+01:59:35.857 [ INFO] xcuitest.installer.LocalXCTestInstaller.start$lambda$3: [Done] Install XCUITest runner on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:35.857 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:35.858 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:36.452 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:36.453 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:37.097 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:37.098 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:37.625 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:37.626 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:38.274 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:38.276 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:38.910 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:38.911 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:39.554 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:39.555 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:40.198 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:40.200 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:40.847 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:40.849 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:41.378 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:41.395 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:41.905 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:41.906 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:42.428 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:42.429 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:43.110 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:43.112 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:43.670 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:43.678 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:44.319 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:44.321 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:44.965 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:44.966 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:45.579 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:45.580 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:46.195 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:46.196 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:46.826 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:46.829 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:47.460 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:47.462 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:48.171 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:48.172 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:48.691 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:48.696 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:49.235 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:49.236 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:49.871 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:49.872 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:50.501 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:50.502 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:51.105 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:51.132 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:51.758 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:51.760 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:52.400 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:52.403 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:53.050 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:53.053 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:53.664 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:53.667 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Failed] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9, exception: java.net.ConnectException: Failed to connect to /127.0.0.1:57973
+01:59:54.363 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Start] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:54.520 [ INFO] xcuitest.installer.LocalXCTestInstaller.xcTestDriverStatusCheck: [Done] Perform XCUITest driver status check on 291E4B86-C951-41A7-8327-84BF0304D0A9
+01:59:54.700 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow:  Running flow f. Uitloggen, beschermde schermen niet bereikbaar
+01:59:54.743 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Getting device info
+01:59:55.003 [ INFO] maestro.Maestro.cachedDeviceInfo_delegate$lambda$0: Got device info: DeviceInfo(platform=IOS, widthPixels=1206, heightPixels=2622, widthGrid=402, heightGrid=874)
+01:59:55.149 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Define variables RUNNING
+01:59:55.154 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Define variables COMPLETED
+01:59:55.156 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+01:59:55.156 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+01:59:55.156 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run ../subflows/launch-clean.yaml RUNNING
+01:59:55.158 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+01:59:55.158 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+01:59:55.159 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS RUNNING
+01:59:55.159 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Clear keychain RUNNING
+01:59:55.160 [ INFO] maestro.Maestro.clearKeychain$lambda$7: Clearing keychain
+01:59:55.163 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, keychain, 291E4B86-C951-41A7-8327-84BF0304D0A9, reset] with {}
+01:59:57.463 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Clear keychain COMPLETED
+01:59:57.465 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run flow when Platform is IOS COMPLETED
+01:59:57.466 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Launch app "com.getdepiqo.app.dev" with clear state RUNNING
+01:59:57.469 [ INFO] maestro.Maestro.clearAppState$lambda$5: Clearing app state com.getdepiqo.app.dev
+01:59:57.471 [ INFO] util.LocalSimulatorUtils.clearAppState: Clearing app com.getdepiqo.app.dev state
+01:59:57.471 [ INFO] util.LocalSimulatorUtils.terminate: [Start] Terminating app com.getdepiqo.app.dev
+01:59:57.471 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, terminate, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+01:59:58.446 [ INFO] util.LocalSimulatorUtils.terminate: [Done] Terminating app com.getdepiqo.app.dev
+02:00:00.664 [ INFO] util.LocalSimulatorUtils.reinstallApp: Copying app binary from /Users/runner/Library/Developer/CoreSimulator/Devices/291E4B86-C951-41A7-8327-84BF0304D0A9/data/Containers/Bundle/Application/78C6C131-35A5-4E56-98D0-44DDE4A16654/com.getdepiqo.app.dev-1792547881857.app to /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/4605096512505990795/com.getdepiqo.app.dev-1792548000656.app
+02:00:01.119 [ INFO] util.LocalSimulatorUtils.reinstallApp: Reinstalling and launching com.getdepiqo.app.dev
+02:00:01.119 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, uninstall, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+02:00:02.692 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, install, 291E4B86-C951-41A7-8327-84BF0304D0A9, /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/4605096512505990795/com.getdepiqo.app.dev-1792548000656.app] with {}
+02:00:04.844 [ INFO] util.LocalSimulatorUtils.reinstallApp: App com.getdepiqo.app.dev reinstalled and launched
+02:00:04.855 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting permissions all=allow through applesimutils
+02:00:04.856 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Start] Setting permissions via pinned applesimutils
+02:00:04.857 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [/Users/runner/.maestro/deps/applesimutils, --byId, 291E4B86-C951-41A7-8327-84BF0304D0A9, --bundle, com.getdepiqo.app.dev, --setPermissions, calendar=YES,camera=YES,contacts=YES,faceid=YES,homekit=YES,medialibrary=YES,microphone=YES,motion=YES,photos=YES,reminders=YES,siri=YES,speech=YES,userTracking=YES] with {}
+02:00:05.823 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Done] Setting permissions pinned applesimutils
+02:00:05.823 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting permissions through applesimutils
+02:00:05.824 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting Permissions all=allow through simctl
+02:00:05.825 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, privacy, 291E4B86-C951-41A7-8327-84BF0304D0A9, grant, location-always, com.getdepiqo.app.dev] with {}
+02:00:06.438 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting Permissions all=allow through simctl
+02:00:06.716 [ INFO] maestro.Maestro.launchApp$lambda$2: Launching app com.getdepiqo.app.dev
+02:00:06.716 [ INFO] maestro.Maestro.launchApp$lambda$2: Stopping com.getdepiqo.app.dev app during launch
+02:00:06.737 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, launch, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+02:00:26.796 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Launch app "com.getdepiqo.app.dev" with clear state COMPLETED
+02:00:26.803 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run ../subflows/launch-clean.yaml COMPLETED
+02:00:26.804 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run ../subflows/login.yaml RUNNING
+02:00:26.821 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Define variables RUNNING
+02:00:26.823 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Define variables COMPLETED
+02:00:26.823 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+02:00:26.826 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+02:00:26.836 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: login-email is visible RUNNING
+02:00:30.716 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: login-email is visible COMPLETED
+02:00:30.743 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: login-email RUNNING
+02:00:31.101 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Email address, title=, value=, text=, hintText=, resource-id=login-email, bounds=[17,313][384,358], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=17, y=313, width=367, height=45))
+02:00:31.104 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:31.403 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:31.407 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (200, 335) using hierarchy based logic for wait
+02:00:31.414 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:31.414 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:32.289 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:32.634 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:32.634 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: login-email COMPLETED
+02:00:32.635 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Input text ${EMAIL} RUNNING
+02:00:35.989 [ INFO] maestro.Maestro.inputText: Inputting text: thomas@huurder.test
+02:00:37.615 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:37.882 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Input text ${EMAIL} COMPLETED
+02:00:37.882 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: login-password RUNNING
+02:00:38.339 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Password, title=, value=, text=, hintText=, resource-id=login-password, bounds=[17,399][384,444], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=17, y=399, width=367, height=45))
+02:00:38.341 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:38.936 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:38.937 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (200, 421) using hierarchy based logic for wait
+02:00:38.938 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:38.938 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:39.858 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:40.122 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:40.125 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: login-password COMPLETED
+02:00:40.126 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Input text ${PASSWORD} RUNNING
+02:00:40.153 [ INFO] maestro.Maestro.inputText: Inputting text: Depiqo-demo-2026
+02:00:41.645 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:41.915 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Input text ${PASSWORD} COMPLETED
+02:00:41.916 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Hide Keyboard RUNNING
+02:00:41.919 [ INFO] maestro.Maestro.hideKeyboard$lambda$9: Hiding Keyboard
+02:00:44.458 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:45.543 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:46.231 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:49.467 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Hide Keyboard COMPLETED
+02:00:49.469 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Scrolling DOWN until id: login-submit is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled RUNNING
+02:00:49.930 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 402, DeviceWidth: 874
+02:00:49.930 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=16, y=462, width=370, height=48)
+02:00:49.934 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+02:00:49.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=login-submit, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=15000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+02:00:49.948 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+02:00:49.948 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Scrolling DOWN until id: login-submit is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled COMPLETED
+02:00:49.948 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: login-submit RUNNING
+02:00:50.266 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Log in, title=, value=, text=, hintText=, resource-id=login-submit, bounds=[16,462][386,510], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=16, y=462, width=370, height=48))
+02:00:50.267 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:50.551 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:50.553 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (201, 486) using hierarchy based logic for wait
+02:00:50.554 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:50.554 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:51.162 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:53.749 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:53.750 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: login-submit COMPLETED
+02:00:53.750 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run dismiss-ios-save-password.yaml RUNNING
+02:00:53.750 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+02:00:53.750 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+02:00:53.750 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS RUNNING
+02:00:53.751 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on (Optional) "Not Now" RUNNING
+02:00:54.043 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Not Now, title=, value=, text=, hintText=, resource-id=, bounds=[57,523][197,571], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=57, y=523, width=140, height=48))
+02:00:54.044 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:54.367 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:54.367 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (127, 547) using hierarchy based logic for wait
+02:00:54.368 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:54.368 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:54.990 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:55.614 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:55.614 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on (Optional) "Not Now" COMPLETED
+02:00:55.614 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run flow when Platform is IOS COMPLETED
+02:00:55.614 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run dismiss-ios-save-password.yaml COMPLETED
+02:00:55.614 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run ../subflows/login.yaml COMPLETED
+02:00:55.615 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run ../subflows/set-language.yaml RUNNING
+02:00:55.615 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+02:00:55.615 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+02:00:55.615 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: tab-profile is visible RUNNING
+02:00:56.165 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: tab-profile is visible COMPLETED
+02:00:56.165 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: tab-profile RUNNING
+02:00:56.466 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Profiel, title=, value=, text=, hintText=, resource-id=tab-profile, bounds=[321,791][402,840], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=321, y=791, width=81, height=49))
+02:00:56.466 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:56.768 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:56.769 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (361, 815) using hierarchy based logic for wait
+02:00:56.770 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:56.770 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:57.347 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:57.623 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:57.624 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: tab-profile COMPLETED
+02:00:57.624 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: profile-screen is visible RUNNING
+02:00:57.937 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: profile-screen is visible COMPLETED
+02:00:57.938 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Scrolling DOWN until id: language-${LANG_CODE} is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled RUNNING
+02:00:58.296 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 402, DeviceWidth: 874
+02:00:58.296 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=37, y=483, width=107, height=40)
+02:00:58.296 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+02:00:58.297 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=language-nl, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=15000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+02:00:58.297 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+02:00:58.297 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Scrolling DOWN until id: language-${LANG_CODE} is visible with speed 40, visibility percentage 100%, timeout 15000 ms, with centering disabled COMPLETED
+02:00:58.297 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: language-${LANG_CODE} RUNNING
+02:00:58.578 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Nederlands, title=, value=, text=, hintText=, resource-id=language-nl, bounds=[37,483][144,523], enabled=true, focused=false, selected=true, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=true), bounds=Bounds(x=37, y=483, width=107, height=40))
+02:00:58.578 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:58.868 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:00:58.868 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (90, 503) using hierarchy based logic for wait
+02:00:58.869 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:00:58.869 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:00:59.428 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:00:59.690 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:00:59.690 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: language-${LANG_CODE} COMPLETED
+02:00:59.691 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that "${T_PROFILE_LANGUAGE}" is visible RUNNING
+02:01:00.066 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that "${T_PROFILE_LANGUAGE}" is visible COMPLETED
+02:01:00.067 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: tab-deposits RUNNING
+02:01:00.443 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Mijn borg, title=, value=, text=, hintText=, resource-id=tab-deposits, bounds=[0,791][80,840], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=0, y=791, width=80, height=49))
+02:01:00.445 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:00.712 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:01:00.721 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (40, 815) using hierarchy based logic for wait
+02:01:00.723 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:01:00.724 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:01.298 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:01.594 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:01:01.594 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: tab-deposits COMPLETED
+02:01:01.594 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run ../subflows/set-language.yaml COMPLETED
+02:01:01.594 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: deposit-card is visible RUNNING
+02:01:01.843 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: deposit-card is visible COMPLETED
+02:01:01.843 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run ../subflows/logout.yaml RUNNING
+02:01:01.843 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Apply configuration RUNNING
+02:01:01.843 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Apply configuration COMPLETED
+02:01:01.843 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: tab-profile RUNNING
+02:01:02.090 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Profiel, title=, value=, text=, hintText=, resource-id=tab-profile, bounds=[321,791][402,840], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=321, y=791, width=81, height=49))
+02:01:02.094 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:02.336 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:01:02.338 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (361, 815) using hierarchy based logic for wait
+02:01:02.339 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:01:02.340 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:02.947 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:03.230 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:01:03.230 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: tab-profile COMPLETED
+02:01:03.230 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: profile-screen is visible RUNNING
+02:01:03.474 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: profile-screen is visible COMPLETED
+02:01:03.475 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Scrolling DOWN until id: profile-logout is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled RUNNING
+02:01:04.238 [ WARN] maestro.orchestra.Orchestra.scrollUntilVisible: Error: maestro.MaestroException$ElementNotFound: Element not found: Id matching regex: profile-logout
+02:01:04.250 [ INFO] maestro.Maestro.swipeFromCenter: Swiping UP from center
+02:01:04.279 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:05.493 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:06.899 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Scrolling try count: 0, DeviceWidth: 402, DeviceWidth: 874
+02:01:06.900 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Element bounds: Bounds(x=16, y=643, width=370, height=48)
+02:01:06.900 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Visibility Percent: 1.0
+02:01:06.900 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: Command centerElement: ScrollUntilVisibleCommand(selector=ElementSelector(textRegex=null, idRegex=profile-logout, size=null, below=null, above=null, leftOf=null, rightOf=null, containsChild=null, containsDescendants=null, traits=null, index=null, enabled=null, optional=false, selected=null, checked=null, focused=null, childOf=null, css=null), direction=DOWN, scrollDuration=601, visibilityPercentage=100, timeout=20000, waitToSettleTimeoutMs=null, centerElement=false, originalSpeedValue=40, label=null, optional=false).centerElement
+02:01:06.900 [ INFO] maestro.orchestra.Orchestra.scrollUntilVisible: visibilityPercentageNormalized: 1.0
+02:01:06.900 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Scrolling DOWN until id: profile-logout is visible with speed 40, visibility percentage 100%, timeout 20000 ms, with centering disabled COMPLETED
+02:01:06.900 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on id: profile-logout RUNNING
+02:01:07.168 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Uitloggen, title=, value=, text=, hintText=, resource-id=profile-logout, bounds=[16,643][386,691], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=16, y=643, width=370, height=48))
+02:01:07.169 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:07.442 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:01:07.446 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (201, 667) using hierarchy based logic for wait
+02:01:07.448 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:01:07.450 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:08.065 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:09.278 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:01:09.279 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on id: profile-logout COMPLETED
+02:01:09.279 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is ANDROID RUNNING
+02:01:09.279 [ INFO] maestro.orchestra.Orchestra.executeSubflowCommands: [Command execution subflow] CommandSkipped: null
+02:01:09.280 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$13: Run flow when Platform is ANDROID SKIPPED
+02:01:09.280 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS RUNNING
+02:01:09.280 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Tap on "${T_PROFILE_LOGOUT_CONFIRM}" RUNNING
+02:01:09.663 [ INFO] maestro.Maestro.tap-HgV9Ck0: Tapping on element:  UiElement(treeNode=TreeNode(attributes={accessibilityText=Ja, uitloggen, title=, value=, text=, hintText=, resource-id=, bounds=[201,485][336,529], enabled=true, focused=false, selected=false, checked=false}, children=[], clickable=null, enabled=true, focused=false, checked=false, selected=false), bounds=Bounds(x=201, y=485, width=135, height=44))
+02:01:09.664 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:09.960 [ INFO] maestro.Maestro.tap-HgV9Ck0: Refreshed element
+02:01:09.961 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Try tapping at (268, 507) using hierarchy based logic for wait
+02:01:09.962 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to byte array
+02:01:09.962 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:10.571 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:12.078 [ INFO] maestro.Maestro.screenshotBasedTap-ogj28Uc: Something have changed in the UI judging by view hierarchy. Proceed.
+02:01:12.079 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Tap on "${T_PROFILE_LOGOUT_CONFIRM}" COMPLETED
+02:01:12.079 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run flow when Platform is IOS COMPLETED
+02:01:12.079 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: login-email is visible RUNNING
+02:01:12.388 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: login-email is visible COMPLETED
+02:01:12.388 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Run ../subflows/logout.yaml COMPLETED
+02:01:12.389 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Take screenshot f-01-logged-out-${LANG_CODE} RUNNING
+02:01:12.399 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+02:01:12.400 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:12.557 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Take screenshot f-01-logged-out-${LANG_CODE} COMPLETED
+02:01:12.557 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Open depiqo://app-link/beleggen RUNNING
+02:01:12.561 [ INFO] maestro.Maestro.openLink: Opening link depiqo://app-link/beleggen for app: com.getdepiqo.app.dev with autoVerify config as false
+02:01:12.565 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, openurl, 291E4B86-C951-41A7-8327-84BF0304D0A9, depiqo://app-link/beleggen] with {}
+02:01:14.461 [ INFO] device.IOSDevice.invoke-F9mIFpk: Waiting for animation to end with timeout 3000
+02:01:15.380 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Open depiqo://app-link/beleggen COMPLETED
+02:01:15.380 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Run flow when Platform is IOS and "Open" is visible RUNNING
+02:01:22.813 [ INFO] maestro.orchestra.Orchestra.executeCommands: [Command execution] CommandSkipped: null
+02:01:22.813 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$13: Run flow when Platform is IOS and "Open" is visible SKIPPED
+02:01:22.814 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: login-email is visible RUNNING
+02:01:23.075 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: login-email is visible COMPLETED
+02:01:23.075 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: invest-overview is not visible RUNNING
+02:01:23.866 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: invest-overview is not visible COMPLETED
+02:01:23.866 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: deposit-card is not visible RUNNING
+02:01:24.891 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: deposit-card is not visible COMPLETED
+02:01:24.891 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: tab-profile is not visible RUNNING
+02:01:25.835 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: tab-profile is not visible COMPLETED
+02:01:25.835 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Stop com.getdepiqo.app.dev RUNNING
+02:01:25.838 [ INFO] maestro.Maestro.stopApp$lambda$3: Stopping app com.getdepiqo.app.dev
+02:01:26.888 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Stop com.getdepiqo.app.dev COMPLETED
+02:01:26.890 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Launch app "com.getdepiqo.app.dev" RUNNING
+02:01:26.893 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting permissions all=allow through applesimutils
+02:01:26.893 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Start] Setting permissions via pinned applesimutils
+02:01:26.893 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [/Users/runner/.maestro/deps/applesimutils, --byId, 291E4B86-C951-41A7-8327-84BF0304D0A9, --bundle, com.getdepiqo.app.dev, --setPermissions, calendar=YES,camera=YES,contacts=YES,faceid=YES,homekit=YES,medialibrary=YES,microphone=YES,motion=YES,photos=YES,reminders=YES,siri=YES,speech=YES,userTracking=YES] with {}
+02:01:28.145 [ INFO] util.LocalSimulatorUtils.setAppleSimutilsPermissions: [Done] Setting permissions pinned applesimutils
+02:01:28.147 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting permissions through applesimutils
+02:01:28.147 [ INFO] device.SimctlIOSDevice.setPermissions: [Start] Setting Permissions all=allow through simctl
+02:01:28.148 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, privacy, 291E4B86-C951-41A7-8327-84BF0304D0A9, grant, location-always, com.getdepiqo.app.dev] with {}
+02:01:28.748 [ INFO] device.SimctlIOSDevice.setPermissions: [Done] Setting Permissions all=allow through simctl
+02:01:28.784 [ INFO] maestro.Maestro.launchApp$lambda$2: Launching app com.getdepiqo.app.dev
+02:01:28.785 [ INFO] maestro.Maestro.launchApp$lambda$2: Stopping com.getdepiqo.app.dev app during launch
+02:01:28.792 [ INFO] util.CommandLineUtils.runCommand: Running command line operation: [xcrun, simctl, launch, 291E4B86-C951-41A7-8327-84BF0304D0A9, com.getdepiqo.app.dev] with {}
+02:01:31.137 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Launch app "com.getdepiqo.app.dev" COMPLETED
+02:01:31.138 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: login-email is visible RUNNING
+02:01:34.214 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: login-email is visible COMPLETED
+02:01:34.215 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Assert that id: tab-profile is not visible RUNNING
+02:01:35.293 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Assert that id: tab-profile is not visible COMPLETED
+02:01:35.293 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$5: Take screenshot f-02-relaunch-${LANG_CODE} RUNNING
+02:01:35.315 [ INFO] maestro.Maestro.takeScreenshot: Taking screenshot
+02:01:35.316 [TRACE] maestro.utils.ScreenshotUtils.takeScreenshot: Taking screenshot to output sink
+02:01:35.437 [ INFO] maestro.cli.runner.TestSuiteInteractor.runFlow$lambda$17$lambda$7: Take screenshot f-02-relaunch-${LANG_CODE} COMPLETED
+02:01:36.428 [ INFO] maestro.cli.report.TestDebugReporter.deleteOldFiles: Performing purge of logs older than 14 days from /Users/runner/work/depiqo/depiqo/ci-out/ios-e2e/nl/maestro-nl/debug/06-logout-protected/.maestro/tests

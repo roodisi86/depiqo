@@ -1,0 +1,40 @@
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:291E4B86-C951-41A7-8327-84BF0304D0A9, OS:26.2, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:291E4B86-C951-41A7-8327-84BF0304D0A9, OS:26.2, name:iPhone 16 Pro }
+** BUILD INTERRUPTED **
+D0A9 -derivedDataPath /var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/maestro_xctestrunner_xcodebuild_output1733220378159417426
+
+2026-10-21 01:54:06.147832+0000 maestro-driver-iosUITests-Runner[20812:65369] [Default] Running tests...
+2026-10-21 01:54:06.333894+0000 maestro-driver-iosUITests-Runner[20812:65369] snapshotKeyHonorModalViews configured to value: (null)
+2026-10-21 01:54:06.348635+0000 maestro-driver-iosUITests-Runner[20812:65960] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+    t =      nans Interface orientation changed to Portrait
+2026-10-21 01:54:10.748387+0000 maestro-driver-iosUITests-Runner[20812:65963] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+Test Suite 'Selected tests' started at 2026-10-21 01:54:10.839.
+Test Suite 'maestro-driver-iosUITests.xctest' started at 2026-10-21 01:54:10.840.
+Test Suite 'maestro_driver_iosUITests' started at 2026-10-21 01:54:10.840.
+    t =      nans Suite Set Up
+Test Case '-[maestro_driver_iosUITests.maestro_driver_iosUITests testHttpServer]' started.
+    t =     0.00s Start Test at 2026-10-21 01:54:10.844
+    t =     0.27s Set Up
+2026-10-21 01:54:11.113985+0000 maestro-driver-iosUITests-Runner[20812:65960] [maestro_driver_iosUITests] Will start HTTP server
+2026-10-21 01:54:11.609292+0000 maestro-driver-iosUITests-Runner[20812:65960] [FlyingFox] starting server 127.0.0.1:53499
+2026-10-21 01:54:11.737485+0000 maestro-driver-iosUITests-Runner[20812:65960] [FlyingFox] <127.0.0.1> open connection
+2026-10-21 01:54:11.748293+0000 maestro-driver-iosUITests-Runner[20812:65960] [FlyingFox] <127.0.0.1> request: GET /status
+2026-10-21 01:54:12.058368+0000 maestro-driver-iosUITests-Runner[20812:65957] [FlyingFox] <127.0.0.1> open connection
+2026-10-21 01:54:12.060111+0000 maestro-driver-iosUITests-Runner[20812:65963] [FlyingFox] <127.0.0.1> request: POST /deviceInfo
+    t =     1.22s Getting device orientation
+2026-10-21 01:54:12.131336+0000 maestro-driver-iosUITests-Runner[20812:65369] Using singleton test manager
+2026-10-21 01:54:12.140735+0000 maestro-driver-iosUITests-Runner[20812:65369] Detected running apps: ["com.getdepiqo.app.dev"]
+    t =     1.30s Getting device orientation
+    t =     1.30s Find the Application 'com.getdepiqo.app.dev'
+2026-10-21 01:54:12.291837+0000 maestro-driver-iosUITests-Runner[20812:65369] Device orientation is 1
+2026-10-21 01:54:27.684591+0000 maestro-driver-iosUITests-Runner[20812:66387] [FlyingFox] <127.0.0.1> request: POST /setPermissions
+2026-10-21 01:54:27.794695+0000 maestro-driver-iosUITests-Runner[20812:65957] [FlyingFox] <127.0.0.1> request: POST /terminateApp
+2026-10-21 01:54:27.799894+0000 maestro-driver-iosUITests-Runner[20812:65369] [Start] Terminating app com.getdepiqo.app.dev
+    t =    16.96s Terminate com.getdepiqo.app.dev:0
+2026-10-21 01:54:27.803863+0000 maestro-driver-iosUITests-Runner[20812:65369] [End] Terminating app com.getdepiqo.app.dev
+2026-10-21 01:54:29.592563+0000 maestro-driver-iosUITests-Runner[20812:66387] [FlyingFox] <127.0.0.1> request: POST /terminateApp
+2026-10-21 01:54:29.604494+0000 maestro-driver-iosUITests-Runner[20812:65369] [Start] Terminating app com.getdepiqo.app.dev
+    t =    18.78s Terminate com.getdepiqo.app.dev:21851
+2026-10-21 01:54:30.711975+0000 maestro-driver-iosUITests-Runner[20812:65369] [End] Terminating app com.getdepiqo.app.dev
+2026-10-21 01:54:31.919970+0000 maestro-driver-iosUITests-Runner[20812:65955] [FlyingFox] <127.0.0.1> request: GET /status
