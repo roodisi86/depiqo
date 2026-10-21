@@ -1,0 +1,97 @@
+Android 14
+Performing Streamed Install
+Success
+Night mode: yes
+font_scale=1.3 night=Night mode: yes
+::group::maestro 01-login-deposits-amounts (android, nl)
+
+Waiting for flows to complete...
+[Passed] a. Login (mila), borgen, vier bedragen, — bij onbekend (42s)
+
+1/1 Flow Passed in 42s
+
+::endgroup::
+::group::maestro 02-login-2fa (android, nl)
+
+Waiting for flows to complete...
+[Passed] b. Login met 2FA (lars) (39s)
+
+1/1 Flow Passed in 39s
+
+::endgroup::
+::group::maestro 03-invite-deeplink-reset (android, nl)
+
+Waiting for flows to complete...
+[Passed] reset-app (2s)
+
+1/1 Flow Passed in 2s
+
+::endgroup::
+::group::maestro 03-invite-deeplink (android, nl)
+
+Waiting for flows to complete...
+[Passed] c. Uitnodiging via deep link: verhuurder, adres, bedrag (2s)
+
+1/1 Flow Passed in 2s
+
+::endgroup::
+::group::maestro 04-settlement-view (android, nl)
+
+Waiting for flows to complete...
+[Passed] d. Eindafrekening bekijken (sanne), niet reageren (43s)
+
+1/1 Flow Passed in 43s
+
+::endgroup::
+::group::maestro 05-notifications-profile-language (android, nl)
+
+Waiting for flows to complete...
+[Passed] e. Meldingen, profiel, taal fr en en (56s)
+
+1/1 Flow Passed in 56s
+
+::endgroup::
+::group::maestro 06-logout-protected (android, nl)
+
+Waiting for flows to complete...
+[Passed] f. Uitloggen, beschermde schermen niet bereikbaar (50s)
+
+1/1 Flow Passed in 50s
+
+::endgroup::
+::group::maestro 07-session-restore (android, nl)
+
+Waiting for flows to complete...
+[Passed] g. Sessie blijft na herstart (34s)
+
+1/1 Flow Passed in 34s
+
+::endgroup::
+::group::maestro 08-invest-visibility (android, nl)
+
+Waiting for flows to complete...
+[Passed] h. Beleggen verborgen (sofie) en zichtbaar in sandbox (daan) (1m)
+
+1/1 Flow Passed in 1m
+
+::endgroup::
+::group::maestro 09-wrong-password (android, nl)
+
+Waiting for flows to complete...
+[Passed] Fout wachtwoord geeft vertaalde foutmelding (58s)
+
+1/1 Flow Passed in 58s
+
+::endgroup::
+---- android nl
+01-login-deposits-amounts ok
+02-login-2fa ok
+03-invite-deeplink ok
+04-settlement-view ok
+05-notifications-profile-language ok
+06-logout-protected ok
+07-session-restore ok
+08-invest-visibility ok
+09-wrong-password ok
+logcat: 64461 lines, 9573 for the app
+scan: 74034 lines in 2 file(s), 20 issued tokens checked, 0 finding(s)
