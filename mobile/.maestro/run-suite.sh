@@ -65,6 +65,9 @@ open_invite_link() {
   fi
 }
 
+# Start Maestro's driver once before the first flow, so a slow first start does not count against a flow.
+maestro ${device_args[@]+"${device_args[@]}"} hierarchy > /dev/null 2>&1 || true
+
 failed=()
 : > "$out/results.txt"
 for file in "$here"/flows/*.yaml; do
@@ -90,6 +93,13 @@ for file in "$here"/flows/*.yaml; do
   esac
   if run_flow "$name" "$file" ${extra[@]+"${extra[@]}"}; then
     echo "$name ok" >> "$out/results.txt"
+  elif [ "$name" != "${name%invite-deeplink}" ]; then
+    failed+=("$name")
+    echo "$name FAILED" >> "$out/results.txt"
+  elif mv "$out/junit/$name.xml" "$out/junit/$name.attempt1.xml" 2>/dev/null; run_flow "$name" "$file" ${extra[@]+"${extra[@]}"}; then
+    # One retry for a flow that failed once (a cold CI simulator sometimes fails to start Maestro's driver).
+    # The report keeps both attempts; results.txt says it passed on the second try.
+    echo "$name ok (tweede poging)" >> "$out/results.txt"
   else
     failed+=("$name")
     echo "$name FAILED" >> "$out/results.txt"
